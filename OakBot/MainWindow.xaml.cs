@@ -34,13 +34,13 @@ namespace OakBot
             InitializeComponent();
 
             // Twitch user instances
-            TwitchUser userStreamer = new TwitchUser("ocgineer");
-            TwitchUser userBot = new TwitchUser("oakminati");
+            TwitchUser userStreamer = new TwitchUser("<streamer user name>");
+            TwitchUser userBot = new TwitchUser("<bot user name>");
 
             // Attach oAuth password to the users creating an TwitchUserCredentials object
             // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
-            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "oauth:1pj3d36mkio86qt2n0clnto7j06mj7");
-            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "oauth:2mmhamv6wf4u1teq8m0u0i9xb02bql");
+            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "<streamer oauth key>");
+            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "<bot oauth key>");
 
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
