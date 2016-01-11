@@ -20,13 +20,6 @@
 
         #region Methods
 
-        public void SendChatMessage(string message)
-        {
-            _chatConnection.IrcClient.WriteLineThrottle(":" + _chatConnection.connectedUser.username +
-                "!" + _chatConnection.connectedUser.username + "@" + _chatConnection.connectedUser.username +
-                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel.username + " :" + message);
-        }
-
         #endregion
 
         #region Properties

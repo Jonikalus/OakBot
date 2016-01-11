@@ -37,6 +37,13 @@ namespace OakBot
 
         #region Methods
 
+        public void SendChatMessage(string message)
+        {
+            IrcClient.WriteLineThrottle(":" + connectedUser.username +
+                "!" + connectedUser.username + "@" + connectedUser.username +
+                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel.name + " :" + message);
+        }
+
         internal void JoinChannel(TwitchChatChannel channel)
         {
             _joinedChannel = channel;
