@@ -23,6 +23,10 @@ namespace OakBot
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Twitch Application
+        public string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+        public string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
+
         //public delegate void MyDel();
         public delegate void DelUI(DispatchUI obj);
 
