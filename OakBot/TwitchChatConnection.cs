@@ -123,7 +123,7 @@ namespace OakBot
 
         public void SendMessage(string message)
         {
-            _joinedChannel.SendChatMessage(message);
+            SendChatMessage(message);
         }
 
         #endregion
