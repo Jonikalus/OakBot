@@ -37,7 +37,9 @@ Commands:
   - Output to chat selectable by streamer or bot account
 
 Remote OBS integration
+
 Point system
+
 Importing data from Deepbot and Ankhbot
 
 Other possibilities at a later stage:
