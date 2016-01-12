@@ -42,6 +42,8 @@ Point system
 
 Importing data from Deepbot and Ankhbot
 
+Backup (automated) database to folder/Box/Drive/Dropbox (outside %appdata%)
+
 Other possibilities at a later stage:
   - Alerts
   - Discord integration
