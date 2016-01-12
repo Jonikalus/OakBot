@@ -9,14 +9,13 @@ Stream overlay Goals:
       - Think of currentsong, giveaways, timers ect.
       - This would remove the need for Twitch alerts client.
 
-Twitch Dashboard:
+Twitch Dashboard Goals:
   - Set stream game and title.
   - View session followers, subs and donators
   - View hosts and raids
   - Auto host
 
-Chat Goals:
-  - Interactive chat
+Twitch Chat Interface Goals:
   - Right-Mouse-Button context menu:
       - Twitch Profile
       - Compose Twitch Message
@@ -24,23 +23,27 @@ Chat Goals:
       - Timeout 5m
       - Timeout 10m
       - Ban
-  - Double-click message
+  - Double-click message (chatty like)
       - Opens User in a new window
       - Shows users chat messages only
       - Shows Twitch status
       - Same options as context menu
 
-Commands:
+Command System Goals:
   - Simple text commands
   - Advanced command creation
   - Command chaining
   - Output to chat selectable by streamer or bot account
 
-Remote OBS integration
+Song Request Goals:
+  - load from YouTube playlist
+  - Not capped
 
-Point system
-
-Importing data from Deepbot and Ankhbot
+Further Goals:
+  - Remote OBS integration
+  - Point system
+  - Importing data from Deepbot and Ankhbot
+  - Backup (automated) database to folder/Box/Drive/Dropbox (outside %appdata%)
 
 Other possibilities at a later stage:
   - Alerts
