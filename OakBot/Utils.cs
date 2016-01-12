@@ -57,5 +57,14 @@ namespace OakBot
         {
             ExecuteQuery(string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", value, settingName), connection);
         }
+
+        //Initial entries for the settings table
+        public static void CreateInitialSettings(SQLiteConnection connection)
+        {
+            ExecuteQuery("INSERT INTO oak_settings (name, value) VALUES ('streamerOAuthToken', 'please change')", connection);
+            ExecuteQuery("INSERT INTO oak_settings (name, value) VALUES ('botOAuthToken', 'please change')", connection);
+            ExecuteQuery("INSERT INTO oak_settings (name, value) VALUES ('streamerUserName', 'please change')", connection);
+            ExecuteQuery("INSERT INTO oak_settings (name, value) VALUES ('botUserName', 'please change')", connection);
+        }
     }
 }
