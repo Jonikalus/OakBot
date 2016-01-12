@@ -10,4 +10,4 @@ such as giveaways, timers, queue that an HTML overlay can read and render on the
 Secondary goal is to provide an integration with Discord to synchronize roles, commands and giveaways.
 
 Currently the bot will connect only to the streamers chat (so it does not join its own channel).
-Database useage would be SQLlite and import from Deepbot and Anhkbot should be available.
+Database usage would be SQLlite and import from Deepbot and Anhkbot should be available.
