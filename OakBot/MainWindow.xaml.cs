@@ -30,8 +30,10 @@ namespace OakBot
         //public delegate void MyDel();
         public delegate void DelUI(DispatchUI obj);
 
-        private TwitchChatConnection botChatConnection;
         private TwitchChatConnection streamerChatConnection;
+        private TwitchWhisperConnection streamerWhisperConnection;
+        private TwitchChatConnection botChatConnection;
+        private TwitchWhisperConnection botWhisperConnection;
 
         public MainWindow()
         {
@@ -40,7 +42,7 @@ namespace OakBot
             // Twitch user instances
             TwitchUser userStreamer = new TwitchUser("<streamer user name>");
             TwitchUser userBot = new TwitchUser("<bot user name>");
-            
+
             // Attach oAuth password to the users creating an TwitchUserCredentials object
             // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
             TwitchCredentials credentialBot = new TwitchCredentials(userBot, "<streamer oauth key>");
@@ -49,14 +51,18 @@ namespace OakBot
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
             streamerChatConnection.JoinChannel(userStreamer);
+            streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
 
             // Start connection for the bot account, login and join streamers channel.
             botChatConnection = new TwitchChatConnection(credentialBot, this, true);
             botChatConnection.JoinChannel(userStreamer);
+            botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
             new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
             new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
+            new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
+            new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
         }
 
         public void ResolveDispatchToUI(DispatchUI dispatchedObj)
@@ -87,6 +93,13 @@ namespace OakBot
                 case "PRIVMSG":
                     ChatReceived.AppendText(time + dispatchedObj.botEvent.author + ": " +
                         dispatchedObj.botEvent.message, Brushes.WhiteSmoke);
+                    ChatReceived.Document.ContentEnd.InsertLineBreak();
+                    break;
+
+                case "WHISPER":
+                    Trace.WriteLine(dispatchedObj.botEvent.message);
+                    ChatReceived.AppendText(time + dispatchedObj.botEvent.author + " > : " +
+                        dispatchedObj.botEvent.message, Brushes.Pink);
                     ChatReceived.Document.ContentEnd.InsertLineBreak();
                     break;
 
@@ -121,13 +134,25 @@ namespace OakBot
                     // Speak as Streamer or Bot
                     if (SpeakAs.SelectedIndex == 0) // streamer
                     {
-                        Trace.WriteLine(ChatSend.Text);
-                        streamerChatConnection.SendChatMessage(ChatSend.Text);
+                        if (ChatSend.Text.StartsWith("/w"))
+                        {
+                            streamerWhisperConnection.SendWhisper(ChatSend.Text);
+                        }
+                        else
+                        {
+                            streamerChatConnection.SendChatMessage(ChatSend.Text);
+                        }
                     }
                     else if (SpeakAs.SelectedIndex == 1) // Bot
                     {
-                        Trace.WriteLine(ChatSend.Text);
-                        botChatConnection.SendChatMessage(ChatSend.Text);
+                        if (ChatSend.Text.StartsWith("/w"))
+                        {
+                            botWhisperConnection.SendWhisper(ChatSend.Text);
+                        }
+                        else
+                        {
+                            botChatConnection.SendChatMessage(ChatSend.Text);
+                        }
                     }
                 }
 
