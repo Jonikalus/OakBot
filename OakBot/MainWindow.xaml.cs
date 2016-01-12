@@ -24,8 +24,11 @@ namespace OakBot
     public partial class MainWindow : Window
     {
         // Twitch Application
-        public string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
-        public string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
+        public static string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
+
+        //Twitch Auth Link
+        public static string twitchAuthLink = string.Format("https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id={0}&redirect_uri=http://localhost&scope=user_read+user_blocks_edit+user_blocks_read+user_follows_edit+channel_read+channel_editor+channel_commercial+channel_stream+channel_subscriptions+user_subscriptions+channel_check_subscription+chat_login", twitchClientID);
 
         //public delegate void MyDel();
         public delegate void DelUI(DispatchUI obj);
