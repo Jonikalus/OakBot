@@ -11,8 +11,8 @@ namespace OakBot
         private MainWindow _window;
         private BotIrcClient ircClient;
         private TwitchCredentials _connectedUser;
+        private TwitchUser _joinedChannel;
         private bool _isBot;
-        private TwitchChatChannel _joinedChannel;
 
         #endregion
 
@@ -37,17 +37,17 @@ namespace OakBot
 
         #region Methods
 
+        public void JoinChannel(TwitchUser channel)
+        {
+            _joinedChannel = channel;
+            ircClient.WriteLineThrottle("JOIN #" + channel.username);
+        }
+
         public void SendChatMessage(string message)
         {
             IrcClient.WriteLineThrottle(":" + connectedUser.username +
                 "!" + connectedUser.username + "@" + connectedUser.username +
-                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel.name + " :" + message);
-        }
-
-        internal void JoinChannel(TwitchChatChannel channel)
-        {
-            _joinedChannel = channel;
-            ircClient.WriteLineThrottle("JOIN #" + channel.name);
+                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel.username + " :" + message);
         }
 
         internal void Run()
@@ -119,11 +119,6 @@ namespace OakBot
                     new DispatchUI(_window, chatEvent);
                     break;
             }
-        }
-
-        public void SendMessage(string message)
-        {
-            SendChatMessage(message);
         }
 
         #endregion

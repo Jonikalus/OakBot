@@ -40,7 +40,7 @@ namespace OakBot
             // Twitch user instances
             TwitchUser userStreamer = new TwitchUser("<streamer user name>");
             TwitchUser userBot = new TwitchUser("<bot user name>");
-
+            
             // Attach oAuth password to the users creating an TwitchUserCredentials object
             // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
             TwitchCredentials credentialBot = new TwitchCredentials(userBot, "<streamer oauth key>");
@@ -48,11 +48,11 @@ namespace OakBot
 
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
-            new TwitchChatChannel(streamerChatConnection, userStreamer);
+            streamerChatConnection.JoinChannel(userStreamer);
 
             // Start connection for the bot account, login and join streamers channel.
             botChatConnection = new TwitchChatConnection(credentialBot, this, true);
-            new TwitchChatChannel(botChatConnection, userStreamer);
+            botChatConnection.JoinChannel(userStreamer);
 
             // New thread for the chat connections
             new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
@@ -122,12 +122,12 @@ namespace OakBot
                     if (SpeakAs.SelectedIndex == 0) // streamer
                     {
                         Trace.WriteLine(ChatSend.Text);
-                        streamerChatConnection.SendMessage(ChatSend.Text);
+                        streamerChatConnection.SendChatMessage(ChatSend.Text);
                     }
                     else if (SpeakAs.SelectedIndex == 1) // Bot
                     {
                         Trace.WriteLine(ChatSend.Text);
-                        botChatConnection.SendMessage(ChatSend.Text);
+                        botChatConnection.SendChatMessage(ChatSend.Text);
                     }
                 }
 
