@@ -1,13 +1,46 @@
 # OakBot
 Twitch Bot focused on integration with HTML overlays and Discord written in C#
 
-Goal is a free solid Twitch Bot mimicing features from both Deepbot and Ankhbot,
-but without monthly payment (no cloud) and richer in features than Ankhbot.
+Goal is a free open solid feature rich Twitch Bot for everyone.
 
-Main goal would be outputting of text and json files of on-going bot activities,
-such as giveaways, timers, queue that an HTML overlay can read and render on the stream.
+Stream overlay Goals:
+  - Outputting of events in textfiles
+  - Outputting of events as json
+      - Think of currentsong, giveaways, timers ect.
+      - This would remove the need for Twitch alerts client.
 
-Secondary goal is to provide an integration with Discord to synchronize roles, commands and giveaways.
+Twitch Dashboard:
+  - Set stream game and title.
+  - View session followers, subs and donators
+  - View hosts and raids
+  - Auto host
 
-Currently the bot will connect only to the streamers chat (so it does not join its own channel).
-Database usage would be SQLlite and import from Deepbot and Anhkbot should be available.
+Chat Goals:
+  - Interactive chat
+  - Right-Mouse-Button context menu:
+      - Twitch Profile
+      - Compose Twitch Message
+      - Purge (/timeout 1)
+      - Timeout 5m
+      - Timeout 10m
+      - Ban
+  - Double-click message
+      - Opens User in a new window
+      - Shows users chat messages only
+      - Shows Twitch status
+      - Same options as context menu
+
+Commands:
+  - Simple text commands
+  - Advanced command creation
+  - Command chaining
+  - Output to chat selectable by streamer or bot account
+
+Remote OBS integration
+Point system
+Importing data from Deepbot and Ankhbot
+
+Other possibilities at a later stage:
+  - Alerts
+  - Discord integration
+  - Let the bot listen to its own channel
