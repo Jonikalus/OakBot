@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace OakBot
 {
@@ -19,9 +22,18 @@ namespace OakBot
     /// </summary>
     public partial class TwitchAuthBrowser : Window
     {
-        public TwitchAuthBrowser()
+        public TwitchAuthBrowser(string link)
         {
             InitializeComponent();
+            wbTwitchAuth.Navigate(link);
+        }
+
+        private void wbTwitchAuth_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
+            if (e.Uri.Host.Trim() == "localhost")
+            {
+                Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
+            }
         }
     }
 }

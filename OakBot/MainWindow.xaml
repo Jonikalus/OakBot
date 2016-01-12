@@ -19,7 +19,7 @@
                             <Label x:Name="LabelBotAccount" Content="Bot Account" HorizontalAlignment="Left" Margin="1,0,0,1" VerticalAlignment="Bottom"/>
                             <TextBox x:Name="textBoxStreamerName" HorizontalAlignment="Left" Margin="110,6,0,0" TextWrapping="Wrap" Width="170" IsEnabled="False" ToolTip="Name of the streamer Twitch account." Height="30" VerticalAlignment="Top"/>
                             <TextBox x:Name="textBoxBotName" HorizontalAlignment="Left" Margin="110,0,0,5" TextWrapping="Wrap" Width="170" IsEnabled="False" ToolTip="Name of the bot Twitch account." Height="30" VerticalAlignment="Bottom"/>
-                            <Button x:Name="buttonStreamerConnect" Content="" HorizontalAlignment="Left" Height="32" Margin="290,5,0,0" VerticalAlignment="Top" Width="170" BorderBrush="{x:Null}" BorderThickness="0" Foreground="{x:Null}" ToolTip="Connect the streamer account with Twitch.">
+                            <Button x:Name="buttonStreamerConnect" Content="" HorizontalAlignment="Left" Height="32" Margin="290,5,0,0" VerticalAlignment="Top" Width="170" BorderBrush="{x:Null}" BorderThickness="0" Foreground="{x:Null}" ToolTip="Connect the streamer account with Twitch." Click="buttonStreamerConnect_Click">
                                 <Button.Background>
                                     <ImageBrush ImageSource="images/Twitch_connect_button.png"/>
                                 </Button.Background>

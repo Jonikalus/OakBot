@@ -54,18 +54,18 @@ namespace OakBot
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
             streamerChatConnection.JoinChannel(userStreamer);
-            streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
+            //streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
 
             // Start connection for the bot account, login and join streamers channel.
             botChatConnection = new TwitchChatConnection(credentialBot, this, true);
             botChatConnection.JoinChannel(userStreamer);
-            botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
+            //botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
-            new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
-            new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
-            new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
-            new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
+            //new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
+            //new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
+            //new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
+            //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
         }
 
         public void ResolveDispatchToUI(DispatchUI dispatchedObj)
@@ -167,6 +167,12 @@ namespace OakBot
         private void ChatReceived_TextChanged(object sender, TextChangedEventArgs e)
         {
             ChatReceived.ScrollToEnd();
+        }
+
+        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
+        {
+            TwitchAuthBrowser tab = new TwitchAuthBrowser(twitchAuthLink);
+            tab.Show();
         }
     }
 }

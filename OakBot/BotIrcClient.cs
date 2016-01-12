@@ -74,7 +74,14 @@ namespace OakBot
 
         public string ReadLine()
         {
-            return inputStream.ReadLine();
+            try
+            {
+                return inputStream.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         #endregion

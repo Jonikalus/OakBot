@@ -63,6 +63,7 @@
     <Compile Include="TwitchCredentials.cs" />
     <Compile Include="TwitchUser.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
+    <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
