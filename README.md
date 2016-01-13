@@ -49,3 +49,4 @@ Other possibilities at a later stage:
   - Alerts
   - Discord integration
   - Let the bot listen to its own channel
+  - API to pull out data
