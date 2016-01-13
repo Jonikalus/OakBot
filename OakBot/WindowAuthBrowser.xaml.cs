@@ -20,9 +20,9 @@ namespace OakBot
     /// <summary>
     /// Interaktionslogik für TwitchAuthBrowser.xaml
     /// </summary>
-    public partial class TwitchAuthBrowser : Window
+    public partial class WindowAuthBrowser : Window
     {
-        public TwitchAuthBrowser(string link)
+        public WindowAuthBrowser(string link)
         {
             InitializeComponent();
             wbTwitchAuth.Navigate(link);

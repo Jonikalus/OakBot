@@ -59,8 +59,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="TwitchAuthBrowser.xaml.cs">
-      <DependentUpon>TwitchAuthBrowser.xaml</DependentUpon>
+    <Compile Include="WindowUserChat.xaml.cs">
+      <DependentUpon>WindowUserChat.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WindowAuthBrowser.xaml.cs">
+      <DependentUpon>WindowAuthBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="TwitchChatConnection.cs" />
     <Compile Include="TwitchChatMessage.cs" />
@@ -68,6 +71,10 @@
     <Compile Include="TwitchUser.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
     <Compile Include="Utils.cs" />
+    <Page Include="WindowUserChat.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -83,7 +90,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="TwitchAuthBrowser.xaml">
+    <Page Include="WindowAuthBrowser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

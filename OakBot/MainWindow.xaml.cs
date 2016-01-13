@@ -33,9 +33,9 @@ namespace OakBot
         //public delegate void MyDel();
         public delegate void DelUI(DispatchUI obj);
 
-        private TwitchChatConnection streamerChatConnection;
+        public TwitchChatConnection streamerChatConnection;
         private TwitchWhisperConnection streamerWhisperConnection;
-        private TwitchChatConnection botChatConnection;
+        public TwitchChatConnection botChatConnection;
         private TwitchWhisperConnection botWhisperConnection;
 
         public MainWindow()
@@ -169,7 +169,7 @@ namespace OakBot
 
         private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
         {
-            TwitchAuthBrowser tab = new TwitchAuthBrowser(twitchAuthLink);
+            WindowAuthBrowser tab = new WindowAuthBrowser(twitchAuthLink);
             tab.Show();
         }
     }
