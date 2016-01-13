@@ -39,6 +39,7 @@ Command System Goals:
   - Command chaining [with optional delay]
   - Command cost [when point system is implemented]
   - Output to chat under the bot or streamer's name
+  - Streamer template messages (think of a sub hype message)
 
 Song Request Goals:
   - load from YouTube playlist
