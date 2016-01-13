@@ -1,6 +1,6 @@
 ﻿namespace OakBot
 {
-    class TwitchUser
+    public class TwitchUser
     {
         #region Fields
 

@@ -70,12 +70,10 @@ namespace OakBot
 
         public void ResolveDispatchToUI(DispatchUI dispatchedObj)
         {
-            string time = "[" + DateTime.Now.ToShortTimeString() + "] ";
-
-            switch (dispatchedObj.botEvent.command)
+            switch (dispatchedObj.chatMessage.command)
             {
                 case "353": // Received list of joined names
-                    string[] names = dispatchedObj.botEvent.message.Split(' ');
+                    string[] names = dispatchedObj.chatMessage.message.Split(' ');
                     foreach (string name in names)
                     {
                         ChatViewers.AppendText(name, Brushes.WhiteSmoke);
@@ -84,30 +82,30 @@ namespace OakBot
                     break;
 
                 case "JOIN": // Person joined channel
-                    ChatViewers.AppendText(dispatchedObj.botEvent.author, Brushes.Yellow);
+                    ChatViewers.AppendText(dispatchedObj.chatMessage.author, Brushes.Yellow);
                     ChatViewers.Document.ContentEnd.InsertLineBreak();
                     break;
 
                 case "PART": // Person left channel
-                    ChatViewers.AppendText(dispatchedObj.botEvent.author, Brushes.Red);
+                    ChatViewers.AppendText(dispatchedObj.chatMessage.author, Brushes.Red);
                     ChatViewers.Document.ContentEnd.InsertLineBreak();
                     break;
 
                 case "PRIVMSG":
-                    ChatReceived.AppendText(time + dispatchedObj.botEvent.author + ": " +
-                        dispatchedObj.botEvent.message, Brushes.WhiteSmoke);
+                    ChatReceived.AppendText("[" + dispatchedObj.chatMessage.shortTime + "] " + dispatchedObj.chatMessage.author + ": " +
+                        dispatchedObj.chatMessage.message, Brushes.WhiteSmoke);
                     ChatReceived.Document.ContentEnd.InsertLineBreak();
                     break;
 
                 case "WHISPER":
-                    Trace.WriteLine(dispatchedObj.botEvent.message);
-                    ChatReceived.AppendText(time + dispatchedObj.botEvent.author + " > : " +
-                        dispatchedObj.botEvent.message, Brushes.Pink);
+                    Trace.WriteLine(dispatchedObj.chatMessage.message);
+                    ChatReceived.AppendText("[" + dispatchedObj.chatMessage.shortTime + "] " + dispatchedObj.chatMessage.author + " > : " +
+                        dispatchedObj.chatMessage.message, Brushes.Pink);
                     ChatReceived.Document.ContentEnd.InsertLineBreak();
                     break;
 
                 default:
-                    ChatReceived.AppendText(dispatchedObj.botEvent.line, Brushes.Red);
+                    ChatReceived.AppendText(dispatchedObj.chatMessage.receivedLine, Brushes.Red);
                     ChatReceived.Document.ContentEnd.InsertLineBreak();
                     break;
             }

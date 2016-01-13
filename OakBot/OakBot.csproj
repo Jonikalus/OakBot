@@ -63,7 +63,7 @@
       <DependentUpon>TwitchAuthBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="TwitchChatConnection.cs" />
-    <Compile Include="TwitchChatEvent.cs" />
+    <Compile Include="TwitchChatMessage.cs" />
     <Compile Include="TwitchCredentials.cs" />
     <Compile Include="TwitchUser.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
