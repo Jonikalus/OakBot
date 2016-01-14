@@ -8,13 +8,23 @@ namespace OakBot
 {
     class Setting
     {
-        public string Name { get; set; }
+        
+        public SettingType SettingType { get; set; }
+
         public string Value { get; set; }
 
-        public Setting(string name, string value)
+        public Setting(SettingType type, string value)
         {
-            Name = name;
+            SettingType = type;
             Value = value;
         }
+    }
+
+    enum SettingType
+    {
+        StreamerOAuthToken = 0,
+        BotOAuthToken = 1,
+        StreamerTwitchUsername = 2,
+        BotTwitchUsername = 3
     }
 }
