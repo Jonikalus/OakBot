@@ -11,7 +11,6 @@ namespace OakBot
 {
     public class Utils
     {
-        public static List<Setting> settings = new List<Setting>();
         //Extracts the OAuth token from an URL
         public static string getAuthTokenFromUrl(string absoluteUrl)
         {
