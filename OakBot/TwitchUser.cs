@@ -1,11 +1,11 @@
 ﻿namespace OakBot
 {
-    class TwitchUser
+    public class TwitchUser
     {
         #region Fields
 
         private string _username;
-        //private string _displayname;
+        private string _displayName;
         //private string _uri;
 
         #endregion
@@ -15,6 +15,7 @@
         public TwitchUser(string username)
         {
             _username = username;
+            _displayName = username; //TODO: get this from Twitch
         }
 
         #endregion
@@ -35,6 +36,14 @@
             get
             {
                 return _username;
+            }
+        }
+
+        public string displayName
+        {
+            get
+            {
+                return _displayName;
             }
         }
 

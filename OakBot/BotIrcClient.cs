@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace OakBot
 {
-    class BotIrcClient
+    public class BotIrcClient
     {
         #region Fields
 

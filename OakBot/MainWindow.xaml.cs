@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -23,24 +24,39 @@ namespace OakBot
     /// </summary>
     public partial class MainWindow : Window
     {
-        // Twitch Application
-        public static string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
-        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
-
-        //Twitch Auth Link
-        public static string twitchAuthLink = string.Format("https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id={0}&redirect_uri=http://localhost&scope=user_read+user_blocks_edit+user_blocks_read+user_follows_edit+channel_read+channel_editor+channel_commercial+channel_stream+channel_subscriptions+user_subscriptions+channel_check_subscription+chat_login", twitchClientID);
-
         //public delegate void MyDel();
         public delegate void DelUI(DispatchUI obj);
 
-        private TwitchChatConnection streamerChatConnection;
+        public TwitchChatConnection streamerChatConnection;
         private TwitchWhisperConnection streamerWhisperConnection;
-        private TwitchChatConnection botChatConnection;
+        public TwitchChatConnection botChatConnection;
         private TwitchWhisperConnection botWhisperConnection;
+
+        // Global collections
+        public ObservableCollection<TwitchChatMessage> colChat;
+        public ObservableCollection<TwitchUser> colViewers;
+        public ObservableCollection<TwitchUser> userDatabase;
+
+        // Sync locks for Collections
+        private object _lockChat = new object();
+        private object _lockViewers = new object();
+        private object _lockDatabase = new object();
+
 
         public MainWindow()
         {
             InitializeComponent();
+
+            // Initiaze Collections and enable sync between threads
+            colChat = new ObservableCollection<TwitchChatMessage>();
+            colViewers = new ObservableCollection<TwitchUser>();
+            userDatabase = new ObservableCollection<TwitchUser>();
+            BindingOperations.EnableCollectionSynchronization(colChat, _lockChat);
+            BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
+            BindingOperations.EnableCollectionSynchronization(userDatabase, _lockDatabase);
+
+            // Link listViews with collections
+            listViewChat.ItemsSource = colChat;
 
             // Twitch user instances
             TwitchUser userStreamer = new TwitchUser("<streamer user name>");
@@ -70,61 +86,41 @@ namespace OakBot
 
         public void ResolveDispatchToUI(DispatchUI dispatchedObj)
         {
-            string time = "[" + DateTime.Now.ToShortTimeString() + "] ";
-
-            switch (dispatchedObj.botEvent.command)
+            switch (dispatchedObj.chatMessage.command)
             {
-                case "353": // Received list of joined names
-                    string[] names = dispatchedObj.botEvent.message.Split(' ');
-                    foreach (string name in names)
-                    {
-                        ChatViewers.AppendText(name, Brushes.WhiteSmoke);
-                        ChatViewers.Document.ContentEnd.InsertLineBreak();
-                    }
-                    break;
-
-                case "JOIN": // Person joined channel
-                    ChatViewers.AppendText(dispatchedObj.botEvent.author, Brushes.Yellow);
-                    ChatViewers.Document.ContentEnd.InsertLineBreak();
-                    break;
-
-                case "PART": // Person left channel
-                    ChatViewers.AppendText(dispatchedObj.botEvent.author, Brushes.Red);
-                    ChatViewers.Document.ContentEnd.InsertLineBreak();
-                    break;
+                //case "353": // Received list of joined names
+                //    string[] names = dispatchedObj.chatMessage.message.Split(' ');
+                //    foreach (string name in names)
+                //    {
+                //
+                //    }
+                //    break;
+                //
+                //case "JOIN": // Person joined channel
+                //
+                //    break;
+                //
+                //case "PART": // Person left channel
+                //
+                //    break;
 
                 case "PRIVMSG":
-                    ChatReceived.AppendText(time + dispatchedObj.botEvent.author + ": " +
-                        dispatchedObj.botEvent.message, Brushes.WhiteSmoke);
-                    ChatReceived.Document.ContentEnd.InsertLineBreak();
+                    colChat.Add(dispatchedObj.chatMessage);
                     break;
 
                 case "WHISPER":
-                    Trace.WriteLine(dispatchedObj.botEvent.message);
-                    ChatReceived.AppendText(time + dispatchedObj.botEvent.author + " > : " +
-                        dispatchedObj.botEvent.message, Brushes.Pink);
-                    ChatReceived.Document.ContentEnd.InsertLineBreak();
+                    colChat.Add(dispatchedObj.chatMessage);
                     break;
 
                 default:
-                    ChatReceived.AppendText(dispatchedObj.botEvent.line, Brushes.Red);
-                    ChatReceived.Document.ContentEnd.InsertLineBreak();
+                    Trace.WriteLine(dispatchedObj.chatMessage.message);
                     break;
             }
         }
 
         private void SpeakAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ChatReceived != null)
-            {
-                // Get the Selected ComboBoxItem
-                var typeItem = SpeakAs.SelectedItem as ComboBoxItem;
 
-                // Add speaking as text to the ChatReceived colored.
-                ChatReceived.AppendText("Now speaking as: " + typeItem.Content.ToString(),
-                    Brushes.Aquamarine);
-                ChatReceived.Document.ContentEnd.InsertLineBreak();
-            }
         }
 
         private void ChatSend_KeyDown(object sender, KeyEventArgs e)
@@ -164,15 +160,29 @@ namespace OakBot
             }
         }
 
-        private void ChatReceived_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ChatReceived.ScrollToEnd();
-        }
-
         private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
         {
-            TwitchAuthBrowser tab = new TwitchAuthBrowser(twitchAuthLink);
+            WindowAuthBrowser tab = new WindowAuthBrowser(true);
             tab.Show();
+        }
+
+        private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
+        {
+            WindowAuthBrowser tab = new WindowAuthBrowser(false);
+            tab.Show();
+        }
+
+        private void listViewChat_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (listViewChat.SelectedIndex != -1)
+            {
+                // for testing purposes create TwitchUser here
+                TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
+                TwitchUser messageAuthor = new TwitchUser(selectedMessage.author);
+
+                WindowUserChat userChat = new WindowUserChat(this, messageAuthor);
+                userChat.Show();
+            }
         }
     }
 }

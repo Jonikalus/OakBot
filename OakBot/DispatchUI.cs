@@ -6,15 +6,15 @@ namespace OakBot
     {
         #region Fields
 
-        private TwitchChatEvent _botEvent;
+        private TwitchChatMessage _chatMessage;
 
         #endregion
 
         #region Consturctor
 
-        public DispatchUI(MainWindow window, TwitchChatEvent chatEvent)
+        public DispatchUI(MainWindow window, TwitchChatMessage chatMessage)
         {
-            _botEvent = chatEvent;
+            _chatMessage = chatMessage;
 
             MainWindow.DelUI del = new MainWindow.DelUI(window.ResolveDispatchToUI);
             window.Dispatcher.BeginInvoke(del, this);
@@ -44,11 +44,11 @@ namespace OakBot
 
         #region Properties
 
-        public TwitchChatEvent botEvent
+        public TwitchChatMessage chatMessage
         {
             get
             {
-                return _botEvent;
+                return _chatMessage;
             }
         }
 

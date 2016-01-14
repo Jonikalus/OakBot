@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace OakBot
 {
-    class TwitchChatConnection
+    public class TwitchChatConnection
     {
         #region Fields
 
@@ -54,34 +54,32 @@ namespace OakBot
         {            
             while (true)
             {
-                TwitchChatEvent cEvent = new TwitchChatEvent(ircClient.ReadLine());
-                EventHandler(cEvent);
+                TwitchChatMessage message = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
+                EventHandler(message);
             }
         }
 
-        internal void EventHandler(TwitchChatEvent chatEvent)
+        internal void EventHandler(TwitchChatMessage cMessage)
         {
-            //DispatchUI toUI;
-
-            switch (chatEvent.command)
+            switch (cMessage.command)
             {
                 case "PING": // Received PING
                     ircClient.WriteLine("PONG");
                     break;
 
                 case "MODE": // Received MODE
-                    if (chatEvent.args[1] == "+o")
+                    if (cMessage.args[1] == "+o")
                     {
                         // Set throttle for current user as operator
-                        if (chatEvent.args[2] == _connectedUser.username)
+                        if (cMessage.args[2] == _connectedUser.username)
                         {
                             ircClient.throttle = 350;
                         }
                     }
-                    else if (chatEvent.args[1] == "-o")
+                    else if (cMessage.args[1] == "-o")
                     {
                         // Set throttle for current user as member
-                        if (chatEvent.args[2] == _connectedUser.username)
+                        if (cMessage.args[2] == _connectedUser.username)
                         {
                             ircClient.throttle = 1550;                    
                         }
@@ -89,34 +87,16 @@ namespace OakBot
 
                     if (!_isBot)
                     {
-                        new DispatchUI(_window, chatEvent);
+                        new DispatchUI(_window, cMessage);
                     }
 
                     break;
 
-                case "JOIN": // Person Joined the channel
+                default: // Send rest to UI
                     if (!_isBot)
                     {
-                        new DispatchUI(_window, chatEvent);
+                        new DispatchUI(_window, cMessage);
                     }
-                    break;
-
-                case "PART": // Person left the channel
-                    if (!_isBot)
-                    {
-                        new DispatchUI(_window, chatEvent);
-                    }
-                    break;
-
-                case "PRIVMSG": // Chat message
-                    if (!_isBot)
-                    {
-                        new DispatchUI(_window, chatEvent);
-                    }
-                    break;
-
-                default: // Unknown event
-                    new DispatchUI(_window, chatEvent);
                     break;
             }
         }

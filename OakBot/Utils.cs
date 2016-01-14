@@ -9,7 +9,7 @@ using System.IO;
 
 namespace OakBot
 {
-    class Utils
+    public class Utils
     {
         public static List<Setting> settings = new List<Setting>();
         //Extracts the OAuth token from an URL

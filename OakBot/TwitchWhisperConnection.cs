@@ -2,7 +2,7 @@
 
 namespace OakBot
 {
-    class TwitchWhisperConnection
+    public class TwitchWhisperConnection
     {
         #region Fields
 
@@ -34,8 +34,8 @@ namespace OakBot
         {
             while (true)
             {
-                TwitchChatEvent cEvent = new TwitchChatEvent(ircClient.ReadLine());
-                EventHandler(cEvent);
+                TwitchChatMessage message = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
+                EventHandler(message);
             }
         }
 
@@ -44,20 +44,20 @@ namespace OakBot
             ircClient.WriteLineThrottle("PRIVMSG #jtv :" + whisperMessage);
         }
 
-        internal void EventHandler(TwitchChatEvent chatEvent)
+        internal void EventHandler(TwitchChatMessage cMessage)
         {
-            switch (chatEvent.command)
+            switch (cMessage.command)
             {
                 case "PING": // Received PING
                     ircClient.WriteLine("PONG");
                     break;
 
                 case "WHISPER": // Chat message
-                    new DispatchUI(_window, chatEvent);
+                    new DispatchUI(_window, cMessage);
                     break;
  
                 default: // Unknown event
-                    new DispatchUI(_window, chatEvent);
+                    new DispatchUI(_window, cMessage);
                     break;
             }
         }
