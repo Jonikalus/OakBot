@@ -61,8 +61,6 @@ namespace OakBot
 
         internal void EventHandler(TwitchChatMessage cMessage)
         {
-            //DispatchUI toUI;
-
             switch (cMessage.command)
             {
                 case "PING": // Received PING
@@ -94,29 +92,11 @@ namespace OakBot
 
                     break;
 
-                case "JOIN": // Person Joined the channel
+                default: // Send rest to UI
                     if (!_isBot)
                     {
                         new DispatchUI(_window, cMessage);
                     }
-                    break;
-
-                case "PART": // Person left the channel
-                    if (!_isBot)
-                    {
-                        new DispatchUI(_window, cMessage);
-                    }
-                    break;
-
-                case "PRIVMSG": // Chat message
-                    if (!_isBot)
-                    {
-                        new DispatchUI(_window, cMessage);
-                    }
-                    break;
-
-                default: // Unknown event
-                    new DispatchUI(_window, cMessage);
                     break;
             }
         }

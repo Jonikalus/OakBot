@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace OakBot
 {
@@ -10,12 +12,39 @@ namespace OakBot
     {
         private MainWindow mW;
         private TwitchUser user;
+        private ObservableCollection<TwitchChatMessage> colChat;
 
         public WindowUserChat(MainWindow window, TwitchUser viewer)
         {
             mW = window;
             user = viewer;
             InitializeComponent();
+
+            // Set other information
+            this.Title = "Chat: " + user.displayName;
+            this.lblDisplayName.Content = user.displayName;
+
+            // copy list
+            colChat = new ObservableCollection<TwitchChatMessage>(mW.colChat);
+
+            // Set item source for the listView
+            listViewChat.ItemsSource = colChat;
+
+            // Filter out only the messages of the user
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listViewChat.ItemsSource);
+            view.Filter = item =>
+            {
+                TwitchUser filter = item as TwitchUser;
+                if (filter == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return filter.username.Contains(user.username);
+                }
+            };
+
         }
 
         private void btnPurge_Click(object sender, RoutedEventArgs e)
