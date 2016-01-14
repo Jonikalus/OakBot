@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Setting.cs" />
     <Compile Include="TwitchAuthBrowser.xaml.cs">
       <DependentUpon>TwitchAuthBrowser.xaml</DependentUpon>
     </Compile>
