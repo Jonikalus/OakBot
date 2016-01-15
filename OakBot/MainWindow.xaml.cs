@@ -27,10 +27,11 @@ namespace OakBot
         //public delegate void MyDel();
         public delegate void DelUI(DispatchUI obj);
 
+        // Chat connections
         public TwitchChatConnection streamerChatConnection;
-        private TwitchWhisperConnection streamerWhisperConnection;
+        public TwitchWhisperConnection streamerWhisperConnection;
         public TwitchChatConnection botChatConnection;
-        private TwitchWhisperConnection botWhisperConnection;
+        public TwitchWhisperConnection botWhisperConnection;
 
         // Global collections
         public ObservableCollection<TwitchChatMessage> colChat;
@@ -41,6 +42,10 @@ namespace OakBot
         private object _lockChat = new object();
         private object _lockViewers = new object();
         private object _lockDatabase = new object();
+
+        // Main refferences to Streamer and Bot object
+        private TwitchUser userStreamer;
+        private TwitchUser userBot;
 
 
         public MainWindow()
@@ -59,13 +64,13 @@ namespace OakBot
             listViewChat.ItemsSource = colChat;
 
             // Twitch user instances
-            TwitchUser userStreamer = new TwitchUser("<streamer user name>");
-            TwitchUser userBot = new TwitchUser("<bot user name>");
+            userStreamer = new TwitchUser("ocgineer");
+            userBot = new TwitchUser("oakminati");
 
             // Attach oAuth password to the users creating an TwitchUserCredentials object
             // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
-            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "<streamer oauth key>");
-            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "<bot oauth key>");
+            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "oauth:2sqvm9kqj2wbp79u4vkcu7kl7clg4j");
+            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "oauth:k7eya64mgpx73dkscakb24dfgdvv93");
 
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
@@ -78,8 +83,8 @@ namespace OakBot
             //botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
-            //new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
-            //new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
+            new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
+            new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
         }
@@ -118,9 +123,25 @@ namespace OakBot
             }
         }
 
+        private void AddChatMessage(string author, string message)
+        {
+            // TODO: add FIFO chat limited as well here  
+            colChat.Add(new TwitchChatMessage(author, message));
+        }
+
         private void SpeakAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (userStreamer != null)
+            {
+                if (SpeakAs.SelectedIndex == 0) // streamer
+                {
+                    AddChatMessage("SYSTEM", string.Format("Speaking as {0}.", userStreamer.displayName));
+                }
+                else if (SpeakAs.SelectedIndex == 1) // bot
+                {
+                    AddChatMessage("SYSTEM", string.Format("Speaking as {0}.", userBot.displayName));
+                }
+            }
         }
 
         private void ChatSend_KeyDown(object sender, KeyEventArgs e)
@@ -139,6 +160,11 @@ namespace OakBot
                         }
                         else
                         {
+                            // Append this message to colChat in order
+                            // to let the streamer see their own messages send.
+                            AddChatMessage(userStreamer.displayName, ChatSend.Text);
+
+                            // Send message
                             streamerChatConnection.SendChatMessage(ChatSend.Text);
                         }
                     }
@@ -150,6 +176,8 @@ namespace OakBot
                         }
                         else
                         {
+                            // No need to append this message to the colChat,
+                            // as the streamers account will receive this message.
                             botChatConnection.SendChatMessage(ChatSend.Text);
                         }
                     }
@@ -180,8 +208,11 @@ namespace OakBot
                 TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
                 TwitchUser messageAuthor = new TwitchUser(selectedMessage.author);
 
-                WindowUserChat userChat = new WindowUserChat(this, messageAuthor);
-                userChat.Show();
+                if(messageAuthor.username != "SYSTEM")
+                {
+                    WindowUserChat userChat = new WindowUserChat(this, messageAuthor);
+                    userChat.Show();
+                }
             }
         }
     }
