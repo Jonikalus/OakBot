@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
+using System.ComponentModel;
 
 namespace OakBot
 {
@@ -24,27 +25,20 @@ namespace OakBot
             this.Title = "Chat: " + user.displayName;
             this.lblDisplayName.Content = user.displayName;
 
-            // copy list
+            // copy current messages
             colChat = new ObservableCollection<TwitchChatMessage>(mW.colChat);
+            ICollectionView view = CollectionViewSource.GetDefaultView(listViewChat.ItemsSource);
+            //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listViewChat.ItemsSource);
+            view.Filter = chatFilter;
 
-            // Set item source for the listView
+            // Set item source for the listView and apply filter
             listViewChat.ItemsSource = colChat;
+        }
 
-            // Filter out only the messages of the user
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listViewChat.ItemsSource);
-            view.Filter = item =>
-            {
-                TwitchUser filter = item as TwitchUser;
-                if (filter == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    return filter.username.Contains(user.username);
-                }
-            };
-
+        private bool chatFilter(object item)
+        {
+            TwitchChatMessage filterItem = item as TwitchChatMessage;
+            return filterItem.author.Equals(user.username);
         }
 
         private void btnPurge_Click(object sender, RoutedEventArgs e)
@@ -74,7 +68,7 @@ namespace OakBot
 
         private void btnTwitchProfile_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(string.Format("http://wwww.twitch.tv/{0}/profile", user.username));
+            Process.Start(string.Format("http://www.twitch.tv/{0}/profile", user.username));
         }
 
         private void btnTwitchCompose_Click(object sender, RoutedEventArgs e)

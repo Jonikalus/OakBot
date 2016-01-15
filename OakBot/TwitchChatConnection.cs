@@ -12,23 +12,24 @@ namespace OakBot
         private BotIrcClient ircClient;
         private TwitchCredentials _connectedUser;
         private TwitchUser _joinedChannel;
-        private bool _isBot;
+        private bool _isStreamer;
 
         #endregion
 
         #region Constructors
 
-        public TwitchChatConnection(TwitchCredentials connectingUser, MainWindow window, bool isBot = false)
+        public TwitchChatConnection(TwitchCredentials connectingUser, MainWindow window, bool isStreamer = true)
         {
             _window = window;
             _connectedUser = connectingUser;
-            _isBot = isBot;
+            _isStreamer = isStreamer;
 
             // Connect to IRC Twitch and login, then request PART/JOIN messages
             ircClient = new BotIrcClient("irc.twitch.tv", 6667, connectingUser);
 
-            if (!isBot) // Request JOIN/PART notifications on the main account.
+            if (isStreamer)
             {
+                // Request JOIN/PART notifications
                 ircClient.WriteLineThrottle("CAP REQ :twitch.tv/membership");
             }   
         }
@@ -54,50 +55,46 @@ namespace OakBot
         {            
             while (true)
             {
-                TwitchChatMessage message = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
-                EventHandler(message);
-            }
-        }
+                TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
 
-        internal void EventHandler(TwitchChatMessage cMessage)
-        {
-            switch (cMessage.command)
-            {
-                case "PING": // Received PING
-                    ircClient.WriteLine("PONG");
-                    break;
+                switch (ircMessage.command)
+                {
+                    case "PING": // Received PING
+                        ircClient.WriteLine("PONG");
+                        break;
 
-                case "MODE": // Received MODE
-                    if (cMessage.args[1] == "+o")
-                    {
-                        // Set throttle for current user as operator
-                        if (cMessage.args[2] == _connectedUser.username)
+                    case "MODE": // Received MODE
+                        if (ircMessage.args[1] == "+o")
                         {
-                            ircClient.throttle = 350;
+                            // Set throttle for current user as operator
+                            if (ircMessage.args[2] == _connectedUser.username)
+                            {
+                                ircClient.throttle = 350;
+                            }
                         }
-                    }
-                    else if (cMessage.args[1] == "-o")
-                    {
-                        // Set throttle for current user as member
-                        if (cMessage.args[2] == _connectedUser.username)
+                        else if (ircMessage.args[1] == "-o")
                         {
-                            ircClient.throttle = 1550;                    
+                            // Set throttle for current user as member
+                            if (ircMessage.args[2] == _connectedUser.username)
+                            {
+                                ircClient.throttle = 1550;
+                            }
                         }
-                    }
 
-                    if (!_isBot)
-                    {
-                        new DispatchUI(_window, cMessage);
-                    }
+                        if (_isStreamer)
+                        {
+                            new DispatchUI(_window, ircMessage);
+                        }
 
-                    break;
+                        break;
 
-                default: // Send rest to UI
-                    if (!_isBot)
-                    {
-                        new DispatchUI(_window, cMessage);
-                    }
-                    break;
+                    default: // Send rest to UI
+                        if (_isStreamer)
+                        {
+                            new DispatchUI(_window, ircMessage);
+                        }
+                        break;
+                }
             }
         }
 

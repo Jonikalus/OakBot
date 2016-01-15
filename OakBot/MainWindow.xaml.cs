@@ -33,7 +33,8 @@ namespace OakBot
         public TwitchChatConnection botChatConnection;
         public TwitchWhisperConnection botWhisperConnection;
 
-        // Global collections
+        // Ccollections
+        private ObservableCollection<WindowUserChat> colChatWindows;
         public ObservableCollection<TwitchChatMessage> colChat;
         public ObservableCollection<TwitchUser> colViewers;
         public ObservableCollection<TwitchUser> userDatabase;
@@ -78,13 +79,13 @@ namespace OakBot
             //streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
 
             // Start connection for the bot account, login and join streamers channel.
-            botChatConnection = new TwitchChatConnection(credentialBot, this, true);
+            botChatConnection = new TwitchChatConnection(credentialBot, this, false);
             botChatConnection.JoinChannel(userStreamer);
             //botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
-            //new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
-            //new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
+            new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
+            new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
         }
@@ -120,6 +121,9 @@ namespace OakBot
                 default:
                     Trace.WriteLine(dispatchedObj.chatMessage.message);
                     break;
+
+                // Update chat collections in child windows
+                // TODO
             }
         }
 
@@ -202,15 +206,17 @@ namespace OakBot
 
         private void listViewChat_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (listViewChat.SelectedIndex != -1)
-            {
+             if (listViewChat.SelectedIndex != -1)
+             {
                 // for testing purposes create TwitchUser here
                 TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
                 TwitchUser messageAuthor = new TwitchUser(selectedMessage.author);
 
                 if(messageAuthor.username != "SYSTEM")
                 {
+                    // Create new userChat window, add to collection and show
                     WindowUserChat userChat = new WindowUserChat(this, messageAuthor);
+                    colChatWindows.Add(userChat);
                     userChat.Show();
                 }
             }
