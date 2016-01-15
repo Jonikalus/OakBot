@@ -64,13 +64,13 @@ namespace OakBot
             listViewChat.ItemsSource = colChat;
 
             // Twitch user instances
-            userStreamer = new TwitchUser("ocgineer");
-            userBot = new TwitchUser("oakminati");
+            userStreamer = new TwitchUser("<streamer user name>");
+            userBot = new TwitchUser("<bot user name>");
 
             // Attach oAuth password to the users creating an TwitchUserCredentials object
             // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
-            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "oauth:2sqvm9kqj2wbp79u4vkcu7kl7clg4j");
-            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "oauth:k7eya64mgpx73dkscakb24dfgdvv93");
+            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "<streamer oauth key>");
+            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "<bot oauth key>");
 
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
@@ -83,8 +83,8 @@ namespace OakBot
             //botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
-            new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
-            new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
+            //new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
+            //new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
         }
