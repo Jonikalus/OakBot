@@ -48,11 +48,15 @@ namespace OakBot
         private TwitchUser userStreamer;
         private TwitchUser userBot;
 
+        // Config collection
+        Config cnf;
+
 
         public MainWindow()
         {
             InitializeComponent();
-
+            // Initialize config
+            cnf = new Config();
             // Initiaze Collections and enable sync between threads
             colChat = new ObservableCollection<TwitchChatMessage>();
             colViewers = new ObservableCollection<TwitchUser>();

@@ -8,19 +8,11 @@ using System.Data.SQLite;
 
 namespace OakBot
 {
-    class Config : IEnumerable<Setting>
+    class Config : ICollection<Setting>
     {
-        private List<Setting> conf;
+        protected List<Setting> conf;
 
-        public IEnumerator<Setting> GetEnumerator()
-        {
-            return conf.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        
 
         public Config()
         {
@@ -33,8 +25,54 @@ namespace OakBot
                 string name, value;
                 name = (string)reader["name"];
                 value = (string)reader["value"];
-                conf.Add(new Setting((SettingType)Enum.Parse(typeof(SettingType), name), value));
+                Add(new Setting((SettingType)Enum.Parse(typeof(SettingType), name), value));
             }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return ((ICollection<Setting>)conf).Count;
+            }
+        }
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                return ((ICollection<Setting>)conf).IsReadOnly;
+            }
+        }
+
+        public void Add(Setting item)
+        {
+            ((ICollection<Setting>)conf).Add(item);
+        }
+
+        public void Clear()
+        {
+            ((ICollection<Setting>)conf).Clear();
+        }
+
+        public bool Contains(Setting item)
+        {
+            return ((ICollection<Setting>)conf).Contains(item);
+        }
+
+        public void CopyTo(Setting[] array, int arrayIndex)
+        {
+            ((ICollection<Setting>)conf).CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Setting> GetEnumerator()
+        {
+            return ((ICollection<Setting>)conf).GetEnumerator();
+        }
+
+        public bool Remove(Setting item)
+        {
+            return ((ICollection<Setting>)conf).Remove(item);
         }
 
         public void Save()
@@ -45,6 +83,11 @@ namespace OakBot
                 SQLiteCommand cmd = new SQLiteCommand(string.Format("UPDATE oak_settings SET value = {0} WHERE name = {1}", s.Value, s.SettingType.ToString("F")), conn);
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((ICollection<Setting>)conf).GetEnumerator();
         }
     }
 }
