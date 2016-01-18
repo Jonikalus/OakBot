@@ -34,7 +34,7 @@ namespace OakBot
         public TwitchWhisperConnection botWhisperConnection;
 
         // Collections
-        private ObservableCollection<WindowViewerChat> colChatWindows;
+        public ObservableCollection<WindowViewerChat> colChatWindows;
         public ObservableCollection<TwitchChatMessage> colChatMessages;
         public ObservableCollection<TwitchUser> colViewers;
         public ObservableCollection<TwitchUser> viewerDatabase;

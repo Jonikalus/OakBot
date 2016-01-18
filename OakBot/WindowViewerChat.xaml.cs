@@ -92,6 +92,11 @@ namespace OakBot
             Process.Start(string.Format("http://www.twitch.tv/message/compose?to={0}", _viewer.username));
         }
 
+        private void windowViewerChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _mW.colChatWindows.Remove(this);
+        }
+
         #endregion
 
         #region Properties
@@ -105,5 +110,6 @@ namespace OakBot
         }
 
         #endregion
+
     }
 }
