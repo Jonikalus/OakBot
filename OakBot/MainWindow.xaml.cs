@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -15,7 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
-using OakBotExtentions;
 
 namespace OakBot
 {
@@ -33,11 +33,11 @@ namespace OakBot
         public TwitchChatConnection botChatConnection;
         public TwitchWhisperConnection botWhisperConnection;
 
-        // Ccollections
-        private ObservableCollection<WindowUserChat> colChatWindows;
-        public ObservableCollection<TwitchChatMessage> colChat;
+        // Collections
+        private ObservableCollection<WindowViewerChat> colChatWindows;
+        public ObservableCollection<TwitchChatMessage> colChatMessages;
         public ObservableCollection<TwitchUser> colViewers;
-        public ObservableCollection<TwitchUser> userDatabase;
+        public ObservableCollection<TwitchUser> viewerDatabase;
 
         // Sync locks for Collections
         private object _lockChat = new object();
@@ -55,18 +55,23 @@ namespace OakBot
         public MainWindow()
         {
             InitializeComponent();
+
             // Initialize config
             cnf = new Config();
+
             // Initiaze Collections and enable sync between threads
-            colChat = new ObservableCollection<TwitchChatMessage>();
+            colChatWindows = new ObservableCollection<WindowViewerChat>();
+            colChatMessages = new ObservableCollection<TwitchChatMessage>();
+            colChatMessages.CollectionChanged += colChatMessages_Changed; // Add message event hook
             colViewers = new ObservableCollection<TwitchUser>();
-            userDatabase = new ObservableCollection<TwitchUser>();
-            BindingOperations.EnableCollectionSynchronization(colChat, _lockChat);
+            viewerDatabase = new ObservableCollection<TwitchUser>();
+            BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
             BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
-            BindingOperations.EnableCollectionSynchronization(userDatabase, _lockDatabase);
+            BindingOperations.EnableCollectionSynchronization(viewerDatabase, _lockDatabase);
 
             // Link listViews with collections
-            listViewChat.ItemsSource = colChat;
+            listViewChat.ItemsSource = colChatMessages;
+            listViewViewers.ItemsSource = colViewers;
 
             // Twitch user instances
             userStreamer = new TwitchUser("<streamer user name>");
@@ -115,11 +120,11 @@ namespace OakBot
                 //    break;
 
                 case "PRIVMSG":
-                    colChat.Add(dispatchedObj.chatMessage);
+                    colChatMessages.Add(dispatchedObj.chatMessage);
                     break;
 
                 case "WHISPER":
-                    colChat.Add(dispatchedObj.chatMessage);
+                    colChatMessages.Add(dispatchedObj.chatMessage);
                     break;
 
                 default:
@@ -134,8 +139,49 @@ namespace OakBot
         private void AddChatMessage(string author, string message)
         {
             // TODO: add FIFO chat limited as well here  
-            colChat.Add(new TwitchChatMessage(author, message));
+            colChatMessages.Add(new TwitchChatMessage(author, message));
         }
+
+        private void colChatMessages_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
+            {
+                foreach (TwitchChatMessage addedMessage in e.NewItems)
+                {
+                    var result = colChatWindows.Where(WindowUserChat => WindowUserChat.viewer.username == addedMessage.author);
+                    if (result.Any())
+                    {
+                        foreach (WindowViewerChat window in result)
+                        {
+                            window.AddViewerMessage(addedMessage);
+                        }
+                    }
+                }
+            }
+        }
+
+        #region Settings EventHandlers
+
+        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
+        {
+            WindowAuthBrowser tab = new WindowAuthBrowser(true);
+            tab.Show();
+        }
+
+        private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
+        {
+            WindowAuthBrowser tab = new WindowAuthBrowser(false);
+            tab.Show();
+        }
+
+        #endregion
+
+        #region Dashboard EventHandlers
+
+
+        #endregion
+
+        #region Twitch Chat
 
         private void SpeakAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -196,34 +242,37 @@ namespace OakBot
             }
         }
 
-        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
-        {
-            WindowAuthBrowser tab = new WindowAuthBrowser(true);
-            tab.Show();
-        }
-
-        private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
-        {
-            WindowAuthBrowser tab = new WindowAuthBrowser(false);
-            tab.Show();
-        }
-
         private void listViewChat_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-             if (listViewChat.SelectedIndex != -1)
-             {
+            if (listViewChat.SelectedIndex != -1)
+            {
                 // for testing purposes create TwitchUser here
                 TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
                 TwitchUser messageAuthor = new TwitchUser(selectedMessage.author);
 
-                if(messageAuthor.username != "SYSTEM")
+                if (messageAuthor.username != "SYSTEM")
                 {
                     // Create new userChat window, add to collection and show
-                    WindowUserChat userChat = new WindowUserChat(this, messageAuthor);
-                    colChatWindows.Add(userChat);
-                    userChat.Show();
+                    // If it already exists try to bring it to the foreground
+                    var result = colChatWindows.Where(WindowUserChat => WindowUserChat.viewer.username == messageAuthor.username);
+                    if (result.Any() == false)
+                    {
+                        WindowViewerChat userChat = new WindowViewerChat(this, messageAuthor);
+                        colChatWindows.Add(userChat);
+                        userChat.Show();
+                    }
+                    else
+                    {
+                        foreach (WindowViewerChat chat in result)
+                        {
+                            chat.Activate();
+                        }
+                    }
                 }
             }
         }
+
+        #endregion
+
     }
 }

@@ -1,4 +1,4 @@
-﻿<Window x:Name="windowUserChat" x:Class="OakBot.WindowUserChat"
+﻿<Window x:Name="windowViewerChat" x:Class="OakBot.WindowViewerChat"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
