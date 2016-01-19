@@ -8,86 +8,38 @@ using System.Data.SQLite;
 
 namespace OakBot
 {
-    class Config : ICollection<Setting>
+    class Config
     {
-        protected List<Setting> conf;
+        public static string StreamerOAuthKey { get; set; }
+        public static string BotOAuthKey { get; set; }
+        public static string StreamerUsername { get; set; }
+        public static string BotUsername { get; set; }
 
-        
-
-        public Config()
+        public static void GetConfigFromDb()
         {
-            conf = new List<Setting>();
             SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;Version=3;");
-            SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM oak_settings", conn);
-            SQLiteDataReader reader = cmd.ExecuteReader();
+            conn.Open();
+            string sql = "SELECT * FROM oak_settings";
+            SQLiteCommand command = new SQLiteCommand(sql, conn);
+            SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                string name, value;
-                name = (string)reader["name"];
-                value = (string)reader["value"];
-                Add(new Setting((SettingType)Enum.Parse(typeof(SettingType), name), value));
+                StreamerOAuthKey = (string)reader["StreamerOAuthToken"];
+                BotOAuthKey = (string)reader["BotOAuthToken"];
+                StreamerUsername = (string)reader["StreamerTwitchUsername"];
+                BotUsername = (string)reader["BotTwitchUsername"];
             }
+            conn.Close();
         }
 
-        public int Count
-        {
-            get
-            {
-                return ((ICollection<Setting>)conf).Count;
-            }
-        }
-
-        public bool IsReadOnly
-        {
-            get
-            {
-                return ((ICollection<Setting>)conf).IsReadOnly;
-            }
-        }
-
-        public void Add(Setting item)
-        {
-            ((ICollection<Setting>)conf).Add(item);
-        }
-
-        public void Clear()
-        {
-            ((ICollection<Setting>)conf).Clear();
-        }
-
-        public bool Contains(Setting item)
-        {
-            return ((ICollection<Setting>)conf).Contains(item);
-        }
-
-        public void CopyTo(Setting[] array, int arrayIndex)
-        {
-            ((ICollection<Setting>)conf).CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<Setting> GetEnumerator()
-        {
-            return ((ICollection<Setting>)conf).GetEnumerator();
-        }
-
-        public bool Remove(Setting item)
-        {
-            return ((ICollection<Setting>)conf).Remove(item);
-        }
-
-        public void Save()
+        public static void SaveConfigToDb()
         {
             SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;Version=3;");
-            foreach (Setting s in this)
-            {
-                SQLiteCommand cmd = new SQLiteCommand(string.Format("UPDATE oak_settings SET value = {0} WHERE name = {1}", s.Value, s.SettingType.ToString("F")), conn);
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((ICollection<Setting>)conf).GetEnumerator();
+            conn.Open();
+            string sql = string.Format("UPDATE oak_settings SET StreamerOAuthToken = {0}, BotOAuthToken = {1}, StreamerTwitchUsername = {2}, BotTwitchUsername = {3}", StreamerOAuthKey, BotOAuthKey, StreamerUsername, BotUsername);
+            SQLiteCommand command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            conn.Close();
         }
     }
 }
