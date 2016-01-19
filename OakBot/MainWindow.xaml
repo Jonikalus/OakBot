@@ -68,8 +68,8 @@
                     </ListView>
                     <ListView x:Name="listViewViewers" Grid.Column="2" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single">
                         <ListView.View>
-                            <GridView>
-                                <GridViewColumn/>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn Width="100" Header="Viewer" DisplayMemberBinding="{Binding displayName}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>

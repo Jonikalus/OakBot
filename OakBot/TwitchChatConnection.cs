@@ -8,7 +8,8 @@ namespace OakBot
     {
         #region Fields
 
-        private MainWindow _window;
+        private MainWindow _mW;
+        MainWindow.delegateMessage delegateMessage;
         private BotIrcClient ircClient;
         private TwitchCredentials _connectedUser;
         private TwitchUser _joinedChannel;
@@ -20,7 +21,8 @@ namespace OakBot
 
         public TwitchChatConnection(TwitchCredentials connectingUser, MainWindow window, bool isStreamer = true)
         {
-            _window = window;
+            _mW = window;
+            delegateMessage = new MainWindow.delegateMessage(_mW.ResolveDispatchToUI);
             _connectedUser = connectingUser;
             _isStreamer = isStreamer;
 
@@ -80,22 +82,22 @@ namespace OakBot
                                 ircClient.throttle = 1550;
                             }
                         }
-
-                        if (_isStreamer)
-                        {
-                            new DispatchUI(_window, ircMessage);
-                        }
-
                         break;
 
-                    default: // Send rest to UI
+                    default: // Chat message
                         if (_isStreamer)
                         {
-                            new DispatchUI(_window, ircMessage);
+                            dispatchMessage(ircMessage);
                         }
                         break;
                 }
             }
+        }
+
+        internal void dispatchMessage(TwitchChatMessage message)
+        {
+
+            _mW.Dispatcher.BeginInvoke(delegateMessage, message);
         }
 
         #endregion

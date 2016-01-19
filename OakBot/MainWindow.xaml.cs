@@ -25,7 +25,7 @@ namespace OakBot
     public partial class MainWindow : Window
     {
         //public delegate void MyDel();
-        public delegate void DelUI(DispatchUI obj);
+        public delegate void delegateMessage(TwitchChatMessage message);
 
         // Chat connections
         public TwitchChatConnection streamerChatConnection;
@@ -34,10 +34,10 @@ namespace OakBot
         public TwitchWhisperConnection botWhisperConnection;
 
         // Collections
-        public ObservableCollection<WindowViewerChat> colChatWindows;
         public ObservableCollection<TwitchChatMessage> colChatMessages;
         public ObservableCollection<TwitchUser> colViewers;
         public ObservableCollection<TwitchUser> viewerDatabase;
+        public ObservableCollection<WindowViewerChat> colChatWindows;
 
         // Sync locks for Collections
         private object _lockChat = new object();
@@ -57,7 +57,7 @@ namespace OakBot
             InitializeComponent();
 
             // Initialize config
-            cnf = new Config();
+            //cnf = new Config();
 
             // Initiaze Collections and enable sync between threads
             colChatWindows = new ObservableCollection<WindowViewerChat>();
@@ -99,40 +99,84 @@ namespace OakBot
             //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
         }
 
-        public void ResolveDispatchToUI(DispatchUI dispatchedObj)
+        public void ResolveDispatchToUI(TwitchChatMessage chatMessage)
         {
-            switch (dispatchedObj.chatMessage.command)
+            switch (chatMessage.command)
             {
                 //case "353": // Received list of joined names
-                //    string[] names = dispatchedObj.chatMessage.message.Split(' ');
+                //    string[] names = chatMessage.message.Split(' ');
                 //    foreach (string name in names)
                 //    {
-                //
+                //        var viewerExist = viewerDatabase.Where(
+                //            TwitchUser => TwitchUser.username == chatMessage.author);
+                //        if (viewerExist.Any()) // Viewer exists
+                //        {
+                //            foreach (TwitchUser viewer in viewerExist)
+                //            {
+                //                colViewers.Add(viewer);
+                //            }
+                //        }
+                //        else // new viewer
+                //        {
+                //            TwitchUser newViewer = new TwitchUser(chatMessage.author);
+                //            viewerDatabase.Add(newViewer);
+                //            colViewers.Add(newViewer);
+                //        }
                 //    }
                 //    break;
                 //
-                //case "JOIN": // Person joined channel
-                //
-                //    break;
-                //
-                //case "PART": // Person left channel
-                //
-                //    break;
+                case "JOIN": // Person joined channel
+                    var viewerJoin = colViewers.Where(TwitchUser =>
+                        TwitchUser.username == chatMessage.author);
+
+                    if (!viewerJoin.Any())
+                    {
+                        var viewerExists = viewerDatabase.Where(TwitchUser =>
+                            TwitchUser.username == chatMessage.author);
+
+                        // If viewer exists add a refference to that
+                        // in the colViewers.
+                        if (viewerExists.Any())
+                        {
+                            foreach (TwitchUser viewer in viewerExists)
+                            {
+                                colViewers.Add(viewer);
+                            }
+                        }
+                        // If viewer does not exists create new Viewer
+                        // and add to that refference to colViewers.
+                        else
+                        {
+                            TwitchUser newViewer = new TwitchUser(chatMessage.author);
+                            viewerDatabase.Add(newViewer);
+                            colViewers.Add(newViewer);
+                        }
+                    }
+
+                    break;
+                
+                case "PART": // Person left channel
+                    var viewerPart = colViewers.Where(TwitchUser =>
+                        TwitchUser.username == chatMessage.author);
+
+                    foreach (TwitchUser viewer in viewerPart)
+                    {
+                        colViewers.Remove(viewer);
+                    }
+
+                    break;
 
                 case "PRIVMSG":
-                    colChatMessages.Add(dispatchedObj.chatMessage);
+                    colChatMessages.Add(chatMessage);
                     break;
 
                 case "WHISPER":
-                    colChatMessages.Add(dispatchedObj.chatMessage);
+                    colChatMessages.Add(chatMessage);
                     break;
 
                 default:
-                    Trace.WriteLine(dispatchedObj.chatMessage.message);
+                    Trace.WriteLine(chatMessage.receivedLine);
                     break;
-
-                // Update chat collections in child windows
-                // TODO
             }
         }
 
