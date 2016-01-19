@@ -73,6 +73,8 @@ namespace OakBot
             listViewChat.ItemsSource = colChatMessages;
             listViewViewers.ItemsSource = colViewers;
 
+            /*
+
             // Twitch user instances
             userStreamer = new TwitchUser("<streamer user name>");
             userBot = new TwitchUser("<bot user name>");
@@ -97,6 +99,8 @@ namespace OakBot
             new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
             //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
+
+            */
         }
 
         public void ResolveDispatchToUI(TwitchChatMessage chatMessage)
@@ -216,6 +220,12 @@ namespace OakBot
         {
             WindowAuthBrowser tab = new WindowAuthBrowser(false);
             tab.Show();
+        }
+
+        private void btnImport_Click(object sender, RoutedEventArgs e)
+        {
+            WindowImportData windowImport = new WindowImportData(this);
+            windowImport.Show();
         }
 
         #endregion

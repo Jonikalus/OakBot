@@ -12,7 +12,7 @@
     <Grid Background="Black">
         <TabControl x:Name="tabControl" BorderThickness="2" Padding="2" SelectedIndex="0" Margin="4">
             <TabItem x:Name="TabSettings" Header="Settings">
-                <Grid Background="#FF363636" Margin="10,-5,-10,5">
+                <Grid Background="#FF363636" Margin="0">
                     <GroupBox x:Name="GroupTwitchLogin" Header="Twitch Login" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="109" Width="806" BorderBrush="Black">
                         <Grid Margin="0">
                             <Label x:Name="LabelStreamerAccount" Content="Streamer Account" HorizontalAlignment="Left" Margin="1,1,0,0" VerticalAlignment="Top"/>
@@ -31,6 +31,7 @@
                             </Button>
                         </Grid>
                     </GroupBox>
+                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="741,351,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Twitch Dashboard"/>
