@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
         <Button x:Name="btnImportAnkh" Content="Import" HorizontalAlignment="Left" Margin="207,105,0,0" VerticalAlignment="Top" Width="75" Click="btnImportAnkh_Click" TabIndex="1"/>
         <Button x:Name="btnImportDeep" Content="Import" HorizontalAlignment="Left" Margin="207,104,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="btnImportDeep_Click" TabIndex="3"/>
-        <TextBox x:Name="tbDeepbotSecret" HorizontalAlignment="Left" Height="23" Margin="10,101,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Deepbot API Secret" VerticalAlignment="Top" Width="192" Foreground="#FFAAAAAA" GotFocus="tbDeepbotSecret_GotFocus" TabIndex="2" LostFocus="tbDeepbotSecret_LostFocus" BorderBrush="LightGray"/>
+        <TextBox x:Name="tbDeepbotSecret" HorizontalAlignment="Left" Height="23" Margin="10,101,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Deepbot API Secret" VerticalAlignment="Top" Width="192" Foreground="LightGray" GotFocus="tbDeepbotSecret_GotFocus" TabIndex="2" LostFocus="tbDeepbotSecret_LostFocus" BorderBrush="LightGray"/>
         <Label x:Name="lblTitleAnkh" Content="AnkhBot" HorizontalAlignment="Left" Margin="207,74,0,0" VerticalAlignment="Top" Width="75"/>
         <Label x:Name="lblTitleDeep" Content="DeepBot" HorizontalAlignment="Left" Margin="207,73,0,0" VerticalAlignment="Top" Width="75" Grid.Row="1"/>
 

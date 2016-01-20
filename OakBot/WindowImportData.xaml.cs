@@ -37,13 +37,39 @@ namespace OakBot
 
             if (result == true)
             {
-                SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source=CurrencyDB.sqlite; Version=3; Read Only=True;"));
-                SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
-                SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
-                while (dataReader.Read())
+                try
                 {
-                    // TODO override and add records from Ankhbot
-                    Trace.WriteLine(string.Format("User: {0} with {1d} points", dataReader["Name"], dataReader["Points"]));
+                    int counter = 0;
+                    string connString = string.Format("DataSource={0}; Version=3; Read Only=True;", dlg.FileName);
+                    SQLiteConnection dbConnection = new SQLiteConnection(connString);
+                    dbConnection.Open();
+                    SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
+                    SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        TwitchUser viewer = new TwitchUser((string)dataReader["Name"]);
+                        viewer.rank = (string)dataReader["Rank"];
+                        viewer.points = (long)dataReader["Points"];
+                        viewer.hours = (string)dataReader["Hours"];
+                        viewer.raids = (long)dataReader["Raids"];
+                        viewer.timeFirstSeen = DateTime.Parse((string)dataReader["LastSeen"]);
+                        viewer.timeLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
+
+                        _mW.viewerDatabase.Add(viewer);
+                        counter++;
+                    }
+
+                    // Display message box
+                    MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.",counter),
+                        "AnkhBot Import", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    dbConnection.Close();
+                    this.Close();
+
+                }
+                catch (SQLiteException ex)
+                {
+                    Trace.WriteLine(ex.ToString());
                 }
 
             }

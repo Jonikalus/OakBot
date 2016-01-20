@@ -72,6 +72,7 @@ namespace OakBot
             // Link listViews with collections
             listViewChat.ItemsSource = colChatMessages;
             listViewViewers.ItemsSource = colViewers;
+            lvViewerDatabase.ItemsSource = viewerDatabase;
 
             /*
 
