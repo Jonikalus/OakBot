@@ -71,3 +71,16 @@ Other possibilities at a later stage:
   - Discord integration
   - Let the bot listen to its own channel
   - API to pull out data
+
+# How to compile and use
+At the moment, the bot is under heavy development!
+That means, it is full of bugs and it lacks of many features. We will release the bot, once the majority of bugs is fixed, but if you still want to use the bot in this state, here are instructions:
+
+  1. Install Visual Studio 2015 on your computer
+  2. Install the GitHub Extension for Visual Studio
+  3. Add an existing repository and enter the link of this bot
+  4. Sync it!
+  5. Press Build and look into the projects folder (C:\Users\{yourname}\Source\Repos\OakBot\OakBot\bin\Debug
+  6. Run the Oakbot.exe file
+
+If you've never used Visual Studio before or haven't even coded before, there will be a bleeding branch for development releases.
