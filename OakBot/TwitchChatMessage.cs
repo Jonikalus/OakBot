@@ -30,13 +30,20 @@ namespace OakBot
             _messageSource = loggedinAccount;
             _receivedLine = receivedLine;
 
-            Match parsedLine = Regex.Match(receivedLine,
+            try
+            {
+                Match parsedLine = Regex.Match(receivedLine,
                 @"^(?:[:](?:(?<author>\S+)[!])?\S+ )?(?<command>\S+)(?: (?!:)(?<arguments>.+?))?(?: [:](?<message>.+))?$");
 
-            _command = parsedLine.Groups["command"].Value.Trim();
-            _arguments = parsedLine.Groups["arguments"].Value.Trim().Split(' ');
-            _author = parsedLine.Groups["author"].Value.Trim();
-            _message = parsedLine.Groups["message"].Value.Trim();
+                _command = parsedLine.Groups["command"].Value.Trim();
+                _arguments = parsedLine.Groups["arguments"].Value.Trim().Split(' ');
+                _author = parsedLine.Groups["author"].Value.Trim();
+                _message = parsedLine.Groups["message"].Value.Trim();
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Web;
+using System;
 
 namespace OakBot
 {
@@ -20,17 +21,24 @@ namespace OakBot
         //Twitch Auth Link Bot scope
         private static string twitchAuthLinkBot = string.Format("https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id={0}&redirect_uri=http://localhost&scope=chat_login", twitchClientID);
 
+        
+
         public WindowAuthBrowser(bool isStreamer)
         {
             InitializeComponent();
-
+            
             this.isStreamer = isStreamer;
             if (isStreamer)
             {
+
+                Utils.InternetSetOption(IntPtr.Zero, 42, IntPtr.Zero, 0);
+                Utils.SuppressWininetBehavior();
                 wbTwitchAuth.Navigate(twitchAuthLinkStreamer);
             }
             else
             {
+                Utils.InternetSetOption(IntPtr.Zero, 42, IntPtr.Zero, 0);
+                Utils.SuppressWininetBehavior();
                 wbTwitchAuth.Navigate(twitchAuthLinkBot);
             }
         }

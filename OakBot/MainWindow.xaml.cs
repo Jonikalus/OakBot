@@ -107,6 +107,9 @@ namespace OakBot
             catch (ThreadAbortException)
             {
 
+            }catch (Exception)
+            {
+
             }
             // Twitch user instances
             userStreamer = new TwitchUser(Config.StreamerUsername);
@@ -120,12 +123,12 @@ namespace OakBot
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
             streamerChatConnection.JoinChannel(userStreamer);
-            //streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
+            streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
 
             // Start connection for the bot account, login and join streamers channel.
             botChatConnection = new TwitchChatConnection(credentialBot, this, false);
             botChatConnection.JoinChannel(userStreamer);
-            //botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
+            botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
             streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };
