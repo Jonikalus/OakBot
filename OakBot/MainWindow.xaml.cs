@@ -48,16 +48,22 @@ namespace OakBot
         private TwitchUser userStreamer;
         private TwitchUser userBot;
 
-        // Config collection
-        Config cnf;
+        // Threads
+        private Thread streamerChat, botChat, streamerWhisper, botWhisper;
 
 
         public MainWindow()
         {
             InitializeComponent();
 
+            
+
             // Initialize config
-            //cnf = new Config();
+            Config.GetConfigFromDb();
+
+            // Set usernames
+            textBoxStreamerName.Text = Config.StreamerUsername;
+            textBoxBotName.Text = Config.BotUsername;
 
             // Initiaze Collections and enable sync between threads
             colChatWindows = new ObservableCollection<WindowViewerChat>();
@@ -74,16 +80,42 @@ namespace OakBot
             listViewViewers.ItemsSource = colViewers;
             lvViewerDatabase.ItemsSource = viewerDatabase;
 
-            /*
+            
 
+            if (!(Config.BotOAuthKey == "please change" || Config.BotUsername == "please change" || Config.StreamerOAuthKey == "please change" || Config.StreamerUsername == "please change"))
+            {
+                LoadBot();
+            }
+            else
+            {
+                MessageBox.Show("Excuse me!\nSorry for interrupting the start, but to use this bot with all of his functions, you have to connect a streamer and a bot account to it. Would you do that know? ^.^");
+            }
+
+            // Delete IE Browser Stuff...
+            Utils.clearIECache();
+        }
+
+        public void LoadBot()
+        {
+            try
+            {
+                streamerChat.Abort();
+                botChat.Abort();
+                streamerWhisper.Abort();
+                botWhisper.Abort();
+            }
+            catch (ThreadAbortException)
+            {
+
+            }
             // Twitch user instances
-            userStreamer = new TwitchUser("<streamer user name>");
-            userBot = new TwitchUser("<bot user name>");
+            userStreamer = new TwitchUser(Config.StreamerUsername);
+            userBot = new TwitchUser(Config.BotUsername);
 
             // Attach oAuth password to the users creating an TwitchUserCredentials object
             // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
-            TwitchCredentials credentialBot = new TwitchCredentials(userBot, "<streamer oauth key>");
-            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, "<bot oauth key>");
+            TwitchCredentials credentialBot = new TwitchCredentials(userBot, Config.StreamerOAuthKey);
+            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, Config.BotOAuthKey);
 
             // Start connection for the streamer account, login and join its channel.
             streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
@@ -96,12 +128,14 @@ namespace OakBot
             //botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
 
             // New thread for the chat connections
-            new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true }.Start();
-            new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true }.Start();
-            //new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true }.Start();
-            //new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true }.Start();
-
-            */
+            streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };
+            botChat = new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true };
+            streamerWhisper = new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true };
+            botWhisper = new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true };
+            streamerChat.Start();
+            botChat.Start();
+            streamerWhisper.Start();
+            botWhisper.Start();
         }
 
         public void ResolveDispatchToUI(TwitchChatMessage chatMessage)
@@ -213,12 +247,14 @@ namespace OakBot
 
         private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
         {
+            Config.StreamerUsername = textBoxStreamerName.Text;
             WindowAuthBrowser tab = new WindowAuthBrowser(true);
             tab.Show();
         }
 
         private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
         {
+            Config.BotUsername = textBoxBotName.Text;
             WindowAuthBrowser tab = new WindowAuthBrowser(false);
             tab.Show();
         }
@@ -227,6 +263,11 @@ namespace OakBot
         {
             WindowImportData windowImport = new WindowImportData(this);
             windowImport.Show();
+        }
+
+        private void btnReconnect_Click(object sender, RoutedEventArgs e)
+        {
+            LoadBot();
         }
 
         #endregion
@@ -329,5 +370,11 @@ namespace OakBot
 
         #endregion
 
+        private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Config.SaveConfigToDb();
+        }
+
+        
     }
 }

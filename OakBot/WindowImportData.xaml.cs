@@ -26,53 +26,17 @@ namespace OakBot
 
         private void btnImportAnkh_Click(object sender, RoutedEventArgs e)
         {
-            // Create OpenFileDialog and set default file extention and filters
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".sqlite";
-            dlg.Filter = "AnkhBot CurrencyDB|CurrencyDB.sqlite";
-            dlg.InitialDirectory = @"%appdata%\AnkhHeart\AnkhBotR2\Twitch\Databases";
-
-            // Show file dialog
-            Nullable<bool> result = dlg.ShowDialog();
-
-            if (result == true)
+            try
             {
-                try
-                {
-                    int counter = 0;
-                    string connString = string.Format("DataSource={0}; Version=3; Read Only=True;", dlg.FileName);
-                    SQLiteConnection dbConnection = new SQLiteConnection(connString);
-                    dbConnection.Open();
-                    SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
-                    SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
-                    while (dataReader.Read())
-                    {
-                        TwitchUser viewer = new TwitchUser((string)dataReader["Name"]);
-                        viewer.rank = (string)dataReader["Rank"];
-                        viewer.points = (long)dataReader["Points"];
-                        viewer.hours = (string)dataReader["Hours"];
-                        viewer.raids = (long)dataReader["Raids"];
-                        viewer.timeFirstSeen = DateTime.Parse((string)dataReader["LastSeen"]);
-                        viewer.timeLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
-
-                        _mW.viewerDatabase.Add(viewer);
-                        counter++;
-                    }
-
-                    // Display message box
-                    MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.",counter),
+                MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.", Config.ImportFromAnkhbot(_mW)),
                         "AnkhBot Import", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    dbConnection.Close();
-                    this.Close();
-
-                }
-                catch (SQLiteException ex)
-                {
-                    Trace.WriteLine(ex.ToString());
-                }
-
+                this.Close();
             }
+            catch (SQLiteException ex)
+            {
+                Trace.WriteLine(ex.ToString());
+            }
+            
         }
 
         private void btnImportDeep_Click(object sender, RoutedEventArgs e)

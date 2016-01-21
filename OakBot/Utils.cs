@@ -19,5 +19,28 @@ namespace OakBot
             return token;
         }
 
+        public static void clearIECache()
+        {
+            ClearFolder(new DirectoryInfo(Environment.GetFolderPath
+            (Environment.SpecialFolder.InternetCache)));
+        }
+
+        public static void ClearFolder(DirectoryInfo folder)
+        {
+            try
+            {
+                foreach (FileInfo file in folder.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo subfolder in folder.GetDirectories())
+                { ClearFolder(subfolder); }
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
     }
 }
