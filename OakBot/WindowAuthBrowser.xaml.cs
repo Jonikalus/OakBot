@@ -55,6 +55,7 @@ namespace OakBot
                 {
                     Config.BotOAuthKey = Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
                 }
+                Config.SaveConfigToDb();
                 this.Close();
             }
         }
