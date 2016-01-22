@@ -8,6 +8,8 @@ using System.Data.SQLite;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Windows.Controls;
+using System.Reflection;
 
 namespace OakBot
 {
@@ -74,6 +76,19 @@ namespace OakBot
             {
                 System.Windows.MessageBox.Show("Something went wrong !>?");
             }
+        }
+
+        public static void HideScriptErrors(WebBrowser wb, bool hide)
+        {
+            var fiComWebBrowser = typeof(WebBrowser).GetField("_axIWebBrowser2", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (fiComWebBrowser == null) return;
+            var objComWebBrowser = fiComWebBrowser.GetValue(wb);
+            if (objComWebBrowser == null)
+            {
+                wb.Loaded += (o, s) => HideScriptErrors(wb, hide); //In case we are to early
+                return;
+            }
+            objComWebBrowser.GetType().InvokeMember("Silent", BindingFlags.SetProperty, null, objComWebBrowser, new object[] { hide });
         }
     }
 }

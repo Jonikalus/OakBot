@@ -21,7 +21,7 @@ namespace OakBot
 
         public WindowAuthBrowser(bool isStreamer)
         {
-            InitializeComponent();          
+            InitializeComponent();       
             _isStreamer = isStreamer;
 
             if (_isStreamer)
@@ -55,6 +55,30 @@ namespace OakBot
                 Config.SaveConfigToDb();
                 this.Close();
             }
+        }
+
+        private void wbTwitchAuth_Navigating(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)
+        {
+            Utils.clearIECache();
+            MessageBox.Show(e.Url.AbsoluteUri);
+            if (e.Url.Host.Trim() == "localhost")
+            {
+                if (_isStreamer)
+                {
+                    Config.StreamerOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Url.AbsoluteUri);
+                }
+                else
+                {
+                    Config.BotOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Url.AbsoluteUri);
+                }
+                Config.SaveConfigToDb();
+                this.Close();
+            }
+        }
+
+        private void wbTwitchAuth_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            Utils.HideScriptErrors(wbTwitchAuth, true);
         }
     }
 }

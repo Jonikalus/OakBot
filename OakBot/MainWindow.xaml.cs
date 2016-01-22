@@ -120,11 +120,11 @@ namespace OakBot
 
             // Start Bot connection and login
             botChatConnection = new TwitchChatConnection(accountBot);
-            botChatConnection.JoinChannel(accountStreamer.username);
+            botChatConnection.JoinChannel(tbChannelName.Text);
 
             // Start Streamer connection and login
             streamerChatConnection = new TwitchChatConnection(accountStreamer, false);
-            streamerChatConnection.JoinChannel(accountStreamer.username);
+            streamerChatConnection.JoinChannel(tbChannelName.Text);
 
             // Create threads for the chat connections
             streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };

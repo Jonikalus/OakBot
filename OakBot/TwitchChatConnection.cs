@@ -167,14 +167,21 @@ namespace OakBot
                             break;
 
                         case "PART": // Person left channel
-                            var viewerPart = MainWindow.colViewers.Where(TwitchUser =>
+                            try
+                            {
+                                var viewerPart = MainWindow.colViewers.Where(TwitchUser =>
                                 TwitchUser.username == ircMessage.author);
 
-                            foreach (TwitchUser viewer in viewerPart)
-                            {
-                                MainWindow.colViewers.Remove(viewer);
+                                foreach (TwitchUser viewer in viewerPart)
+                                {
+                                    MainWindow.colViewers.Remove(viewer);
+                                }
+                                break;
                             }
-                            break;
+                            catch (System.Exception ex)
+                            {
+                                break;
+                            }
 
                         case "PRIVMSG":
                             MainWindow.colChatMessages.Add(ircMessage);
