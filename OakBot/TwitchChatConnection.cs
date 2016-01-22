@@ -12,7 +12,7 @@ namespace OakBot
         MainWindow.delegateMessage delegateMessage;
         private BotIrcClient ircClient;
         private TwitchCredentials _connectedUser;
-        private TwitchUser _joinedChannel;
+        private string _joinedChannel;
         private bool _isStreamer;
 
         #endregion
@@ -26,31 +26,28 @@ namespace OakBot
             _connectedUser = connectingUser;
             _isStreamer = isStreamer;
 
-            // Connect to IRC Twitch and login, then request PART/JOIN messages
+            // Connect to IRC Twitch and login with given TwitchCredentials
             ircClient = new BotIrcClient("irc.twitch.tv", 6667, connectingUser);
-
-            if (isStreamer)
-            {
-                // Request JOIN/PART notifications
-                ircClient.WriteLineThrottle("CAP REQ :twitch.tv/membership");
-            }   
+            
+            // Request JOIN/PART notifications
+            ircClient.WriteLineThrottle("CAP REQ :twitch.tv/membership");  
         }
 
         #endregion
 
         #region Methods
 
-        public void JoinChannel(TwitchUser channel)
+        public void JoinChannel(string channel)
         {
             _joinedChannel = channel;
-            ircClient.WriteLineThrottle("JOIN #" + channel.username);
+            ircClient.WriteLineThrottle("JOIN #" + channel);
         }
 
         public void SendChatMessage(string message)
         {
-            IrcClient.WriteLineThrottle(":" + connectedUser.username +
-                "!" + connectedUser.username + "@" + connectedUser.username +
-                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel.username + " :" + message);
+            IrcClient.WriteLineThrottle(":" + _connectedUser.username +
+                "!" + _connectedUser.username + "@" + _connectedUser.username +
+                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel + " :" + message);
         }
 
         internal void Run()

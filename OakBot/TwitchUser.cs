@@ -11,7 +11,7 @@ namespace OakBot
         private string _avatarUri;
 
         #endregion
-        
+
         #region Constructors
 
         public TwitchUser(string username)
@@ -58,16 +58,24 @@ namespace OakBot
         // Channel
         public bool isFollowing { get; set; }
         public bool isSub { get; set; }
-        
+
         // Points, Hours and Rank
         public long points { get; set; }        // BigInt SQL
-        public string hours { get; set; }       // days:hours:minutes
-        public long raids { get; set; }
+        public long raids { get; set; }         // BigInt SQL
         public string rank { get; set; }
 
+        public TimeSpan watchedTimeSpan { get; set; }
+        public double hours
+        {
+            get
+            {
+                return Math.Round(watchedTimeSpan.TotalHours, 1, MidpointRounding.AwayFromZero);
+            }
+        }
+
         // First seen and last message (seen)
-        public DateTime timeFirstSeen { get; set; }
-        public DateTime timeLastSeen { get; set; }
+        public DateTime dateLastSeen { get; set; }
+        public DateTime dateFollow { get; set; }
 
         // Regular and indicator that streamer/mod removed regular
         public bool isReg { get; set; }
