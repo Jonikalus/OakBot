@@ -46,11 +46,11 @@ namespace OakBot
             {
                 if (_isStreamer)
                 {
-                    Config.StreamerOAuthKey = Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
+                    Config.StreamerOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
                 }
                 else
                 {
-                    Config.BotOAuthKey = Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
+                    Config.BotOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
                 }
                 Config.SaveConfigToDb();
                 this.Close();
