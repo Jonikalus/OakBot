@@ -7,7 +7,7 @@ namespace OakBot
         #region Fields
 
         private MainWindow _mW;
-        MainWindow.delegateMessage delegateMessage;
+        //MainWindow.delegateMessage delegateMessage;
         private BotIrcClient ircClient;
         private TwitchCredentials _connectedUser;
 
@@ -18,7 +18,7 @@ namespace OakBot
         public TwitchWhisperConnection(TwitchCredentials connectingUser, MainWindow window)
         {
             _mW = window;
-            delegateMessage = new MainWindow.delegateMessage(_mW.ResolveDispatchToUI);
+            //delegateMessage = new MainWindow.delegateMessage(_mW.ResolveDispatchToUI);
             _connectedUser = connectingUser;
 
             // Connect and login into the whisper server
@@ -50,16 +50,16 @@ namespace OakBot
                         break;
 
                     case "WHISPER": // Chat message
-                        dispatchMessage(ircMessage);
+                        //dispatchMessage(ircMessage);
                         break;
                 }
             }
         }
 
-        internal void dispatchMessage(TwitchChatMessage message)
-        {
-            _mW.Dispatcher.BeginInvoke(delegateMessage, message);
-        }
+        //internal void dispatchMessage(TwitchChatMessage message)
+        //{
+        //    _mW.Dispatcher.BeginInvoke(delegateMessage, message);
+        //}
 
         #endregion
 

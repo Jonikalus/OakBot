@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Data.SQLite;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace OakBot
 {
@@ -34,12 +35,15 @@ namespace OakBot
                 {
                     file.Delete();
                 }
+
                 foreach (DirectoryInfo subfolder in folder.GetDirectories())
-                { ClearFolder(subfolder); }
+                {
+                    ClearFolder(subfolder);
+                }
             }
             catch (Exception ex)
             {
-                
+                Trace.WriteLine("ClearFolder Exception: " + ex.ToString());
             }
         }
 

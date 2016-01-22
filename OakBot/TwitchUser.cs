@@ -8,7 +8,7 @@ namespace OakBot
 
         private string _username;
         private string _displayName;
-        private string _avatarUri;
+        //private string _avatarUri;
 
         #endregion
 
