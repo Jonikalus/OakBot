@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using System.Windows;
 using System.Windows.Media;
 using System.IO;
+using System.ComponentModel;
 
 namespace OakBot
 {
@@ -22,14 +23,103 @@ namespace OakBot
         }
 
         public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
-        public static string StreamerOAuthKey { get; set; }
-        public static string BotOAuthKey { get; set; }
-        public static string StreamerUsername { get; set; }
-        public static string BotUsername { get; set; }
-        public static string ChannelName { get; set; }
-        public static string Server { get; set; }
-        public static int Port { get; set; }
-        public static bool AutoConnect { get; set; }
+        public static string StreamerOAuthKey {
+            get
+            {
+                return StreamerOAuthKey;
+            }
+            set
+            {
+                StreamerOAuthKey = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static string BotOAuthKey {
+            get
+            {
+                return BotOAuthKey;
+            }
+            set
+            {
+                BotOAuthKey = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static string StreamerUsername {
+            get
+            {
+                return StreamerUsername;
+            }
+            set
+            {
+                StreamerUsername = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static string BotUsername {
+            get
+            {
+                return BotUsername;
+            }
+            set
+            {
+                BotUsername = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static string ChannelName {
+            get
+            {
+                return ChannelName;
+            }
+            set
+            {
+                ChannelName = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static string Server {
+            get
+            {
+                return Server;
+            }
+            set
+            {
+                Server = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static int Port {
+            get
+            {
+                return Port;
+            }
+            set
+            {
+                Port = value;
+                SaveConfigToDb();
+            }
+        }
+
+        public static bool AutoConnect {
+            get
+            {
+                return AutoConnect;
+            }
+            set
+            {
+                AutoConnect = value;
+                SaveConfigToDb();
+            }
+        }
+
+        
 
         public static void GetConfigFromDb()
         {
