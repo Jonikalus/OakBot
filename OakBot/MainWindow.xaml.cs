@@ -56,6 +56,9 @@ namespace OakBot
         {
             InitializeComponent();
 
+            // Create Config if not present
+            Config.CreateDatabaseIfNotExist();
+
             // Initialize config
             Config.GetConfigFromDb();
 

@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Windows;
 using System.Windows.Media;
+using System.IO;
 
 namespace OakBot
 {
     class Config
     {
         // Twitch Application
-        public static string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+        public static string twitchClientID {
+            get
+            {
+                return "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+            }
+        }
         public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
 
         public static string StreamerOAuthKey { get; set; }
@@ -56,6 +62,40 @@ namespace OakBot
             {
                 System.Windows.MessageBox.Show(ex.ToString());
             }
+        }
+
+        public static void CreateDatabaseIfNotExist()
+        {
+            if (!File.Exists("OakSettings.sqlite"))
+            {
+                try
+                {
+                    SQLiteConnection.CreateFile("OakSettings.sqlite");
+                    SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;Version=3");
+                    conn.Open();
+                    string creationSql = "CREATE TABLE IF NOT EXISTS `oak_settings` ( `name` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(name) )";
+                    string strOAuth = "INSERT INTO `oak_settings` VALUES ( 'StreamerOAuthToken', 'please change' )";
+                    string botOAuth = "INSERT INTO `oak_settings` VALUES ( 'BotOAuthToken', 'please change' )";
+                    string strUser = "INSERT INTO `oak_settings` VALUES ( 'StreamerTwitchUsername', 'please change' )";
+                    string botUser = "INSERT INTO `oak_settings` VALUES ( 'BotTwitchUsername', 'please change' )";
+                    SQLiteCommand cmd = new SQLiteCommand(creationSql, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(strOAuth, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(botOAuth, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(strUser, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(botUser, conn);
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+            
         }
 
         public static void SaveConfigToDb()
