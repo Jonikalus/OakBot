@@ -20,12 +20,16 @@ namespace OakBot
                 return "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
             }
         }
-        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
 
+        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
         public static string StreamerOAuthKey { get; set; }
         public static string BotOAuthKey { get; set; }
         public static string StreamerUsername { get; set; }
         public static string BotUsername { get; set; }
+        public static string ChannelName { get; set; }
+        public static string Server { get; set; }
+        public static int Port { get; set; }
+        public static bool AutoConnect { get; set; }
 
         public static void GetConfigFromDb()
         {
