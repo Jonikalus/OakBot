@@ -265,7 +265,7 @@ namespace OakBot
             windowImport.Show();
         }
 
-        private void btnReconnect_Click(object sender, RoutedEventArgs e)
+        private void btnBotConnect_Click(object sender, RoutedEventArgs e)
         {
             LoadBot();
         }
