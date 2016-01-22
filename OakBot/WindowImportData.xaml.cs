@@ -26,17 +26,10 @@ namespace OakBot
 
         private void btnImportAnkh_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (Config.ImportFromAnkhbot(_mW))
             {
-                MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.", Config.ImportFromAnkhbot(_mW)),
-                        "AnkhBot Import", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
-            }
-            catch (SQLiteException ex)
-            {
-                Trace.WriteLine(ex.ToString());
-            }
-            
+            }            
         }
 
         private void btnImportDeep_Click(object sender, RoutedEventArgs e)

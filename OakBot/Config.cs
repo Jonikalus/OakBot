@@ -5,15 +5,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using System.Windows;
+using System.Windows.Media;
+using System.IO;
 
 namespace OakBot
 {
     class Config
     {
+        // Twitch Application
+        public static string twitchClientID {
+            get
+            {
+                return "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+            }
+        }
+
+        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
         public static string StreamerOAuthKey { get; set; }
         public static string BotOAuthKey { get; set; }
         public static string StreamerUsername { get; set; }
         public static string BotUsername { get; set; }
+        public static string ChannelName { get; set; }
+        public static string Server { get; set; }
+        public static int Port { get; set; }
+        public static bool AutoConnect { get; set; }
 
         public static void GetConfigFromDb()
         {
@@ -40,6 +56,18 @@ namespace OakBot
                         case "StreamerOAuthToken":
                             StreamerOAuthKey = (string)reader["value"];
                             break;
+                        case "DefaultChannelName":
+                            ChannelName = (string)reader["value"];
+                            break;
+                        case "DefaultServer":
+                            Server = (string)reader["value"];
+                            break;
+                        case "Port":
+                            int.Parse((string)reader["value"]);
+                            break;
+                        case "AutoConnect":
+                            bool.Parse((string)reader["value"]);
+                            break;
                         default:
                             break;
                     }
@@ -50,6 +78,52 @@ namespace OakBot
             {
                 System.Windows.MessageBox.Show(ex.ToString());
             }
+        }
+
+        public static void CreateDatabaseIfNotExist()
+        {
+            if (!File.Exists("OakSettings.sqlite"))
+            {
+                try
+                {
+                    SQLiteConnection.CreateFile("OakSettings.sqlite");
+                    SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;Version=3");
+                    conn.Open();
+                    string creationSql = "CREATE TABLE IF NOT EXISTS `oak_settings` ( `name` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(name) )";
+                    string strOAuth = "INSERT INTO `oak_settings` VALUES ( 'StreamerOAuthToken', 'please change' )";
+                    string botOAuth = "INSERT INTO `oak_settings` VALUES ( 'BotOAuthToken', 'please change' )";
+                    string strUser = "INSERT INTO `oak_settings` VALUES ( 'StreamerTwitchUsername', 'please change' )";
+                    string botUser = "INSERT INTO `oak_settings` VALUES ( 'BotTwitchUsername', 'please change' )";
+                    string channelName = "INSERT INTO `oak_settings` VALUES ( 'DefaultChannelName', '' )";
+                    string server = "INSERT INTO `oak_settings` VALUES ( 'DefaultServer', 'tmi.twitch.tv' )";
+                    string port = "INSERT INTO `oak_settings` VALUES ( 'Port', '6667' )";
+                    string autoConnect = "INSERT INTO `oak_settings` VALUES ( 'AutoConnect', 'false' )";
+                    SQLiteCommand cmd = new SQLiteCommand(creationSql, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(strOAuth, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(botOAuth, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(strUser, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(botUser, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(channelName, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(server, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(port, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(autoConnect, conn);
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+            
         }
 
         public static void SaveConfigToDb()
@@ -69,10 +143,22 @@ namespace OakBot
             sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", StreamerOAuthKey, "StreamerOAuthToken");
             command = new SQLiteCommand(sql, conn);
             command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", ChannelName, "DefaultChannelName");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", Server, "DefaultServer");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", Port, "Port");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", AutoConnect, "AutoConnect");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
             conn.Close();
         }
 
-        public static int ImportFromAnkhbot(MainWindow _mW)
+        public static bool ImportFromAnkhbot(MainWindow _mW)
         {
             // Create OpenFileDialog and set default file extention and filters
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -87,29 +173,66 @@ namespace OakBot
             {
                 int counter = 0;
                 string connString = string.Format("DataSource={0}; Version=3; Read Only=True;", dlg.FileName);
-                SQLiteConnection dbConnection = new SQLiteConnection(connString);
-                dbConnection.Open();
-                SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
-                SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
-                while (dataReader.Read())
-                {
-                    TwitchUser viewer = new TwitchUser((string)dataReader["Name"]);
-                    viewer.rank = (string)dataReader["Rank"];
-                    viewer.points = (long)dataReader["Points"];
-                    viewer.hours = (string)dataReader["Hours"];
-                    viewer.raids = (long)dataReader["Raids"];
-                    viewer.timeFirstSeen = DateTime.Parse((string)dataReader["LastSeen"]);
-                    viewer.timeLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
 
-                    _mW.viewerDatabase.Add(viewer);
-                    counter++;
+                try
+                {
+                    SQLiteConnection dbConnection = new SQLiteConnection(connString);
+                    dbConnection.Open();
+
+                    SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
+                    SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        TwitchUser viewer = new TwitchUser((string)dataReader["Name"]);
+
+                        viewer.rank = (string)dataReader["Rank"];
+                        viewer.points = (long)dataReader["Points"];
+                        viewer.raids = (long)dataReader["Raids"];
+                        viewer.dateLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
+
+                        // AnkhBot's time format d.HH:MM:SS where d is not present if < 1 day
+                        string ankhbotHours = (string)dataReader["Hours"];
+                        TimeSpan watchedHours = new TimeSpan();
+                        if (ankhbotHours.Contains("."))
+                        {
+                            TimeSpan.TryParseExact(ankhbotHours, @"d\.hh\:mm\:ss", null, out watchedHours);
+                        }
+                        else
+                        {
+                            TimeSpan.TryParseExact(ankhbotHours, @"hh\:mm\:ss", null, out watchedHours);
+                        }
+                        viewer.watchedTimeSpan = watchedHours;
+
+                        MainWindow.viewerDatabase.Add(viewer);
+                        counter++;
+                    }
+
+                    dbConnection.Close();
+                }
+                catch (SQLiteException ex)
+                {
+                    MessageBox.Show(string.Format("Could not open or read the selected sqlite database file.\n\n{0}", ex.ToString()),
+                        "AnkhBot User Data Import", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("The following program error has occured:\n\n{0}", ex.ToString()),
+                        "AnkhBot User Data Import", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    return false;
                 }
 
-                dbConnection.Close();
-                return counter;
-
+                // Succesfull import
+                MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.", counter),
+                    "AnkhBot Import", MessageBoxButton.OK, MessageBoxImage.Information);
+                return true;
             }
-            else return 0;
+
+            // User canceled the file selection
+            return false;
+
         }
     }
 }

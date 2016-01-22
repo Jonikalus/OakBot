@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace OakBot
 {
@@ -14,7 +15,9 @@ namespace OakBot
 
         private MainWindow _mW;
         private TwitchUser _viewer;
+
         private ObservableCollection<TwitchChatMessage> colViewerMessages;
+        private object _lock = new object();
 
         #endregion
 
@@ -24,7 +27,12 @@ namespace OakBot
         {
             _mW = mW;
             _viewer = viewer;
+
             InitializeComponent();
+            colViewerMessages = new ObservableCollection<TwitchChatMessage>();
+
+            // Thread synchronization
+            BindingOperations.EnableCollectionSynchronization(colViewerMessages, _lock);
 
             // Set information
             this.Title = "Chat: " + _viewer.displayName;
@@ -32,8 +40,7 @@ namespace OakBot
 
             // Rather than copying all messages just collect the selected viewers
             // messages to save system resources in case of huge global chat history.
-            colViewerMessages = new ObservableCollection<TwitchChatMessage>();
-            var viewerMessages = mW.colChatMessages.Where(
+            var viewerMessages = MainWindow.colChatMessages.Where(
                 TwitchChatMessage => TwitchChatMessage.author == viewer.username);
             foreach(TwitchChatMessage message in viewerMessages)
             {
@@ -94,7 +101,7 @@ namespace OakBot
 
         private void windowViewerChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _mW.colChatWindows.Remove(this);
+            MainWindow.colChatWindows.Remove(this);
         }
 
         #endregion

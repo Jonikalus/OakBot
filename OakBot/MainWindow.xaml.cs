@@ -24,39 +24,33 @@ namespace OakBot
     /// </summary>
     public partial class MainWindow : Window
     {
-        //public delegate void MyDel();
-        public delegate void delegateMessage(TwitchChatMessage message);
+        // Streamer and Bot account info
+        private TwitchCredentials accountStreamer;
+        private TwitchCredentials accountBot;
 
         // Chat connections
-        public TwitchChatConnection streamerChatConnection;
-        public TwitchWhisperConnection streamerWhisperConnection;
         public TwitchChatConnection botChatConnection;
-        public TwitchWhisperConnection botWhisperConnection;
+        public TwitchChatConnection streamerChatConnection;
 
-        // Collections
-        public ObservableCollection<TwitchChatMessage> colChatMessages;
-        public ObservableCollection<TwitchUser> colViewers;
-        public ObservableCollection<TwitchUser> viewerDatabase;
-        public ObservableCollection<WindowViewerChat> colChatWindows;
-
-        // Sync locks for Collections
+        // Collections and 
+        public static ObservableCollection<TwitchChatMessage> colChatMessages;
         private object _lockChat = new object();
+        public static ObservableCollection<TwitchUser> colViewers;
         private object _lockViewers = new object();
+        public static ObservableCollection<TwitchUser> viewerDatabase;
         private object _lockDatabase = new object();
-
-        // Main refferences to Streamer and Bot object
-        private TwitchUser userStreamer;
-        private TwitchUser userBot;
+        public static ObservableCollection<WindowViewerChat> colChatWindows;
 
         // Threads
-        private Thread streamerChat, botChat, streamerWhisper, botWhisper;
-
+        private Thread streamerChat;
+        private Thread botChat;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            
+            // Create Config if not present
+            Config.CreateDatabaseIfNotExist();
 
             // Initialize config
             Config.GetConfigFromDb();
@@ -66,14 +60,20 @@ namespace OakBot
             textBoxStreamerName.Text = Config.StreamerUsername;
             textBoxBotName.Text = Config.BotUsername;
 
+            // Set Channel Name
+            tbChannelName.Text = Config.ChannelName;
+
             // Initiaze Collections and enable sync between threads
             colChatWindows = new ObservableCollection<WindowViewerChat>();
+            
             colChatMessages = new ObservableCollection<TwitchChatMessage>();
-            colChatMessages.CollectionChanged += colChatMessages_Changed; // Add message event hook
-            colViewers = new ObservableCollection<TwitchUser>();
-            viewerDatabase = new ObservableCollection<TwitchUser>();
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
+            colChatMessages.CollectionChanged += colChatMessages_Changed;
+
+            colViewers = new ObservableCollection<TwitchUser>();
             BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
+
+            viewerDatabase = new ObservableCollection<TwitchUser>();
             BindingOperations.EnableCollectionSynchronization(viewerDatabase, _lockDatabase);
 
             // Link listViews with collections
@@ -89,11 +89,12 @@ namespace OakBot
             }
             else
             {
-                MessageBox.Show("Excuse me!\nSorry for interrupting the start, but to use this bot with all of his functions, you have to connect a streamer and a bot account to it. Would you do that know? ^.^");
+                MessageBox.Show("Excuse me!\nSorry for interrupting the start, but to use this bot with all of it's functions, you have to connect a streamer and a bot account to it.");
             }
 
             // Delete IE Browser Stuff...
             Utils.clearIECache();
+
         }
 
         public void LoadBot()
@@ -102,149 +103,38 @@ namespace OakBot
             {
                 streamerChat.Abort();
                 botChat.Abort();
-                streamerWhisper.Abort();
-                botWhisper.Abort();
+                //streamerWhisper.Abort();
+                //botWhisper.Abort();
             }
             catch (ThreadAbortException)
             {
 
-            }catch (Exception)
+            }
+            catch (Exception)
             {
 
             }
-            // Twitch user instances
-            userStreamer = new TwitchUser(Config.StreamerUsername);
-            userBot = new TwitchUser(Config.BotUsername);
 
-            // Attach oAuth password to the users creating an TwitchUserCredentials object
-            // Twitch IRC oAuth password required. Obtain one from https://twitchapps.com/tmi/
-            TwitchCredentials credentialBot = new TwitchCredentials(userBot, Config.StreamerOAuthKey);
-            TwitchCredentials credentialStreamer = new TwitchCredentials(userStreamer, Config.BotOAuthKey);
+            // Twitch Credentials
+            accountStreamer = new TwitchCredentials(Config.StreamerUsername, Config.StreamerOAuthKey);
+            accountBot = new TwitchCredentials(Config.BotUsername, Config.BotOAuthKey);
 
-            // Start connection for the streamer account, login and join its channel.
-            streamerChatConnection = new TwitchChatConnection(credentialStreamer, this);
-            streamerChatConnection.JoinChannel(userStreamer);
-            streamerWhisperConnection = new TwitchWhisperConnection(credentialStreamer, this);
+            // Start Bot connection and login
+            botChatConnection = new TwitchChatConnection(accountBot);
+            botChatConnection.JoinChannel(tbChannelName.Text);
 
-            // Start connection for the bot account, login and join streamers channel.
-            botChatConnection = new TwitchChatConnection(credentialBot, this, false);
-            botChatConnection.JoinChannel(userStreamer);
-            botWhisperConnection = new TwitchWhisperConnection(credentialBot, this);
+            // Start Streamer connection and login
+            streamerChatConnection = new TwitchChatConnection(accountStreamer, false);
+            streamerChatConnection.JoinChannel(tbChannelName.Text);
 
-            // New thread for the chat connections
+            // Create threads for the chat connections
             streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };
             botChat = new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true };
-            streamerWhisper = new Thread(new ThreadStart(streamerWhisperConnection.Run)) { IsBackground = true };
-            botWhisper = new Thread(new ThreadStart(botWhisperConnection.Run)) { IsBackground = true };
+
+            // Start the chat connection threads
             streamerChat.Start();
             botChat.Start();
-            streamerWhisper.Start();
-            botWhisper.Start();
-        }
 
-        public void ResolveDispatchToUI(TwitchChatMessage chatMessage)
-        {
-            switch (chatMessage.command)
-            {
-                //case "353": // Received list of joined names
-                //    string[] names = chatMessage.message.Split(' ');
-                //    foreach (string name in names)
-                //    {
-                //        var viewerExist = viewerDatabase.Where(
-                //            TwitchUser => TwitchUser.username == chatMessage.author);
-                //        if (viewerExist.Any()) // Viewer exists
-                //        {
-                //            foreach (TwitchUser viewer in viewerExist)
-                //            {
-                //                colViewers.Add(viewer);
-                //            }
-                //        }
-                //        else // new viewer
-                //        {
-                //            TwitchUser newViewer = new TwitchUser(chatMessage.author);
-                //            viewerDatabase.Add(newViewer);
-                //            colViewers.Add(newViewer);
-                //        }
-                //    }
-                //    break;
-                //
-                case "JOIN": // Person joined channel
-                    var viewerJoin = colViewers.Where(TwitchUser =>
-                        TwitchUser.username == chatMessage.author);
-
-                    if (!viewerJoin.Any())
-                    {
-                        var viewerExists = viewerDatabase.Where(TwitchUser =>
-                            TwitchUser.username == chatMessage.author);
-
-                        // If viewer exists add a refference to that
-                        // in the colViewers.
-                        if (viewerExists.Any())
-                        {
-                            foreach (TwitchUser viewer in viewerExists)
-                            {
-                                colViewers.Add(viewer);
-                            }
-                        }
-                        // If viewer does not exists create new Viewer
-                        // and add to that refference to colViewers.
-                        else
-                        {
-                            TwitchUser newViewer = new TwitchUser(chatMessage.author);
-                            viewerDatabase.Add(newViewer);
-                            colViewers.Add(newViewer);
-                        }
-                    }
-
-                    break;
-                
-                case "PART": // Person left channel
-                    var viewerPart = colViewers.Where(TwitchUser =>
-                        TwitchUser.username == chatMessage.author);
-
-                    foreach (TwitchUser viewer in viewerPart)
-                    {
-                        colViewers.Remove(viewer);
-                    }
-
-                    break;
-
-                case "PRIVMSG":
-                    colChatMessages.Add(chatMessage);
-                    break;
-
-                case "WHISPER":
-                    colChatMessages.Add(chatMessage);
-                    break;
-
-                default:
-                    Trace.WriteLine(chatMessage.receivedLine);
-                    break;
-            }
-        }
-
-        private void AddChatMessage(string author, string message)
-        {
-            // TODO: add FIFO chat limited as well here  
-            colChatMessages.Add(new TwitchChatMessage(author, message));
-        }
-
-        private void colChatMessages_Changed(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
-            {
-                foreach (TwitchChatMessage addedMessage in e.NewItems)
-                {
-                    var result = colChatWindows.Where(WindowUserChat => WindowUserChat.viewer.username == addedMessage.author);
-                    if (result.Any())
-                    {
-                        foreach (WindowViewerChat window in result)
-                        {
-                            window.AddViewerMessage(addedMessage);
-                        }
-                    }
-                }
-            }
         }
 
         #region Settings EventHandlers
@@ -269,7 +159,7 @@ namespace OakBot
             windowImport.Show();
         }
 
-        private void btnReconnect_Click(object sender, RoutedEventArgs e)
+        private void btnBotConnect_Click(object sender, RoutedEventArgs e)
         {
             LoadBot();
         }
@@ -285,15 +175,15 @@ namespace OakBot
 
         private void SpeakAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (userStreamer != null)
+            if (accountStreamer != null)
             {
                 if (SpeakAs.SelectedIndex == 0) // streamer
                 {
-                    AddChatMessage("SYSTEM", string.Format("Speaking as {0}.", userStreamer.displayName));
+                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.username)));
                 }
                 else if (SpeakAs.SelectedIndex == 1) // bot
                 {
-                    AddChatMessage("SYSTEM", string.Format("Speaking as {0}.", userBot.displayName));
+                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountBot.username)));
                 }
             }
         }
@@ -310,15 +200,12 @@ namespace OakBot
                     {
                         if (ChatSend.Text.StartsWith("/w"))
                         {
-                            streamerWhisperConnection.SendWhisper(ChatSend.Text);
+                            //streamerWhisperConnection.SendWhisper(ChatSend.Text);
                         }
                         else
                         {
-                            // Append this message to colChat in order
-                            // to let the streamer see their own messages send.
-                            AddChatMessage(userStreamer.displayName, ChatSend.Text);
-
-                            // Send message
+                            // No need to append this message to the colChat,
+                            // as the bot (primary) account will receive this message.
                             streamerChatConnection.SendChatMessage(ChatSend.Text);
                         }
                     }
@@ -326,12 +213,13 @@ namespace OakBot
                     {
                         if (ChatSend.Text.StartsWith("/w"))
                         {
-                            botWhisperConnection.SendWhisper(ChatSend.Text);
+                            //botWhisperConnection.SendWhisper(ChatSend.Text);
                         }
                         else
                         {
-                            // No need to append this message to the colChat,
-                            // as the streamers account will receive this message.
+                            // Append this message to colChat in order
+                            // to let the streamer see their own messages send.
+                            colChatMessages.Add(new TwitchChatMessage(accountBot.username, ChatSend.Text));
                             botChatConnection.SendChatMessage(ChatSend.Text);
                         }
                     }
@@ -374,11 +262,33 @@ namespace OakBot
 
         #endregion
 
+        #region Global EventHandlers
+
+        private void colChatMessages_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
+            {
+                foreach (TwitchChatMessage addedMessage in e.NewItems)
+                {
+                    var result = colChatWindows.Where(WindowUserChat => WindowUserChat.viewer.username == addedMessage.author);
+                    if (result.Any())
+                    {
+                        foreach (WindowViewerChat window in result)
+                        {
+                            window.AddViewerMessage(addedMessage);
+                        }
+                    }
+                }
+            }
+        }
+
         private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            Config.ChannelName = tbChannelName.Text;
             Config.SaveConfigToDb();
         }
 
-        
+        #endregion
+
     }
 }

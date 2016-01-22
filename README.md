@@ -1,15 +1,14 @@
 # OakBot
 Twitch Bot focused on integration with HTML overlays written in C#
-Free open solid feature rich Twitch Bot for everyone to use.
+
+Free, open, solid and feature rich Twitch Bot for everyone to use and to improve.
 
 
-
-
-Stream overlay Goals:
-  - Outputting of events in textfiles
-  - Outputting of events as json
-      - Think of currentsong, giveaways, timers ect.
-      - This would remove the need for Twitch alerts client.
+Stream Overlay Goals:
+  - Outputting of events in text files
+  - Outputting of events as JSON
+      - Think of current song, giveaways, timers ect.
+      - This would remove the need for TwitchAlerts client.
 
 Twitch Dashboard Goals:
   - Set stream game and title.
@@ -18,7 +17,7 @@ Twitch Dashboard Goals:
   - View session followers and subscribers
   - View session donators (from TwitchAlerts API)
   - View session hosts and raids (whenever possible, later stage)
-  - Auto host
+  - Auto-Host
 
 Twitch Chat Interface Goals:
   - Right-Mouse-Button context menu:
@@ -42,8 +41,8 @@ Command System Goals:
   - Streamer template messages (think of a sub hype message)
 
 Song Request Goals:
-  - load from YouTube playlist
-  - load from local playlist(s)
+  - Load from YouTube playlist
+  - Load from local playlist(s)
   - Not capped (whenever possible)
   - One list, insert requests between the playlist sings
   - Streamer requested songs inserted but not pushed down by viewer requests

@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OakBot"
+        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         mc:Ignorable="d"
         Title="TwitchAuthBrowser" Height="531" Width="383">
     <Grid>
-        <WebBrowser x:Name="wbTwitchAuth" Navigating="wbTwitchAuth_Navigating"/>
-
+        <WebBrowser x:Name="wbTwitchAuth" Navigating="wbTwitchAuth_Navigating" Navigated="wbTwitchAuth_Navigated"/>
     </Grid>
 </Window>
