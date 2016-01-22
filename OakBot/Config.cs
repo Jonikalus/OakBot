@@ -167,7 +167,7 @@ namespace OakBot
                         }
                         viewer.watchedTimeSpan = watchedHours;
 
-                        _mW.viewerDatabase.Add(viewer);
+                        MainWindow.viewerDatabase.Add(viewer);
                         counter++;
                     }
 
