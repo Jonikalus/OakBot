@@ -59,6 +59,9 @@ namespace OakBot
             textBoxStreamerName.Text = Config.StreamerUsername;
             textBoxBotName.Text = Config.BotUsername;
 
+            // Set Channel Name
+            tbChannelName.Text = Config.ChannelName;
+
             // Initiaze Collections and enable sync between threads
             colChatWindows = new ObservableCollection<WindowViewerChat>();
             
@@ -280,6 +283,7 @@ namespace OakBot
 
         private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            Config.ChannelName = tbChannelName.Text;
             Config.SaveConfigToDb();
         }
 

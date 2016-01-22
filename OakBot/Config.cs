@@ -56,6 +56,18 @@ namespace OakBot
                         case "StreamerOAuthToken":
                             StreamerOAuthKey = (string)reader["value"];
                             break;
+                        case "DefaultChannelName":
+                            ChannelName = (string)reader["value"];
+                            break;
+                        case "DefaultServer":
+                            Server = (string)reader["value"];
+                            break;
+                        case "Port":
+                            int.Parse((string)reader["value"]);
+                            break;
+                        case "AutoConnect":
+                            bool.Parse((string)reader["value"]);
+                            break;
                         default:
                             break;
                     }
@@ -82,6 +94,10 @@ namespace OakBot
                     string botOAuth = "INSERT INTO `oak_settings` VALUES ( 'BotOAuthToken', 'please change' )";
                     string strUser = "INSERT INTO `oak_settings` VALUES ( 'StreamerTwitchUsername', 'please change' )";
                     string botUser = "INSERT INTO `oak_settings` VALUES ( 'BotTwitchUsername', 'please change' )";
+                    string channelName = "INSERT INTO `oak_settings` VALUES ( 'DefaultChannelName', '' )";
+                    string server = "INSERT INTO `oak_settings` VALUES ( 'DefaultServer', 'tmi.twitch.tv' )";
+                    string port = "INSERT INTO `oak_settings` VALUES ( 'Port', '6667' )";
+                    string autoConnect = "INSERT INTO `oak_settings` VALUES ( 'AutoConnect', 'false' )";
                     SQLiteCommand cmd = new SQLiteCommand(creationSql, conn);
                     cmd.ExecuteNonQuery();
                     cmd = new SQLiteCommand(strOAuth, conn);
@@ -91,6 +107,14 @@ namespace OakBot
                     cmd = new SQLiteCommand(strUser, conn);
                     cmd.ExecuteNonQuery();
                     cmd = new SQLiteCommand(botUser, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(channelName, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(server, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(port, conn);
+                    cmd.ExecuteNonQuery();
+                    cmd = new SQLiteCommand(autoConnect, conn);
                     cmd.ExecuteNonQuery();
                     conn.Close();
                 }
@@ -117,6 +141,18 @@ namespace OakBot
             command = new SQLiteCommand(sql, conn);
             command.ExecuteNonQuery();
             sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", StreamerOAuthKey, "StreamerOAuthToken");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", ChannelName, "DefaultChannelName");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", Server, "DefaultServer");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", Port, "Port");
+            command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", AutoConnect, "AutoConnect");
             command = new SQLiteCommand(sql, conn);
             command.ExecuteNonQuery();
             conn.Close();
