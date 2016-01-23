@@ -55,6 +55,7 @@ namespace OakBot
             // Initialize config
             Config.GetConfigFromDb();
 
+
             // Set usernames
             textBoxStreamerName.Text = Config.StreamerUsername;
             textBoxBotName.Text = Config.BotUsername;
