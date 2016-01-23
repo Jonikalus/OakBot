@@ -160,7 +160,6 @@ namespace OakBot
             if (!string.IsNullOrWhiteSpace(tbChannelName.Text))
             {
                 Config.ChannelName = tbChannelName.Text;
-                Config.SaveConfigToDb();
             }
         }
 
@@ -169,7 +168,6 @@ namespace OakBot
             if (cbAutoConnectBot.IsChecked == true)
             {
                 Config.AutoConnect = true;
-                Config.SaveConfigToDb();
             }
         }
 
@@ -178,7 +176,6 @@ namespace OakBot
             if (cbAutoConnectBot.IsChecked == false)
             {
                 Config.AutoConnect = false;
-                Config.SaveConfigToDb();
             }
         }
 

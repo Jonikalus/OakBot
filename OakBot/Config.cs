@@ -22,15 +22,24 @@ namespace OakBot
             }
         }
 
+        private static string streamerOAuthKey;
+        private static string botOAuthKey;
+        private static string streamerUsername;
+        private static string botUsername;
+        private static string channelName;
+        private static string server;
+        private static int port;
+        private static bool autoConnect;
+
         public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
         public static string StreamerOAuthKey {
             get
             {
-                return StreamerOAuthKey;
+                return streamerOAuthKey;
             }
             set
             {
-                StreamerOAuthKey = value;
+                streamerOAuthKey = value;
                 SaveConfigToDb();
             }
         }
@@ -38,11 +47,11 @@ namespace OakBot
         public static string BotOAuthKey {
             get
             {
-                return BotOAuthKey;
+                return botOAuthKey;
             }
             set
             {
-                BotOAuthKey = value;
+                botOAuthKey = value;
                 SaveConfigToDb();
             }
         }
@@ -50,11 +59,11 @@ namespace OakBot
         public static string StreamerUsername {
             get
             {
-                return StreamerUsername;
+                return streamerUsername;
             }
             set
             {
-                StreamerUsername = value;
+                streamerUsername = value;
                 SaveConfigToDb();
             }
         }
@@ -62,11 +71,11 @@ namespace OakBot
         public static string BotUsername {
             get
             {
-                return BotUsername;
+                return botUsername;
             }
             set
             {
-                BotUsername = value;
+                botUsername = value;
                 SaveConfigToDb();
             }
         }
@@ -74,11 +83,11 @@ namespace OakBot
         public static string ChannelName {
             get
             {
-                return ChannelName;
+                return channelName;
             }
             set
             {
-                ChannelName = value;
+                channelName = value;
                 SaveConfigToDb();
             }
         }
@@ -86,11 +95,11 @@ namespace OakBot
         public static string Server {
             get
             {
-                return Server;
+                return server;
             }
             set
             {
-                Server = value;
+                server = value;
                 SaveConfigToDb();
             }
         }
@@ -98,11 +107,11 @@ namespace OakBot
         public static int Port {
             get
             {
-                return Port;
+                return port;
             }
             set
             {
-                Port = value;
+                port = value;
                 SaveConfigToDb();
             }
         }
@@ -110,11 +119,11 @@ namespace OakBot
         public static bool AutoConnect {
             get
             {
-                return AutoConnect;
+                return autoConnect;
             }
             set
             {
-                AutoConnect = value;
+                autoConnect = value;
                 SaveConfigToDb();
             }
         }
@@ -135,28 +144,28 @@ namespace OakBot
                     switch ((string)reader["name"])
                     {
                         case "BotTwitchUsername":
-                            BotUsername = (string)reader["value"];
+                            botUsername = (string)reader["value"];
                             break;
                         case "StreamerTwitchUsername":
-                            StreamerUsername = (string)reader["value"];
+                            streamerUsername = (string)reader["value"];
                             break;
                         case "BotOAuthToken":
-                            BotOAuthKey = (string)reader["value"];
+                            botOAuthKey = (string)reader["value"];
                             break;
                         case "StreamerOAuthToken":
-                            StreamerOAuthKey = (string)reader["value"];
+                            streamerOAuthKey = (string)reader["value"];
                             break;
                         case "DefaultChannelName":
-                            ChannelName = (string)reader["value"];
+                            channelName = (string)reader["value"];
                             break;
                         case "DefaultServer":
-                            Server = (string)reader["value"];
+                            server = (string)reader["value"];
                             break;
                         case "Port":
-                            int.Parse((string)reader["value"]);
+                            port = int.Parse((string)reader["value"]);
                             break;
                         case "AutoConnect":
-                            bool.Parse((string)reader["value"]);
+                            autoConnect = bool.Parse((string)reader["value"]);
                             break;
                         default:
                             break;
