@@ -58,6 +58,7 @@ namespace OakBot
             // Set usernames
             textBoxStreamerName.Text = Config.StreamerUsername;
             textBoxBotName.Text = Config.BotUsername;
+            cbAutoConnectBot.IsChecked = Config.AutoConnect;
 
             // Set Channel Name
             tbChannelName.Text = Config.ChannelName;
@@ -80,30 +81,27 @@ namespace OakBot
             listViewViewers.ItemsSource = colViewers;
             lvViewerDatabase.ItemsSource = viewerDatabase;
 
-            
 
-            if (!(Config.BotOAuthKey == "please change" || Config.BotUsername == "please change" || Config.StreamerOAuthKey == "please change" || Config.StreamerUsername == "please change"))
-            {
-                LoadBot();
-            }
-            else
-            {
-                MessageBox.Show("Excuse me!\nSorry for interrupting the start, but to use this bot with all of it's functions, you have to connect a streamer and a bot account to it.");
-            }
 
-            // Delete IE Browser Stuff...
-            Utils.clearIECache();
-
+            //if (!(Config.BotOAuthKey == "please change" ||
+            //    Config.BotUsername == "please change" ||
+            //    Config.StreamerOAuthKey == "please change" ||
+            //    Config.StreamerUsername == "please change"))
+            //{
+            //    LoadBot();
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Excuse me!\nSorry for interrupting the start, but to use this bot with all of it's functions, you have to connect a streamer and a bot account to it.");
+            //}
         }
 
         public void LoadBot()
         {
             try
             {
-                streamerChat.Abort();
+                //streamerChat.Abort();
                 botChat.Abort();
-                //streamerWhisper.Abort();
-                //botWhisper.Abort();
             }
             catch (ThreadAbortException)
             {
@@ -115,24 +113,26 @@ namespace OakBot
             }
 
             // Twitch Credentials
-            accountStreamer = new TwitchCredentials(Config.StreamerUsername, Config.StreamerOAuthKey);
             accountBot = new TwitchCredentials(Config.BotUsername, Config.BotOAuthKey);
+            accountStreamer = new TwitchCredentials(Config.StreamerUsername, Config.StreamerOAuthKey);
+            
+            // TODO: Validate credentials before trying to login the chat
 
             // Start Bot connection and login
             botChatConnection = new TwitchChatConnection(accountBot);
-            botChatConnection.JoinChannel(tbChannelName.Text);
+            botChatConnection.JoinChannel(Config.ChannelName);
 
             // Start Streamer connection and login
             streamerChatConnection = new TwitchChatConnection(accountStreamer, false);
-            streamerChatConnection.JoinChannel(tbChannelName.Text);
+            streamerChatConnection.JoinChannel(Config.ChannelName);
 
             // Create threads for the chat connections
-            streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };
             botChat = new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true };
+            streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };
 
             // Start the chat connection threads
-            streamerChat.Start();
             botChat.Start();
+            streamerChat.Start();
 
         }
 
@@ -140,6 +140,7 @@ namespace OakBot
 
         private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
         {
+            Utils.clearIECache();
             Config.StreamerUsername = textBoxStreamerName.Text;
             WindowAuthBrowser tab = new WindowAuthBrowser(true);
             tab.Show();
@@ -147,9 +148,37 @@ namespace OakBot
 
         private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
         {
+            Utils.clearIECache();
             Config.BotUsername = textBoxBotName.Text;
             WindowAuthBrowser tab = new WindowAuthBrowser(false);
             tab.Show();
+        }
+
+        private void tbChannelName_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(tbChannelName.Text))
+            {
+                Config.ChannelName = tbChannelName.Text;
+                Config.SaveConfigToDb();
+            }
+        }
+
+        private void cbAutoConnectBot_Checked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectBot.IsChecked == true)
+            {
+                Config.AutoConnect = true;
+                Config.SaveConfigToDb();
+            }
+        }
+
+        private void cbAutoConnectBot_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectBot.IsChecked == false)
+            {
+                Config.AutoConnect = false;
+                Config.SaveConfigToDb();
+            }
         }
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
@@ -233,30 +262,39 @@ namespace OakBot
         {
             if (listViewChat.SelectedIndex != -1)
             {
-                // for testing purposes create TwitchUser here
+                // Get the selected TwitchChatMessage object
                 TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
-                TwitchUser messageAuthor = new TwitchUser(selectedMessage.author);
 
-                if (messageAuthor.username != "SYSTEM")
+                // Get viewer's TwitchUser object to attach to the new chat window
+                // This also prevents chat opening of "OakBot" system messages
+                // Creating new TwitchUser objects is handled by TwitchChatConnection on time
+                var isInDatabase = viewerDatabase.FirstOrDefault(x => x.username == selectedMessage.author);
+                if (isInDatabase != null)
                 {
-                    // Create new userChat window, add to collection and show
-                    // If it already exists try to bring it to the foreground
-                    var result = colChatWindows.Where(WindowUserChat => WindowUserChat.viewer.username == messageAuthor.username);
-                    if (result.Any() == false)
+                    // Check if the child chat window is open already
+                    var isChatOpen = colChatWindows.FirstOrDefault(x => x.viewer.username == isInDatabase.username);
+                    if (isChatOpen != null)
                     {
-                        WindowViewerChat userChat = new WindowViewerChat(this, messageAuthor);
-                        colChatWindows.Add(userChat);
-                        userChat.Show();
+                        isChatOpen.Activate();
                     }
                     else
                     {
-                        foreach (WindowViewerChat chat in result)
-                        {
-                            chat.Activate();
-                        }
+                        WindowViewerChat userChat = new WindowViewerChat(this, isInDatabase);
+                        colChatWindows.Add(userChat);
+                        userChat.Show();
                     }
                 }
             }
+        }
+
+        private void btnViewerAddPoints_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (TwitchUser viewer in colViewers)
+            {
+                viewer.points += 10;
+            }
+
+            // TODO: INotfiy event to update UI on changed values!!!
         }
 
         #endregion
@@ -286,6 +324,7 @@ namespace OakBot
             Config.ChannelName = tbChannelName.Text;
             Config.SaveConfigToDb();
         }
+
 
         #endregion
 

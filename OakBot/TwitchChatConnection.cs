@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace OakBot
@@ -53,6 +54,7 @@ namespace OakBot
             while (true)
             {
                 TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
+                Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
 
                 // Streamer account only reply on pings and set throttle
                 if (_isBot == false)
@@ -80,10 +82,6 @@ namespace OakBot
                                     ircClient.throttle = 1550;
                                 }
                             }
-                            break;
-
-                        default:
-                            Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
                             break;
                     }
                 }
@@ -114,96 +112,74 @@ namespace OakBot
                             }
                             break;
 
-                        //case "353": // Received list of joined names
-                        //    string[] names = chatMessage.message.Split(' ');
-                        //    foreach (string name in names)
-                        //    {
-                        //        var viewerExist = viewerDatabase.Where(
-                        //            TwitchUser => TwitchUser.username == chatMessage.author);
-                        //        if (viewerExist.Any()) // Viewer exists
-                        //        {
-                        //            foreach (TwitchUser viewer in viewerExist)
-                        //            {
-                        //                colViewers.Add(viewer);
-                        //            }
-                        //        }
-                        //        else // new viewer
-                        //        {
-                        //            TwitchUser newViewer = new TwitchUser(chatMessage.author);
-                        //            viewerDatabase.Add(newViewer);
-                        //            colViewers.Add(newViewer);
-                        //        }
-                        //    }
-                        //    break;
-
-                        case "JOIN": // Person joined channel
-                            var viewerJoin = MainWindow.colViewers.Where(TwitchUser =>
-                                TwitchUser.username == ircMessage.author);
-
-                            if (!viewerJoin.Any())
+                        // Received a list of joined viewers
+                        case "353":
+                            string[] viewers = ircMessage.message.Split(' ');
+                            foreach (string name in viewers)
                             {
-                                var viewerExists = MainWindow.viewerDatabase.Where(TwitchUser =>
-                                    TwitchUser.username == ircMessage.author);
-
-                                // If viewer exists add a refference to that
-                                // in the colViewers.
-                                if (viewerExists.Any())
+                                // First check if viewer is not already in the viewers list
+                                var isInViewList1 = MainWindow.colViewers.FirstOrDefault(x => x.username == name);
+                                if (isInViewList1 == null)
                                 {
-                                    foreach (TwitchUser viewer in viewerExists)
-                                    {
-                                        MainWindow.colViewers.Add(viewer);
+                                    // Check if viewer exists in database to refer to
+                                    var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.username == name);
+                                    if (isInDatabase != null)
+                                    { // is in database
+                                        MainWindow.colViewers.Add(isInDatabase);
+                                    }
+                                    else
+                                    { // is not in database
+                                        TwitchUser newViewer = new TwitchUser(name);
+                                        MainWindow.viewerDatabase.Add(newViewer);
+                                        MainWindow.colViewers.Add(newViewer);
                                     }
                                 }
-                                // If viewer does not exists create new Viewer
-                                // and add to that refference to colViewers.
+                            }
+                        break;
+
+                        // JOIN Event
+                        case "JOIN":
+                            // First check if JOINed viewer is not already in the viewers list
+                            var isInViewList2 = MainWindow.colViewers.FirstOrDefault(x => x.username == ircMessage.author);
+                            if(isInViewList2 == null)
+                            {
+                                // Check if viewer exists in database to refer to
+                                var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.username == ircMessage.author);
+                                if(isInDatabase != null)
+                                { // is in database
+                                    MainWindow.colViewers.Add(isInDatabase);
+                                }
                                 else
-                                {
+                                { // is not in database
                                     TwitchUser newViewer = new TwitchUser(ircMessage.author);
                                     MainWindow.viewerDatabase.Add(newViewer);
                                     MainWindow.colViewers.Add(newViewer);
                                 }
                             }
+                        break;
 
-                            break;
-
-                        case "PART": // Person left channel
-                            try
+                        // PART Event
+                        case "PART":
+                            // Check if PARTing viewer is in the viewers list
+                            var toRemove = MainWindow.colViewers.FirstOrDefault(x => x.username == ircMessage.author);
+                            if(toRemove != null)
                             {
-                                var viewerPart = MainWindow.colViewers.Where(TwitchUser =>
-                                TwitchUser.username == ircMessage.author);
-
-                                foreach (TwitchUser viewer in viewerPart)
-                                {
-                                    MainWindow.colViewers.Remove(viewer);
-                                }
-                                break;
-                            }
-                            catch (System.Exception ex)
-                            {
-                                break;
+                                MainWindow.colViewers.Remove(toRemove);
                             }
 
+                            // other method (itteration)
+                            //MainWindow.colViewers.Where(x => x.username == ircMessage.author).ToList().ForEach(
+                            //    e => MainWindow.colViewers.Remove(e));
+                        break;
+                        
+                        // PRIVMSG (Chat Message Received) Event
                         case "PRIVMSG":
                             MainWindow.colChatMessages.Add(ircMessage);
-                            break;
-
-                        case "WHISPER":
-                            MainWindow.colChatMessages.Add(ircMessage);
-                            break;
-
-                        default:
-                            Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
-                            break;
+                        break;
                     }
                 }
             }
         }
-
-        //internal void dispatchMessage(TwitchChatMessage message)
-        //{
-        //
-        //    _mW.Dispatcher.BeginInvoke(delegateMessage, message);
-        //}
 
         #endregion
 

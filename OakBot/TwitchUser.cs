@@ -7,7 +7,7 @@ namespace OakBot
         #region Fields
 
         private string _username;
-        private string _displayName;
+        //private string _displayName;
         //private string _avatarUri;
 
         #endregion
@@ -17,7 +17,15 @@ namespace OakBot
         public TwitchUser(string username)
         {
             _username = username;
-            _displayName = username; //TODO: get this from Twitch
+
+            points = 0;
+            raids = 0;
+            rank = "";
+
+            following = false;
+            subscriber = false;
+
+            watchedTimeSpan = new TimeSpan(0);
         }
 
         #endregion
@@ -45,7 +53,7 @@ namespace OakBot
         {
             get
             {
-                return _displayName;
+                return _username;
             }
         }
 
