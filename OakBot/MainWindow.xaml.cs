@@ -49,20 +49,9 @@ namespace OakBot
         {
             InitializeComponent();
 
-            // Create Config if not present
-            Config.CreateDatabaseIfNotExist();
-
             // Initialize config
             Config.GetConfigFromDb();
-
-
-            // Set usernames
-            textBoxStreamerName.Text = Config.StreamerUsername;
-            textBoxBotName.Text = Config.BotUsername;
-            cbAutoConnectBot.IsChecked = Config.AutoConnect;
-
-            // Set Channel Name
-            tbChannelName.Text = Config.ChannelName;
+            LoadConfigToUI();
 
             // Initiaze Collections and enable sync between threads
             colChatWindows = new ObservableCollection<WindowViewerChat>();
@@ -134,40 +123,81 @@ namespace OakBot
             // Start the chat connection threads
             botChat.Start();
             streamerChat.Start();
+        }
 
+        public void LoadConfigToUI()
+        {
+            textBoxBotName.Text = Config.BotUsername;
+            tbChannelName.Text = Config.ChannelName;
+            cbAutoConnectBot.IsChecked = Config.AutoConnectBot;
+            textBoxStreamerName.Text = Config.StreamerUsername;
+            cbAutoConnectBot.IsChecked = Config.AutoConnectStreamer;
+            cbAutoConnectStreamer.IsChecked = Config.AutoConnectStreamer;
         }
 
         #region Settings EventHandlers
 
-        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
+        #region BotConnect
+
+        private void textBoxBotName_LostFocus(object sender, RoutedEventArgs e)
         {
-            Utils.clearIECache();
-            Config.StreamerUsername = textBoxStreamerName.Text;
-            WindowAuthBrowser tab = new WindowAuthBrowser(true);
-            tab.Show();
+            if (string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            {
+                MessageBox.Show("Please enter the bot Twitch username.",
+                    "Bot Twitch Username", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                Config.BotUsername = textBoxBotName.Text.Trim().ToLower();
+            }
         }
 
         private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
         {
-            Utils.clearIECache();
-            Config.BotUsername = textBoxBotName.Text;
-            WindowAuthBrowser tab = new WindowAuthBrowser(false);
-            tab.Show();
+            if(textBoxBotName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            {
+                MessageBox.Show("Please enter the bot Twitch username first before trying to connect with Twitch.",
+                    "Bot Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                WindowAuthBrowser tab = new WindowAuthBrowser(false);
+                tab.Show();
+            }
         }
 
         private void tbChannelName_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(tbChannelName.Text))
+            if (string.IsNullOrWhiteSpace(tbChannelName.Text))
             {
-                Config.ChannelName = tbChannelName.Text;
+                MessageBox.Show("Please enter a channel which the bot (and streamer) account should enter.",
+                    "Joining Channel Name", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            else
+            {
+                Config.ChannelName = tbChannelName.Text.Trim().ToLower();
+            }
+        }
+
+        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO
+        }
+
+        private void comboBox_Copy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO
         }
 
         private void cbAutoConnectBot_Checked(object sender, RoutedEventArgs e)
         {
             if (cbAutoConnectBot.IsChecked == true)
             {
-                Config.AutoConnect = true;
+                Config.AutoConnectBot = true;
+            }
+            else
+            {
+                Config.AutoConnectBot = false;
             }
         }
 
@@ -175,19 +205,85 @@ namespace OakBot
         {
             if (cbAutoConnectBot.IsChecked == false)
             {
-                Config.AutoConnect = false;
+                Config.AutoConnectBot = false;
             }
-        }
-
-        private void btnImport_Click(object sender, RoutedEventArgs e)
-        {
-            WindowImportData windowImport = new WindowImportData(this);
-            windowImport.Show();
+            else
+            {
+                Config.AutoConnectBot = true;
+            }
         }
 
         private void btnBotConnect_Click(object sender, RoutedEventArgs e)
         {
             LoadBot();
+        }
+
+        #endregion
+
+        #region Streamer Connect
+
+        private void textBoxStreamerName_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
+            {
+                MessageBox.Show("Please enter the streamer Twitch username if you want to use the features that require a connected streamer account.",
+                    "Streamer Twitch Username", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                Config.StreamerUsername = textBoxStreamerName.Text.Trim().ToLower();
+            }
+        }
+
+        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBoxStreamerName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
+            {
+                MessageBox.Show("Please enter the streamer Twitch username first before trying to connect with Twitch if you want to use features that require a connected streamer account.",
+                    "Streamer Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                WindowAuthBrowser tab = new WindowAuthBrowser(true);
+                tab.Show();
+            }
+        }
+
+        private void cbAutoConnectStreamer_Checked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectStreamer.IsChecked == true)
+            {
+                Config.AutoConnectStreamer = true;
+            }
+            else
+            {
+                Config.AutoConnectStreamer = false;
+            }
+        }
+
+        private void cbAutoConnectStreamer_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectStreamer.IsChecked == false)
+            {
+                Config.AutoConnectStreamer = false;
+            }
+            else
+            {
+                Config.AutoConnectStreamer = true;
+            }
+        }
+
+        private void btnStreamerConnect_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO
+        }
+
+        #endregion
+
+        private void btnImport_Click(object sender, RoutedEventArgs e)
+        {
+            WindowImportData windowImport = new WindowImportData();
+            windowImport.Show();
         }
 
         #endregion
@@ -319,8 +415,7 @@ namespace OakBot
 
         private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Config.ChannelName = tbChannelName.Text;
-            Config.SaveConfigToDb();
+
         }
 
 

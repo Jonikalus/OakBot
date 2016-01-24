@@ -6,21 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Windows;
-using System.Windows.Media;
 using System.IO;
-using System.ComponentModel;
 
 namespace OakBot
 {
     class Config
     {
         // Twitch Application
-        public static string twitchClientID {
-            get
-            {
-                return "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
-            }
-        }
+        public static string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
 
         private static string streamerOAuthKey;
         private static string botOAuthKey;
@@ -29,10 +23,13 @@ namespace OakBot
         private static string channelName;
         private static string server;
         private static int port;
-        private static bool autoConnect;
+        private static bool autoConnectBot;
+        private static bool autoConnectStreamer;
 
-        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
-        public static string StreamerOAuthKey {
+        #region Properties
+
+        public static string StreamerOAuthKey
+        {
             get
             {
                 return streamerOAuthKey;
@@ -40,7 +37,7 @@ namespace OakBot
             set
             {
                 streamerOAuthKey = value;
-                SaveConfigToDb();
+                SaveConfigToDb("StreamerOAuthToken", value);
             }
         }
 
@@ -52,7 +49,7 @@ namespace OakBot
             set
             {
                 botOAuthKey = value;
-                SaveConfigToDb();
+                SaveConfigToDb("BotOAuthToken", value);
             }
         }
 
@@ -64,7 +61,7 @@ namespace OakBot
             set
             {
                 streamerUsername = value;
-                SaveConfigToDb();
+                SaveConfigToDb("StreamerTwitchUsername", value);
             }
         }
 
@@ -76,7 +73,7 @@ namespace OakBot
             set
             {
                 botUsername = value;
-                SaveConfigToDb();
+                SaveConfigToDb("BotTwitchUsername", value);
             }
         }
 
@@ -88,11 +85,11 @@ namespace OakBot
             set
             {
                 channelName = value;
-                SaveConfigToDb();
+                SaveConfigToDb("ChannelName", value);
             }
         }
 
-        public static string Server {
+        public static string ServerIP {
             get
             {
                 return server;
@@ -100,11 +97,11 @@ namespace OakBot
             set
             {
                 server = value;
-                SaveConfigToDb();
+                SaveConfigToDb("ServerIP", value);
             }
         }
 
-        public static int Port {
+        public static int ServerPort {
             get
             {
                 return port;
@@ -112,226 +109,169 @@ namespace OakBot
             set
             {
                 port = value;
-                SaveConfigToDb();
+                SaveConfigToDb("ServerPort", value.ToString());
             }
         }
 
-        public static bool AutoConnect {
+        public static bool AutoConnectBot
+        {
             get
             {
-                return autoConnect;
+                return autoConnectBot;
             }
             set
             {
-                autoConnect = value;
-                SaveConfigToDb();
+                autoConnectBot = value;
+                SaveConfigToDb("AutoConnectBot", value.ToString());
             }
         }
 
-        
+        public static bool AutoConnectStreamer
+        {
+            get
+            {
+                return autoConnectStreamer;
+            }
+            set
+            {
+                autoConnectStreamer = value;
+                SaveConfigToDb("AutoConnectStreamer", value.ToString());
+            }
+        }
+
+        #endregion
 
         public static void GetConfigFromDb()
         {
-            try
-            {
-                SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;");
-                conn.Open();
-                string sql = "SELECT * FROM oak_settings";
-                SQLiteCommand command = new SQLiteCommand(sql, conn);
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    switch ((string)reader["name"])
-                    {
-                        case "BotTwitchUsername":
-                            botUsername = (string)reader["value"];
-                            break;
-                        case "StreamerTwitchUsername":
-                            streamerUsername = (string)reader["value"];
-                            break;
-                        case "BotOAuthToken":
-                            botOAuthKey = (string)reader["value"];
-                            break;
-                        case "StreamerOAuthToken":
-                            streamerOAuthKey = (string)reader["value"];
-                            break;
-                        case "DefaultChannelName":
-                            channelName = (string)reader["value"];
-                            break;
-                        case "DefaultServer":
-                            server = (string)reader["value"];
-                            break;
-                        case "Port":
-                            port = int.Parse((string)reader["value"]);
-                            break;
-                        case "AutoConnect":
-                            autoConnect = bool.Parse((string)reader["value"]);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.ToString());
-            }
-        }
+            // Set filename
+            string filename = "OakBotDatabase.sqlite";
 
-        public static void CreateDatabaseIfNotExist()
-        {
-            if (!File.Exists("OakSettings.sqlite"))
+            // Create database file if not exists
+            if (!File.Exists(filename))
             {
                 try
                 {
-                    SQLiteConnection.CreateFile("OakSettings.sqlite");
-                    SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;Version=3");
-                    conn.Open();
-                    string creationSql = "CREATE TABLE IF NOT EXISTS `oak_settings` ( `name` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(name) )";
-                    string strOAuth = "INSERT INTO `oak_settings` VALUES ( 'StreamerOAuthToken', 'please change' )";
-                    string botOAuth = "INSERT INTO `oak_settings` VALUES ( 'BotOAuthToken', 'please change' )";
-                    string strUser = "INSERT INTO `oak_settings` VALUES ( 'StreamerTwitchUsername', 'please change' )";
-                    string botUser = "INSERT INTO `oak_settings` VALUES ( 'BotTwitchUsername', 'please change' )";
-                    string channelName = "INSERT INTO `oak_settings` VALUES ( 'DefaultChannelName', '' )";
-                    string server = "INSERT INTO `oak_settings` VALUES ( 'DefaultServer', 'tmi.twitch.tv' )";
-                    string port = "INSERT INTO `oak_settings` VALUES ( 'Port', '6667' )";
-                    string autoConnect = "INSERT INTO `oak_settings` VALUES ( 'AutoConnect', 'false' )";
-                    SQLiteCommand cmd = new SQLiteCommand(creationSql, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(strOAuth, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(botOAuth, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(strUser, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(botUser, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(channelName, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(server, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(port, conn);
-                    cmd.ExecuteNonQuery();
-                    cmd = new SQLiteCommand(autoConnect, conn);
-                    cmd.ExecuteNonQuery();
-                    conn.Close();
+                    // Create database file
+                    SQLiteConnection.CreateFile(filename);
+
+                    // Start connection to the database file
+                    SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0};Version=3", filename));
+                    dbConnection.Open();
+
+                    // Create the settings table
+                    SQLiteCommand sqlCmd = new SQLiteCommand(
+                        "CREATE TABLE `Settings` (`name` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(name))", dbConnection);
+                    sqlCmd.ExecuteNonQuery();
+
+                    // Insert default values
+                    sqlCmd = new SQLiteCommand(
+                        "INSERT INTO `Settings` (`name`, `value`) VALUES " +
+                        "('BotTwitchUsername', 'notSet'), " +
+                        "('BotOAuthToken', 'notSet'), " +
+                        "('ChannelName', 'notSet'), " +
+                        "('ServerIP', 'tmi.twitch.tv'), " +
+                        "('ServerPort', '6667'), " +
+                        "('AutoConnectBot', 'false'), " +
+                        "('StreamerTwitchUsername', 'notSet'), " +
+                        "('StreamerOAuthToken', 'notSet'), " +
+                        "('AutoConnectStreamer', 'false') ", dbConnection);
+                    sqlCmd.ExecuteNonQuery();
+
+                    // Close database file
+                    dbConnection.Close();
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString());
                 }
             }
-            
-        }
 
-        public static void SaveConfigToDb()
-        {
-            SQLiteConnection conn = new SQLiteConnection("Data Source=OakSettings.sqlite;Version=3;");
-            conn.Open();
-            //string sql = string.Format("UPDATE oak_settings SET StreamerOAuthToken = '{0}', BotOAuthToken = '{1}', StreamerTwitchUsername = '{2}', BotTwitchUsername = '{3}'", StreamerOAuthKey, BotOAuthKey, StreamerUsername, BotUsername);
-            string sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", BotUsername, "BotTwitchUsername");
-            SQLiteCommand command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", StreamerUsername, "StreamerTwitchUsername");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", BotOAuthKey, "BotOAuthToken");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", StreamerOAuthKey, "StreamerOAuthToken");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", ChannelName, "DefaultChannelName");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", Server, "DefaultServer");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", Port, "Port");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            sql = string.Format("UPDATE oak_settings SET value = '{0}' WHERE name = '{1}'", AutoConnect, "AutoConnect");
-            command = new SQLiteCommand(sql, conn);
-            command.ExecuteNonQuery();
-            conn.Close();
-        }
-
-        public static bool ImportFromAnkhbot(MainWindow _mW)
-        {
-            // Create OpenFileDialog and set default file extention and filters
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".sqlite";
-            dlg.Filter = "AnkhBot CurrencyDB|CurrencyDB.sqlite";
-            dlg.InitialDirectory = @"%appdata%\AnkhHeart\AnkhBotR2\Twitch\Databases";
-
-            // Show file dialog
-            Nullable<bool> result = dlg.ShowDialog();
-
-            if (result == true)
+            // Read setting values from Database
+            try
             {
-                int counter = 0;
-                string connString = string.Format("DataSource={0}; Version=3; Read Only=True;", dlg.FileName);
+                // Start connection to the database file
+                SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0};", filename));
+                dbConnection.Open();
 
-                try
+                // Get all data from 'Settings' table
+                SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM `Settings`", dbConnection);
+                SQLiteDataReader sqlReader = sqlCmd.ExecuteReader();
+                while (sqlReader.Read())
                 {
-                    SQLiteConnection dbConnection = new SQLiteConnection(connString);
-                    dbConnection.Open();
-
-                    SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
-                    SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
-                    while (dataReader.Read())
+                    switch ((string)sqlReader["name"])
                     {
-                        TwitchUser viewer = new TwitchUser((string)dataReader["Name"]);
+                        case "BotTwitchUsername":
+                            botUsername = (string)sqlReader["value"];
+                            break;
 
-                        viewer.rank = (string)dataReader["Rank"];
-                        viewer.points = (long)dataReader["Points"];
-                        viewer.raids = (long)dataReader["Raids"];
-                        viewer.dateLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
+                        case "BotOAuthToken":
+                            botOAuthKey = (string)sqlReader["value"];
+                            break;
 
-                        // AnkhBot's time format d.HH:MM:SS where d is not present if < 1 day
-                        string ankhbotHours = (string)dataReader["Hours"];
-                        TimeSpan watchedHours = new TimeSpan();
-                        if (ankhbotHours.Contains("."))
-                        {
-                            TimeSpan.TryParseExact(ankhbotHours, @"d\.hh\:mm\:ss", null, out watchedHours);
-                        }
-                        else
-                        {
-                            TimeSpan.TryParseExact(ankhbotHours, @"hh\:mm\:ss", null, out watchedHours);
-                        }
-                        viewer.watchedTimeSpan = watchedHours;
+                        case "ChannelName":
+                            channelName = (string)sqlReader["value"];
+                            break;
 
-                        MainWindow.viewerDatabase.Add(viewer);
-                        counter++;
+                        case "ServerIP":
+                            server = (string)sqlReader["value"];
+                            break;
+
+                        case "ServerPort":
+                            port = int.Parse((string)sqlReader["value"]);
+                            break;
+
+                        case "AutoConnectBot":
+                            autoConnectBot = bool.Parse((string)sqlReader["value"]);
+                            break;
+
+                        case "StreamerTwitchUsername":
+                            streamerUsername = (string)sqlReader["value"];
+                            break;
+
+                        case "StreamerOAuthToken":
+                            streamerOAuthKey = (string)sqlReader["value"];
+                            break;
+
+                        case "AutoConnectStreamer":
+                            autoConnectStreamer = bool.Parse((string)sqlReader["value"]);
+                            break;
+
+                        default:
+                            break;
                     }
-
-                    dbConnection.Close();
                 }
-                catch (SQLiteException ex)
-                {
-                    MessageBox.Show(string.Format("Could not open or read the selected sqlite database file.\n\n{0}", ex.ToString()),
-                        "AnkhBot User Data Import", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(string.Format("The following program error has occured:\n\n{0}", ex.ToString()),
-                        "AnkhBot User Data Import", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    return false;
-                }
-
-                // Succesfull import
-                MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.", counter),
-                    "AnkhBot Import", MessageBoxButton.OK, MessageBoxImage.Information);
-                return true;
+                dbConnection.Close();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
 
-            // User canceled the file selection
-            return false;
+        public static void SaveConfigToDb(string settingName, string settingsValue)
+        {
+            try
+            {
+                // Set filename
+                string filename = "OakBotDatabase.sqlite";
 
+                // Start connection to the database file
+                SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0};Version=3", filename));
+                dbConnection.Open();
+
+                // Update `Settings` per value
+                SQLiteCommand sqlCmd = new SQLiteCommand(
+                    string.Format("UPDATE `Settings` SET `value` = '{0}' WHERE `name` = '{1}'", settingsValue, settingName), dbConnection);
+                sqlCmd.ExecuteNonQuery();
+
+                // Close database file
+                dbConnection.Close();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }

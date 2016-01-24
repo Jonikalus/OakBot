@@ -16,17 +16,15 @@ namespace OakBot
     /// </summary>
     public partial class WindowImportData : Window
     {
-        private MainWindow _mW;
 
-        public WindowImportData(MainWindow mW)
+        public WindowImportData()
         {
-            _mW = mW;
             InitializeComponent();
         }
 
         private void btnImportAnkh_Click(object sender, RoutedEventArgs e)
         {
-            if (Config.ImportFromAnkhbot(_mW))
+            if (Utils.ImportFromAnkhbot())
             {
                 this.Close();
             }            

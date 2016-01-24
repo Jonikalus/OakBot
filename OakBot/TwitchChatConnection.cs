@@ -63,7 +63,7 @@ namespace OakBot
                     {
                         case "PING": // Received PING
                             ircClient.WriteLine("PONG");
-                            break;
+                        break;
 
                         case "MODE": // Received MODE
                             if (ircMessage.args[1] == "+o")
@@ -82,7 +82,7 @@ namespace OakBot
                                     ircClient.throttle = 1550;
                                 }
                             }
-                            break;
+                        break;
                     }
                 }
                 else

@@ -117,6 +117,9 @@ namespace OakBot
         public string msgPart { get; set; }
         public string comment { get; set; }
 
+        // DJ TAG to request more songs that others
+        // Requested by KiroKnightbow
+        //public bool musicDJ { get; set; }
 
     }
 }
