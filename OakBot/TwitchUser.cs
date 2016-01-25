@@ -1,14 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace OakBot
 {
-    public class TwitchUser
+    public class TwitchUser : INotifyPropertyChanged
     {
         #region Fields
 
-        private string _username;
-        //private string _displayName;
-        //private string _avatarUri;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -17,10 +16,11 @@ namespace OakBot
         public TwitchUser(string username)
         {
             _username = username;
+            _displayName = username;
 
-            points = 0;
-            raids = 0;
-            rank = "";
+            _points = 0;
+            _raids = 0;
+            _rank = "";
 
             following = false;
             subscriber = false;
@@ -32,6 +32,14 @@ namespace OakBot
 
         #region Methods
 
+        private void NotifyPropertyChanged(string info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
         public override string ToString()
         {
             return username;
@@ -41,6 +49,7 @@ namespace OakBot
 
         #region Properties
 
+        private string _username;
         public string username
         {
             get
@@ -49,28 +58,99 @@ namespace OakBot
             }
         }
 
+        private string _displayName;
         public string displayName
         {
             get
             {
-                return _username;
+                return _displayName;
             }
         }
 
-        #endregion
+        private bool _following;
+        public bool following
+        {
+            get
+            {
+                return _following;
+            }
+            set
+            {
+                if (value != _following)
+                {
+                    _following = value;
+                    NotifyPropertyChanged("following");
+                }
+            }
+        }
 
-        // displayName, avatarUri, isSub and isFollowing
-        // Should be fetched from Twitch
-        // isSub and isFollowing can also be set by the bot on event
+        private bool _subscriber;
+        public bool subscriber
+        {
+            get
+            {
+                return _subscriber;
+            }
+            set
+            {
+                if(value != _subscriber)
+                {
+                    _subscriber = value;
+                    NotifyPropertyChanged("subscriber");
+                }
+            }
+        }
 
-        // Channel
-        public bool following { get; set; }     // Bool SQL
-        public bool subscriber { get; set; }    // Bool SQL
+        private long _points;       // BigInt SQL
+        public long points
+        {
+            get
+            {
+                return _points;
+            }
+            set
+            {
+                if (value != _points)
+                {
+                    _points = value;
+                    NotifyPropertyChanged("points");
+                }
+            }
+        }
 
-        // Points, raids, Hours and Rankname
-        public long points { get; set; }        // BigInt SQL
-        public long raids { get; set; }         // BigInt SQL
-        public string rank { get; set; }        // Text SQL
+        private long _raids;        // BigInt SQL
+        public long raids
+        {
+            get
+            {
+                return _raids;
+            }
+            set
+            {
+                if (value != _raids)
+                {
+                    _raids = value;
+                    NotifyPropertyChanged("raids");
+                }
+            }
+        }
+        
+        private string _rank;
+        public string rank
+        {
+            get
+            {
+                return _rank;
+            }
+            set
+            {
+                if (value != _rank)
+                {
+                    _rank = value;
+                    NotifyPropertyChanged("rank");
+                }
+            }
+        }
 
         // Watched timespan
         public TimeSpan watchedTimeSpan { get; set; }
@@ -121,5 +201,6 @@ namespace OakBot
         // Requested by KiroKnightbow
         //public bool musicDJ { get; set; }
 
+        #endregion
     }
 }

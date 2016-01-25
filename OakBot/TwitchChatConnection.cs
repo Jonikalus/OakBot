@@ -54,39 +54,11 @@ namespace OakBot
             while (true)
             {
                 TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
-                Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
 
-                // Streamer account only reply on pings and set throttle
-                if (_isBot == false)
+                // Bot account is the main chat account
+                if (_isBot)
                 {
-                    switch (ircMessage.command)
-                    {
-                        case "PING": // Received PING
-                            ircClient.WriteLine("PONG");
-                        break;
-
-                        case "MODE": // Received MODE
-                            if (ircMessage.args[1] == "+o")
-                            {
-                                // Set throttle for current user as operator
-                                if (ircMessage.args[2] == _connectedUser.username)
-                                {
-                                    ircClient.throttle = 350;
-                                }
-                            }
-                            else if (ircMessage.args[1] == "-o")
-                            {
-                                // Set throttle for current user as member
-                                if (ircMessage.args[2] == _connectedUser.username)
-                                {
-                                    ircClient.throttle = 1550;
-                                }
-                            }
-                        break;
-                    }
-                }
-                else
-                {
+                    Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
                     switch (ircMessage.command)
                     {
                         case "PING": // Received PING
@@ -115,67 +87,57 @@ namespace OakBot
                         // Received a list of joined viewers
                         case "353":
                             string[] viewers = ircMessage.message.Split(' ');
-                            foreach (string name in viewers)
+                            foreach (string username in viewers)
                             {
-                                // First check if viewer is not already in the viewers list
-                                var isInViewList1 = MainWindow.colViewers.FirstOrDefault(x => x.username == name);
-                                if (isInViewList1 == null)
-                                {
-                                    // Check if viewer exists in database to refer to
-                                    var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.username == name);
-                                    if (isInDatabase != null)
-                                    { // is in database
-                                        MainWindow.colViewers.Add(isInDatabase);
-                                    }
-                                    else
-                                    { // is not in database
-                                        TwitchUser newViewer = new TwitchUser(name);
-                                        MainWindow.viewerDatabase.Add(newViewer);
-                                        MainWindow.colViewers.Add(newViewer);
-                                    }
-                                }
+                                Utils.AddToViewersCol(username);
                             }
                         break;
 
                         // JOIN Event
                         case "JOIN":
-                            // First check if JOINed viewer is not already in the viewers list
-                            var isInViewList2 = MainWindow.colViewers.FirstOrDefault(x => x.username == ircMessage.author);
-                            if(isInViewList2 == null)
-                            {
-                                // Check if viewer exists in database to refer to
-                                var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.username == ircMessage.author);
-                                if(isInDatabase != null)
-                                { // is in database
-                                    MainWindow.colViewers.Add(isInDatabase);
-                                }
-                                else
-                                { // is not in database
-                                    TwitchUser newViewer = new TwitchUser(ircMessage.author);
-                                    MainWindow.viewerDatabase.Add(newViewer);
-                                    MainWindow.colViewers.Add(newViewer);
-                                }
-                            }
+                            Utils.AddToViewersCol(ircMessage.author);
                         break;
 
                         // PART Event
                         case "PART":
-                            // Check if PARTing viewer is in the viewers list
-                            var toRemove = MainWindow.colViewers.FirstOrDefault(x => x.username == ircMessage.author);
-                            if(toRemove != null)
-                            {
-                                MainWindow.colViewers.Remove(toRemove);
-                            }
-
-                            // other method (itteration)
-                            //MainWindow.colViewers.Where(x => x.username == ircMessage.author).ToList().ForEach(
-                            //    e => MainWindow.colViewers.Remove(e));
+                            Utils.RemoveFromViewersCol(ircMessage.author);
                         break;
                         
                         // PRIVMSG (Chat Message Received) Event
                         case "PRIVMSG":
+                            // Seeing that JOIN Message is not that fast ...
+                            Utils.AddToViewersCol(ircMessage.author);
                             MainWindow.colChatMessages.Add(ircMessage);
                         break;
+                    }
+                }
+                else
+                {
+                    Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
+                    switch (ircMessage.command)
+                    {
+                        case "PING": // Received PING
+                            ircClient.WriteLine("PONG");
+                            break;
+
+                        case "MODE": // Received MODE
+                            if (ircMessage.args[1] == "+o")
+                            {
+                                // Set throttle for current user as operator
+                                if (ircMessage.args[2] == _connectedUser.username)
+                                {
+                                    ircClient.throttle = 350;
+                                }
+                            }
+                            else if (ircMessage.args[1] == "-o")
+                            {
+                                // Set throttle for current user as member
+                                if (ircMessage.args[2] == _connectedUser.username)
+                                {
+                                    ircClient.throttle = 1550;
+                                }
+                            }
+                            break;
                     }
                 }
             }

@@ -75,7 +75,7 @@ namespace OakBot
             bool success = InternetSetOption(IntPtr.Zero, 81/*INTERNET_OPTION_SUPPRESS_BEHAVIOR*/, new IntPtr(optionPtr), sizeof(int));
             if (!success)
             {
-                System.Windows.MessageBox.Show("Something went wrong !>?");
+                MessageBox.Show("Something went wrong !>?");
             }
         }
 
@@ -92,6 +92,54 @@ namespace OakBot
             objComWebBrowser.GetType().InvokeMember("Silent", BindingFlags.SetProperty, null, objComWebBrowser, new object[] { hide });
         }
 
+        /// <summary>
+        /// Add the viewer as TwitchUser to the viewers collection.
+        /// Creates a new TwitchUser and adds it to the database if needed.
+        /// </summary>
+        /// <param name="viewerName">Viewers Twitch username to add</param>
+        public static void AddToViewersCol(string viewerName)
+        {
+            // First check if viewer is not already in the viewers list
+            var isInViewList = MainWindow.colViewers.FirstOrDefault(x => x.username == viewerName);
+            if (isInViewList == null)
+            {
+                // Check if viewer exists in database to refer to
+                var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.username == viewerName);
+                if (isInDatabase != null)
+                { // is in database
+                    MainWindow.colViewers.Add(isInDatabase);
+                }
+                else
+                { // is not in database
+                    TwitchUser newViewer = new TwitchUser(viewerName);
+                    MainWindow.viewerDatabase.Add(newViewer);
+                    MainWindow.colViewers.Add(newViewer);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes the viewer from the viewers collection.
+        /// </summary>
+        /// <param name="viewerName">Viewers Twitch username to remove</param>
+        public static void RemoveFromViewersCol(string viewerName)
+        {
+            // Check if PARTing viewer is in the viewers list
+            var toRemove = MainWindow.colViewers.FirstOrDefault(x => x.username == viewerName);
+            if (toRemove != null)
+            {
+                MainWindow.colViewers.Remove(toRemove);
+            }
+
+            // other method (itteration)
+            //MainWindow.colViewers.Where(x => x.username == ircMessage.author).ToList().ForEach(
+            //    e => MainWindow.colViewers.Remove(e));
+        }
+
+        /// <summary>
+        /// Import the currency database file created by Ankhbot.
+        /// </summary>
+        /// <returns></returns>
         public static bool ImportFromAnkhbot()
         {
             // Create OpenFileDialog and set default file extention and filters

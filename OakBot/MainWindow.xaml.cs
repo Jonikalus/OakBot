@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace OakBot
 {
@@ -32,13 +33,14 @@ namespace OakBot
         public TwitchChatConnection botChatConnection;
         public TwitchChatConnection streamerChatConnection;
 
-        // Collections and 
+        // Collections
         public static ObservableCollection<TwitchChatMessage> colChatMessages;
         private object _lockChat = new object();
         public static ObservableCollection<TwitchUser> colViewers;
         private object _lockViewers = new object();
         public static ObservableCollection<TwitchUser> viewerDatabase;
         private object _lockDatabase = new object();
+        private ICollectionView databaseView;
         public static ObservableCollection<WindowViewerChat> colChatWindows;
 
         // Threads
@@ -69,21 +71,11 @@ namespace OakBot
             // Link listViews with collections
             listViewChat.ItemsSource = colChatMessages;
             listViewViewers.ItemsSource = colViewers;
+
+            // Database listView with filter
             lvViewerDatabase.ItemsSource = viewerDatabase;
-
-
-
-            //if (!(Config.BotOAuthKey == "please change" ||
-            //    Config.BotUsername == "please change" ||
-            //    Config.StreamerOAuthKey == "please change" ||
-            //    Config.StreamerUsername == "please change"))
-            //{
-            //    LoadBot();
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Excuse me!\nSorry for interrupting the start, but to use this bot with all of it's functions, you have to connect a streamer and a bot account to it.");
-            //}
+            databaseView = CollectionViewSource.GetDefaultView(lvViewerDatabase.ItemsSource);
+            databaseView.Filter = DatabaseFilter;
         }
 
         public void LoadBot()
@@ -389,6 +381,24 @@ namespace OakBot
             }
 
             // TODO: INotfiy event to update UI on changed values!!!
+        }
+
+        #endregion
+
+        #region Database
+
+        private void tbFilterOnName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(databaseView != null)
+            {
+                databaseView.Refresh();
+            }
+        }
+
+        private bool DatabaseFilter(object item)
+        {
+            TwitchUser viewer = item as TwitchUser;
+            return viewer.username.Contains(tbFilterOnName.Text);
         }
 
         #endregion

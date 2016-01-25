@@ -111,7 +111,8 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="260" Foreground="LightGray"/>
+                    <TextBox x:Name="tbFilterOnName" HorizontalAlignment="Left" Height="23" Margin="102,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" TextChanged="tbFilterOnName_TextChanged"/>
+                    <Label x:Name="lblFilterOnName" Content="Search Viewer:" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>
