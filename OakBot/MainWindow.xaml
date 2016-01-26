@@ -26,7 +26,7 @@
                             <CheckBox x:Name="cbAutoConnectStreamer" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,18,0,0" VerticalAlignment="Top" Checked="cbAutoConnectStreamer_Checked" Unchecked="cbAutoConnectStreamer_Unchecked"/>
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="741,351,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click"/>
+                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="715,329,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click"/>
                     <GroupBox x:Name="GroupTwitchBotLogin" Header="BOT LOGIN" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="109" Width="806" BorderBrush="Black">
                         <Grid Margin="0">
                             <Label x:Name="lblBotAccount" Content="Bot Name" HorizontalAlignment="Left" Margin="10,0,0,48" VerticalAlignment="Bottom" FontSize="18.667"/>
@@ -113,6 +113,11 @@
                     </ListView>
                     <TextBox x:Name="tbFilterOnName" HorizontalAlignment="Left" Height="23" Margin="102,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" TextChanged="tbFilterOnName_TextChanged"/>
                     <Label x:Name="lblFilterOnName" Content="Search Viewer:" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Twitch Chat Test">
+                <Grid Background="#FF363636" Margin="0">
+                    <TextBlock x:Name="tbkChat" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="361" Width="806" Background="White"/>
                 </Grid>
             </TabItem>
         </TabControl>

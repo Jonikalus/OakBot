@@ -25,18 +25,18 @@ namespace OakBot
 
         public WindowViewerChat(MainWindow mW, TwitchUser viewer)
         {
+            // Set fields
             _mW = mW;
             _viewer = viewer;
 
+            // Init Window and set datacontext to this
+            // for databinding to the attached TwitchUser
             InitializeComponent();
+            DataContext = this;
+
+            // Init TwitchChatMessage collection and enable sync between threads
             colViewerMessages = new ObservableCollection<TwitchChatMessage>();
-
-            // Thread synchronization
             BindingOperations.EnableCollectionSynchronization(colViewerMessages, _lock);
-
-            // Set information
-            this.Title = "Chat: " + _viewer.displayName;
-            this.lblDisplayName.Content = _viewer.displayName;
 
             // Rather than copying all messages just collect the selected viewers
             // messages to save system resources in case of huge global chat history.

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OakBot"
         mc:Ignorable="d"
-        Title="Chat: &lt;displayName&gt;" Height="350" Width="585" MinWidth="585" MaxWidth="585" MinHeight="200" Closing="windowViewerChat_Closing">
-    <Grid Margin="0,0,2,0">
+        Title="{Binding viewer.displayName, StringFormat='OakBot Viewer: {0}'}" Height="350" Width="585" MinWidth="585" MaxWidth="585" MinHeight="200" Closing="windowViewerChat_Closing">
+    <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="100"/>
@@ -19,8 +19,11 @@
         <Button x:Name="btnUnban" Content="Unban" Margin="330,10,0,10" HorizontalAlignment="Left" Width="75" Click="btnUnban_Click"/>
         <Button x:Name="btnTwitchProfile" Content="Profile" Margin="410,10,0,10" HorizontalAlignment="Left" Width="75" Click="btnTwitchProfile_Click"/>
         <Button x:Name="btnTwitchCompose" Content="Compose" Margin="490,10,0,10" HorizontalAlignment="Left" Width="75" Click="btnTwitchCompose_Click"/>
+        
         <Image x:Name="image" HorizontalAlignment="Left" Height="80" Margin="10,10,0,0" VerticalAlignment="Top" Width="80" Grid.Row="1"/>
-        <Label x:Name="lblDisplayName" Content="User's Display Name" HorizontalAlignment="Left" Margin="95,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="470" Height="46" FontSize="21.333" FontWeight="Bold"/>
+        <Label x:Name="lblDisplayName" Content="{Binding viewer.displayName}" HorizontalAlignment="Left" Margin="95,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="470" Height="46" FontSize="21.333" FontWeight="Bold"/>
+        <Label x:Name="lblPoints" Content="{Binding viewer.points}" ContentStringFormat="Points: {0}" HorizontalAlignment="Left" Margin="95,64,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <!-- <TextBox Text="{Binding viewer.points, StringFormat="Points: {0}" /> -->
         <ListView x:Name="listViewChat" Margin="10" Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -30,6 +33,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
 
     </Grid>
 </Window>

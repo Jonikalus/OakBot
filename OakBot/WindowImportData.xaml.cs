@@ -32,24 +32,24 @@ namespace OakBot
 
         private void btnImportDeep_Click(object sender, RoutedEventArgs e)
         {
-            if(tbDeepbotSecret.Text != "Deepbot API Secret")
+            if(tbDeepSecret.Text != "Deepbot API Secret")
             {
                 // TODO connect to deepbot websocket
             }
         }
 
-        private void tbDeepbotSecret_GotFocus(object sender, RoutedEventArgs e)
+        private void tbDeepSecret_GotFocus(object sender, RoutedEventArgs e)
         {
-            tbDeepbotSecret.Clear();
-            tbDeepbotSecret.Foreground = Brushes.Black;
+            tbDeepSecret.Clear();
+            tbDeepSecret.Foreground = Brushes.Black;
         }
 
-        private void tbDeepbotSecret_LostFocus(object sender, RoutedEventArgs e)
+        private void tbDeepSecret_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrWhiteSpace(tbDeepbotSecret.Text))
+            if (String.IsNullOrWhiteSpace(tbDeepSecret.Text))
             {
-                tbDeepbotSecret.Foreground = Brushes.LightGray;
-                tbDeepbotSecret.Text = "Deepbot API Secret";
+                tbDeepSecret.Foreground = Brushes.LightGray;
+                tbDeepSecret.Text = "Deepbot API Secret";
             }
         }
     }

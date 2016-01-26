@@ -275,7 +275,7 @@ namespace OakBot
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
             WindowImportData windowImport = new WindowImportData();
-            windowImport.Show();
+            windowImport.ShowDialog();
         }
 
         #endregion
@@ -411,14 +411,23 @@ namespace OakBot
             {
                 foreach (TwitchChatMessage addedMessage in e.NewItems)
                 {
-                    var result = colChatWindows.Where(WindowUserChat => WindowUserChat.viewer.username == addedMessage.author);
-                    if (result.Any())
+                    // Method 1
+                    var chatWindow = colChatWindows.FirstOrDefault(x => x.viewer.username == addedMessage.author);
+                    if (chatWindow != null)
                     {
-                        foreach (WindowViewerChat window in result)
-                        {
-                            window.AddViewerMessage(addedMessage);
-                        }
+                        chatWindow.AddViewerMessage(addedMessage);
                     }
+
+                    // Method 2
+                    //var openWindow = colChatWindows.Where(x => x.viewer.username == addedMessage.author);
+                    //foreach (WindowViewerChat window in openWindow)
+                    //{
+                    //    window.AddViewerMessage(addedMessage);
+                    //}
+
+                    // Method 3
+                    //colChatWindows.Where(x => x.viewer.username == addedMessage.author).ToList().ForEach(
+                    //    y => y.AddViewerMessage(addedMessage));
                 }
             }
         }
