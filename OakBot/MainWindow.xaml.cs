@@ -36,9 +36,9 @@ namespace OakBot
         // Collections
         public static ObservableCollection<TwitchChatMessage> colChatMessages;
         private object _lockChat = new object();
-        public static ObservableCollection<TwitchUser> colViewers;
+        public static ObservableCollection<TwitchViewer> colViewers;
         private object _lockViewers = new object();
-        public static ObservableCollection<TwitchUser> viewerDatabase;
+        public static ObservableCollection<TwitchViewer> viewerDatabase;
         private object _lockDatabase = new object();
         private ICollectionView databaseView;
         public static ObservableCollection<WindowViewerChat> colChatWindows;
@@ -62,10 +62,10 @@ namespace OakBot
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
             colChatMessages.CollectionChanged += colChatMessages_Changed;
 
-            colViewers = new ObservableCollection<TwitchUser>();
+            colViewers = new ObservableCollection<TwitchViewer>();
             BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
 
-            viewerDatabase = new ObservableCollection<TwitchUser>();
+            viewerDatabase = new ObservableCollection<TwitchViewer>();
             BindingOperations.EnableCollectionSynchronization(viewerDatabase, _lockDatabase);
 
             // Link listViews with collections
@@ -351,9 +351,9 @@ namespace OakBot
                 // Get the selected TwitchChatMessage object
                 TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
 
-                // Get viewer's TwitchUser object to attach to the new chat window
+                // Get viewer's TwitchViewer object to attach to the new chat window
                 // This also prevents chat opening of "OakBot" system messages
-                // Creating new TwitchUser objects is handled by TwitchChatConnection on time
+                // Creating new TwitchViewer objects is handled by TwitchChatConnection on time
                 var isInDatabase = viewerDatabase.FirstOrDefault(x => x.username == selectedMessage.author);
                 if (isInDatabase != null)
                 {
@@ -375,7 +375,7 @@ namespace OakBot
 
         private void btnViewerAddPoints_Click(object sender, RoutedEventArgs e)
         {
-            foreach (TwitchUser viewer in colViewers)
+            foreach (TwitchViewer viewer in colViewers)
             {
                 viewer.points += 10;
             }
@@ -397,7 +397,7 @@ namespace OakBot
 
         private bool DatabaseFilter(object item)
         {
-            TwitchUser viewer = item as TwitchUser;
+            TwitchViewer viewer = item as TwitchViewer;
             return viewer.username.Contains(tbFilterOnName.Text);
         }
 
