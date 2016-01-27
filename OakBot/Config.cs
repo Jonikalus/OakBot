@@ -119,7 +119,7 @@ namespace OakBot
                 MessageBox.Show(ex.ToString());
             }
         }
-        public static void SaveConfigToDb(string settingName, string settingsValue)
+        public static void SaveSettingPropertyToDB(string settingName, string settingsValue)
         {
             try
             {
@@ -146,7 +146,13 @@ namespace OakBot
         }
 
         // Twitch Application
-        public static string twitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+        public static string TwitchClientID
+        {
+            get
+            {
+                return "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+            }
+        }
         public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
 
         // Settings fields and properties
@@ -162,7 +168,7 @@ namespace OakBot
                 if (value != streamerOAuthKey)
                 {
                     streamerOAuthKey = value;
-                    SaveConfigToDb("StreamerOAuthToken", value);
+                    SaveSettingPropertyToDB("StreamerOAuthToken", value);
                 }
             }
         }
@@ -178,7 +184,7 @@ namespace OakBot
                 if (value != botOAuthKey)
                 {
                     botOAuthKey = value;
-                    SaveConfigToDb("BotOAuthToken", value);
+                    SaveSettingPropertyToDB("BotOAuthToken", value);
                 }
             }
         }
@@ -194,7 +200,7 @@ namespace OakBot
                 if (value != streamerUsername)
                 {
                     streamerUsername = value;
-                    SaveConfigToDb("StreamerTwitchUsername", value);
+                    SaveSettingPropertyToDB("StreamerTwitchUsername", value);
                 }
             }
         }
@@ -210,7 +216,7 @@ namespace OakBot
                 if (value != botUsername)
                 {
                     botUsername = value;
-                    SaveConfigToDb("BotTwitchUsername", value);
+                    SaveSettingPropertyToDB("BotTwitchUsername", value);
                 }
             }
         }
@@ -226,7 +232,7 @@ namespace OakBot
                 if (value != channelName)
                 {
                     channelName = value;
-                    SaveConfigToDb("ChannelName", value);
+                    SaveSettingPropertyToDB("ChannelName", value);
                 }
             }
         }
@@ -242,7 +248,7 @@ namespace OakBot
                 if (value != serverIP)
                 {
                     serverIP = value;
-                    SaveConfigToDb("ServerIP", value);
+                    SaveSettingPropertyToDB("ServerIP", value);
                 }
             }
         }
@@ -258,7 +264,7 @@ namespace OakBot
                 if (value != serverPort)
                 {
                     serverPort = value;
-                    SaveConfigToDb("ServerPort", value.ToString());
+                    SaveSettingPropertyToDB("ServerPort", value.ToString());
                 }
             }
         }
@@ -275,7 +281,7 @@ namespace OakBot
                 if(value != autoConnectBot)
                 {
                     autoConnectBot = value;
-                    SaveConfigToDb("AutoConnectBot", value.ToString());
+                    SaveSettingPropertyToDB("AutoConnectBot", value.ToString());
                 }
             }
         }
@@ -292,7 +298,7 @@ namespace OakBot
                 if (value != autoConnectStreamer)
                 {
                     autoConnectStreamer = value;
-                    SaveConfigToDb("AutoConnectStreamer", value.ToString());
+                    SaveSettingPropertyToDB("AutoConnectStreamer", value.ToString());
                 }
             }
         }
