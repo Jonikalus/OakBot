@@ -62,18 +62,7 @@ namespace OakBot
 
         #region Properties
 
-        public string combined
-        {
-            get
-            {
-                return string.Format("[{0}] {1}: {2}",
-                    _timestamp.ToShortTimeString(),
-                    _author,
-                    _message);
-            }
-        }
-
-        public string shortTime
+        public string ShortTime
         {
             get
             {
@@ -81,7 +70,7 @@ namespace OakBot
             }
         }
 
-        public string receivedLine
+        public string ReceivedLine
         {
             get
             {
@@ -89,7 +78,7 @@ namespace OakBot
             }
         }
 
-        public string command
+        public string Command
         {
             get
             {
@@ -97,7 +86,7 @@ namespace OakBot
             }
         }
 
-        public string[] args
+        public string[] Args
         {
             get
             {
@@ -105,7 +94,7 @@ namespace OakBot
             }
         }
 
-        public string author
+        public string Author
         {
             get
             {
@@ -113,7 +102,7 @@ namespace OakBot
             }
         }
 
-        public string message
+        public string Message
         {
             get
             {

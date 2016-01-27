@@ -38,8 +38,8 @@ namespace OakBot
 
             // TODO: make "login" method in TwitchChatConnections to split error handling
 
-            WriteLine("PASS " + user.oauth);
-            WriteLine("NICK " + user.username);
+            WriteLine("PASS " + user.OAuth);
+            WriteLine("NICK " + user.UserName);
 
             // TODO: successfull login check > in TwitchChatConnection
 

@@ -293,11 +293,11 @@ namespace OakBot
             {
                 if (SpeakAs.SelectedIndex == 0) // streamer
                 {
-                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.username)));
+                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.UserName)));
                 }
                 else if (SpeakAs.SelectedIndex == 1) // bot
                 {
-                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountBot.username)));
+                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountBot.UserName)));
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace OakBot
                         {
                             // Append this message to colChat in order
                             // to let the streamer see their own messages send.
-                            colChatMessages.Add(new TwitchChatMessage(accountBot.username, ChatSend.Text));
+                            colChatMessages.Add(new TwitchChatMessage(accountBot.UserName, ChatSend.Text));
                             botChatConnection.SendChatMessage(ChatSend.Text);
                         }
                     }
@@ -354,11 +354,11 @@ namespace OakBot
                 // Get viewer's TwitchViewer object to attach to the new chat window
                 // This also prevents chat opening of "OakBot" system messages
                 // Creating new TwitchViewer objects is handled by TwitchChatConnection on time
-                var isInDatabase = viewerDatabase.FirstOrDefault(x => x.username == selectedMessage.author);
+                var isInDatabase = viewerDatabase.FirstOrDefault(x => x.UserName == selectedMessage.Author);
                 if (isInDatabase != null)
                 {
                     // Check if the child chat window is open already
-                    var isChatOpen = colChatWindows.FirstOrDefault(x => x.viewer.username == isInDatabase.username);
+                    var isChatOpen = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == isInDatabase.UserName);
                     if (isChatOpen != null)
                     {
                         isChatOpen.Activate();
@@ -377,10 +377,8 @@ namespace OakBot
         {
             foreach (TwitchViewer viewer in colViewers)
             {
-                viewer.points += 10;
+                viewer.Points += 10;
             }
-
-            // TODO: INotfiy event to update UI on changed values!!!
         }
 
         #endregion
@@ -398,7 +396,7 @@ namespace OakBot
         private bool DatabaseFilter(object item)
         {
             TwitchViewer viewer = item as TwitchViewer;
-            return viewer.username.Contains(tbFilterOnName.Text);
+            return viewer.UserName.Contains(tbFilterOnName.Text);
         }
 
         #endregion
@@ -412,7 +410,7 @@ namespace OakBot
                 foreach (TwitchChatMessage addedMessage in e.NewItems)
                 {
                     // Method 1
-                    var chatWindow = colChatWindows.FirstOrDefault(x => x.viewer.username == addedMessage.author);
+                    var chatWindow = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == addedMessage.Author);
                     if (chatWindow != null)
                     {
                         chatWindow.AddViewerMessage(addedMessage);

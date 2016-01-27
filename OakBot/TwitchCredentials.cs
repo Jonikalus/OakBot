@@ -4,17 +4,17 @@
     {
         #region Fields
 
-        private string _username;
-        private string _oauth;
+        private string userName;
+        private string oauth;
 
         #endregion
 
         #region Constructors
 
-        public TwitchCredentials(string username, string oauth)
+        public TwitchCredentials(string userName, string oauth)
         {
-            _username = username;
-            _oauth = oauth;
+            this.userName = userName;
+            this.oauth = oauth;
         }
 
         #endregion
@@ -23,26 +23,26 @@
 
         public override string ToString()
         {
-            return _username;
+            return userName;
         }
 
         #endregion
 
         #region Properties
 
-        public string username
+        public string UserName
         {
             get
             {
-                return _username;
+                return userName;
             }
         }
 
-        public string oauth
+        public string OAuth
         {
             get
             {
-                return _oauth;
+                return oauth;
             }
         }
 

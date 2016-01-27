@@ -9,9 +9,9 @@ namespace OakBot
         #region Fields
 
         private BotIrcClient ircClient;
-        private TwitchCredentials _connectedUser;
-        private string _joinedChannel;
-        private bool _isBot;
+        private TwitchCredentials connectedUser;
+        private string joinedChannel;
+        private bool isBot;
 
         #endregion
 
@@ -19,8 +19,8 @@ namespace OakBot
 
         public TwitchChatConnection(TwitchCredentials connectingUser, bool isBot = true)
         {
-            _connectedUser = connectingUser;
-            _isBot = isBot;
+            this.connectedUser = connectingUser;
+            this.isBot = isBot;
 
             // Connect to IRC Twitch and login with given TwitchCredentials
             ircClient = new BotIrcClient("irc.twitch.tv", 6667, connectingUser);
@@ -38,46 +38,46 @@ namespace OakBot
 
         public void JoinChannel(string channel)
         {
-            _joinedChannel = channel;
+            joinedChannel = channel;
             ircClient.WriteLineThrottle("JOIN #" + channel);
         }
 
         public void SendChatMessage(string message)
         {
-            IrcClient.WriteLineThrottle(":" + _connectedUser.username +
-                "!" + _connectedUser.username + "@" + _connectedUser.username +
-                ".tmi.twitch.tv PRIVMSG #" + _joinedChannel + " :" + message);
+            IrcClient.WriteLineThrottle(":" + connectedUser.UserName +
+                "!" + connectedUser.UserName + "@" + connectedUser.UserName +
+                ".tmi.twitch.tv PRIVMSG #" + joinedChannel + " :" + message);
         }
 
         internal void Run()
         {
             while (true)
             {
-                TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
+                TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), connectedUser);
 
                 // Bot account is the main chat account
-                if (_isBot)
+                if (isBot)
                 {
-                    Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
-                    switch (ircMessage.command)
+                    Trace.WriteLine(connectedUser.UserName + ":  " + ircMessage.ReceivedLine);
+                    switch (ircMessage.Command)
                     {
                         case "PING": // Received PING
                             ircClient.WriteLine("PONG");
                             break;
 
                         case "MODE": // Received MODE
-                            if (ircMessage.args[1] == "+o")
+                            if (ircMessage.Args[1] == "+o")
                             {
                                 // Set throttle for current user as operator
-                                if (ircMessage.args[2] == _connectedUser.username)
+                                if (ircMessage.Args[2] == connectedUser.UserName)
                                 {
                                     ircClient.throttle = 350;
                                 }
                             }
-                            else if (ircMessage.args[1] == "-o")
+                            else if (ircMessage.Args[1] == "-o")
                             {
                                 // Set throttle for current user as member
-                                if (ircMessage.args[2] == _connectedUser.username)
+                                if (ircMessage.Args[2] == connectedUser.UserName)
                                 {
                                     ircClient.throttle = 1550;
                                 }
@@ -86,7 +86,7 @@ namespace OakBot
 
                         // Received a list of joined viewers
                         case "353":
-                            string[] viewers = ircMessage.message.Split(' ');
+                            string[] viewers = ircMessage.Message.Split(' ');
                             foreach (string username in viewers)
                             {
                                 Utils.AddToViewersCol(username);
@@ -95,44 +95,44 @@ namespace OakBot
 
                         // JOIN Event
                         case "JOIN":
-                            Utils.AddToViewersCol(ircMessage.author);
+                            Utils.AddToViewersCol(ircMessage.Author);
                         break;
 
                         // PART Event
                         case "PART":
-                            Utils.RemoveFromViewersCol(ircMessage.author);
+                            Utils.RemoveFromViewersCol(ircMessage.Author);
                         break;
                         
                         // PRIVMSG (Chat Message Received) Event
                         case "PRIVMSG":
                             // Seeing that JOIN Message is not that fast ...
-                            Utils.AddToViewersCol(ircMessage.author);
+                            Utils.AddToViewersCol(ircMessage.Author);
                             MainWindow.colChatMessages.Add(ircMessage);
                         break;
                     }
                 }
                 else
                 {
-                    Trace.WriteLine(_connectedUser.username + ":  " + ircMessage.receivedLine);
-                    switch (ircMessage.command)
+                    Trace.WriteLine(connectedUser.UserName + ":  " + ircMessage.ReceivedLine);
+                    switch (ircMessage.Command)
                     {
                         case "PING": // Received PING
                             ircClient.WriteLine("PONG");
                             break;
 
                         case "MODE": // Received MODE
-                            if (ircMessage.args[1] == "+o")
+                            if (ircMessage.Args[1] == "+o")
                             {
                                 // Set throttle for current user as operator
-                                if (ircMessage.args[2] == _connectedUser.username)
+                                if (ircMessage.Args[2] == connectedUser.UserName)
                                 {
                                     ircClient.throttle = 350;
                                 }
                             }
-                            else if (ircMessage.args[1] == "-o")
+                            else if (ircMessage.Args[1] == "-o")
                             {
                                 // Set throttle for current user as member
-                                if (ircMessage.args[2] == _connectedUser.username)
+                                if (ircMessage.Args[2] == connectedUser.UserName)
                                 {
                                     ircClient.throttle = 1550;
                                 }
@@ -147,11 +147,11 @@ namespace OakBot
 
         #region Properies
 
-        public TwitchCredentials connectedUser
+        public TwitchCredentials ConnectedUser
         {
             get
             {
-                return _connectedUser;
+                return connectedUser;
             }
         }
 

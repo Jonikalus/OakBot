@@ -43,7 +43,7 @@ namespace OakBot
             {
                 TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
 
-                switch (ircMessage.command)
+                switch (ircMessage.Command)
                 {
                     case "PING": // Received PING
                         ircClient.WriteLine("PONG");

@@ -79,16 +79,16 @@
                     <ListView x:Name="listViewChat" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="listViewChat_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="50" Header="Time" DisplayMemberBinding="{Binding shortTime}"/>
-                                <GridViewColumn Width="100" Header="Author" DisplayMemberBinding="{Binding author}"/>
-                                <GridViewColumn Width="350" Header="Message" DisplayMemberBinding="{Binding message}"/>
+                                <GridViewColumn Width="50" Header="Time" DisplayMemberBinding="{Binding ShortTime}"/>
+                                <GridViewColumn Width="100" Header="Author" DisplayMemberBinding="{Binding Author}"/>
+                                <GridViewColumn Width="350" Header="Message" DisplayMemberBinding="{Binding Message}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
                     <ListView x:Name="listViewViewers" Grid.Column="2" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="100" Header="Viewer" DisplayMemberBinding="{Binding displayName}"/>
+                                <GridViewColumn Width="100" Header="Viewer" DisplayMemberBinding="{Binding DisplayName}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
