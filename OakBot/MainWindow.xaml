@@ -41,10 +41,10 @@
                             <Label x:Name="lblChannelName" Content="Channel Name" HorizontalAlignment="Left" Margin="10,0,0,12" VerticalAlignment="Bottom" FontSize="18.667"/>
                             <Label x:Name="lblServer" Content="Server" HorizontalAlignment="Left" Margin="321,0,0,11" VerticalAlignment="Bottom" FontSize="18.667"/>
                             <Label x:Name="lblPort" Content="Port" HorizontalAlignment="Left" Margin="519,0,0,10" VerticalAlignment="Bottom" FontSize="18.667"/>
-                            <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="394,50,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" SelectionChanged="comboBox_SelectionChanged">
+                            <ComboBox x:Name="cbServerIP" HorizontalAlignment="Left" Margin="394,50,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" SelectionChanged="comboBox_SelectionChanged">
                                 <ComboBoxItem Content="tmi.twitch.tv"/>
                             </ComboBox>
-                            <ComboBox x:Name="comboBox_Copy" HorizontalAlignment="Left" Margin="568,51,0,0" VerticalAlignment="Top" Width="60" SelectedIndex="0" SelectionChanged="comboBox_Copy_SelectionChanged">
+                            <ComboBox x:Name="cbServerPort" HorizontalAlignment="Left" Margin="568,51,0,0" VerticalAlignment="Top" Width="60" SelectedIndex="0" SelectionChanged="comboBox_Copy_SelectionChanged">
                                 <ListBoxItem Content="6667"/>
                                 <ListBoxItem Content="443"/>
                             </ComboBox>
@@ -104,10 +104,10 @@
                     <ListView x:Name="lvViewerDatabase" Margin="10" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding username}"/>
-                                <GridViewColumn Width="150" Header="Points" DisplayMemberBinding="{Binding points}"/>
-                                <GridViewColumn Width="150" Header="Hours" DisplayMemberBinding="{Binding hours}"/>
-                                <GridViewColumn Width="150" Header="Rank" DisplayMemberBinding="{Binding rank}"/>
+                                <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding UserName}"/>
+                                <GridViewColumn Width="150" Header="Points" DisplayMemberBinding="{Binding Points}"/>
+                                <GridViewColumn Width="150" Header="Hours" DisplayMemberBinding="{Binding Hours}"/>
+                                <GridViewColumn Width="150" Header="Rank" DisplayMemberBinding="{Binding Rank}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>

@@ -25,6 +25,8 @@ namespace OakBot
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Fields
+
         // Streamer and Bot account info
         private TwitchCredentials accountStreamer;
         private TwitchCredentials accountBot;
@@ -46,6 +48,10 @@ namespace OakBot
         // Threads
         private Thread streamerChat;
         private Thread botChat;
+
+        #endregion
+
+        #region Constructor
 
         public MainWindow()
         {
@@ -76,13 +82,29 @@ namespace OakBot
             lvViewerDatabase.ItemsSource = viewerDatabase;
             databaseView = CollectionViewSource.GetDefaultView(lvViewerDatabase.ItemsSource);
             databaseView.Filter = DatabaseFilter;
+
+            // Auto connect
+            if (Config.AutoConnectBot)
+            {
+                ConnectBot();
+
+                // Can only connect if Bot is connected
+                if (Config.AutoConnectStreamer)
+                {
+                    ConnectStreamer();
+                }
+            }
+
         }
 
-        public void LoadBot()
+        #endregion
+
+        #region Methods
+
+        private void ConnectBot()
         {
             try
             {
-                //streamerChat.Abort();
                 botChat.Abort();
             }
             catch (ThreadAbortException)
@@ -94,27 +116,109 @@ namespace OakBot
 
             }
 
+            // Disable UI elements
+            textBoxBotName.IsEnabled = false;
+            buttonBotConnect.IsEnabled = false;
+            tbChannelName.IsEnabled = false;
+            cbServerIP.IsEnabled = false;
+            cbServerPort.IsEnabled = false;
+            cbAutoConnectBot.IsEnabled = false;
+            btnBotConnect.Content = "Disconnect";
+
             // Twitch Credentials
             accountBot = new TwitchCredentials(Config.BotUsername, Config.BotOAuthKey);
-            accountStreamer = new TwitchCredentials(Config.StreamerUsername, Config.StreamerOAuthKey);
-            
-            // TODO: Validate credentials before trying to login the chat
 
             // Start Bot connection and login
             botChatConnection = new TwitchChatConnection(accountBot);
             botChatConnection.JoinChannel(Config.ChannelName);
+
+            // Create threads for the chat connections
+            botChat = new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true };
+
+            // Start the chat connection threads
+            botChat.Start();
+        }
+
+        private void DisconnectBot()
+        {
+            try
+            {
+                botChat.Abort();
+            }
+            catch (ThreadAbortException)
+            {
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+            // Enable UI elements
+            textBoxBotName.IsEnabled = true;
+            buttonBotConnect.IsEnabled = true;
+            tbChannelName.IsEnabled = true;
+            cbServerIP.IsEnabled = true;
+            cbServerPort.IsEnabled = true;
+            cbAutoConnectBot.IsEnabled = true;
+            btnBotConnect.Content = "Connect";
+        }
+
+        private void ConnectStreamer()
+        {
+            try
+            {
+                streamerChat.Abort();
+            }
+            catch (ThreadAbortException)
+            {
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+            // Disable UI elements
+            textBoxStreamerName.IsEnabled = false;
+            buttonStreamerConnect.IsEnabled = false;
+            cbAutoConnectStreamer.IsEnabled = false;
+            btnStreamerConnect.Content = "Disconnect";
+
+            // Twitch Credentials
+            accountStreamer = new TwitchCredentials(Config.StreamerUsername, Config.StreamerOAuthKey);
 
             // Start Streamer connection and login
             streamerChatConnection = new TwitchChatConnection(accountStreamer, false);
             streamerChatConnection.JoinChannel(Config.ChannelName);
 
             // Create threads for the chat connections
-            botChat = new Thread(new ThreadStart(botChatConnection.Run)) { IsBackground = true };
             streamerChat = new Thread(new ThreadStart(streamerChatConnection.Run)) { IsBackground = true };
 
             // Start the chat connection threads
-            botChat.Start();
             streamerChat.Start();
+        }
+
+        private void DisconnectStreamer()
+        {
+            try
+            {
+                streamerChat.Abort();
+            }
+            catch (ThreadAbortException)
+            {
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+            // Enable UI elements
+            textBoxStreamerName.IsEnabled = true;
+            buttonStreamerConnect.IsEnabled = true;
+            cbAutoConnectStreamer.IsEnabled = true;
+            btnStreamerConnect.Content = "Connect";
         }
 
         public void LoadConfigToUI()
@@ -126,6 +230,8 @@ namespace OakBot
             cbAutoConnectBot.IsChecked = Config.AutoConnectStreamer;
             cbAutoConnectStreamer.IsChecked = Config.AutoConnectStreamer;
         }
+
+        #endregion
 
         #region Settings EventHandlers
 
@@ -207,7 +313,14 @@ namespace OakBot
 
         private void btnBotConnect_Click(object sender, RoutedEventArgs e)
         {
-            LoadBot();
+            if(btnBotConnect.Content.ToString() == "Connect")
+            {
+                ConnectBot();
+            }
+            else
+            {
+                DisconnectBot();
+            }
         }
 
         #endregion
@@ -267,7 +380,23 @@ namespace OakBot
 
         private void btnStreamerConnect_Click(object sender, RoutedEventArgs e)
         {
-            // TODO
+            if (btnBotConnect.Content.ToString() != "Connect")
+            {
+                if (btnStreamerConnect.Content.ToString() == "Connect")
+                {
+                    ConnectStreamer();
+                }
+                else
+                {
+                    DisconnectStreamer();
+                }
+            }
+            else
+            {
+                MessageBox.Show("You need to connect the bot account first before you can connect the streamer account.\n" +
+                    "If you only want to use the bot functionality and not the Twitch dashboard login with your account as bot.",
+                    "Streamer Chat Connect", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         #endregion
