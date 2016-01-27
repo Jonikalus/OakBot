@@ -93,25 +93,25 @@ namespace OakBot
         }
 
         /// <summary>
-        /// Add the viewer as TwitchUser to the viewers collection.
-        /// Creates a new TwitchUser and adds it to the database if needed.
+        /// Add the viewer as TwitchViewer to the viewers collection.
+        /// Creates a new TwitchViewer and adds it to the database if needed.
         /// </summary>
         /// <param name="viewerName">Viewers Twitch username to add</param>
         public static void AddToViewersCol(string viewerName)
         {
             // First check if viewer is not already in the viewers list
-            var isInViewList = MainWindow.colViewers.FirstOrDefault(x => x.username == viewerName);
+            var isInViewList = MainWindow.colViewers.FirstOrDefault(x => x.UserName == viewerName);
             if (isInViewList == null)
             {
                 // Check if viewer exists in database to refer to
-                var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.username == viewerName);
+                var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.UserName == viewerName);
                 if (isInDatabase != null)
                 { // is in database
                     MainWindow.colViewers.Add(isInDatabase);
                 }
                 else
                 { // is not in database
-                    TwitchUser newViewer = new TwitchUser(viewerName);
+                    TwitchViewer newViewer = new TwitchViewer(viewerName);
                     MainWindow.viewerDatabase.Add(newViewer);
                     MainWindow.colViewers.Add(newViewer);
                 }
@@ -125,7 +125,7 @@ namespace OakBot
         public static void RemoveFromViewersCol(string viewerName)
         {
             // Check if PARTing viewer is in the viewers list
-            var toRemove = MainWindow.colViewers.FirstOrDefault(x => x.username == viewerName);
+            var toRemove = MainWindow.colViewers.FirstOrDefault(x => x.UserName == viewerName);
             if (toRemove != null)
             {
                 MainWindow.colViewers.Remove(toRemove);
@@ -168,11 +168,11 @@ namespace OakBot
                     SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
                     while (dataReader.Read())
                     {
-                        TwitchUser viewer = new TwitchUser((string)dataReader["Name"]);
+                        TwitchViewer viewer = new TwitchViewer((string)dataReader["Name"]);
 
-                        viewer.rank = (string)dataReader["Rank"];
-                        viewer.points = (long)dataReader["Points"];
-                        viewer.raids = (long)dataReader["Raids"];
+                        viewer.Rank = (string)dataReader["Rank"];
+                        viewer.Points = (long)dataReader["Points"];
+                        viewer.Raids = (long)dataReader["Raids"];
                         viewer.dateLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
 
                         // AnkhBot's time format d.HH:MM:SS where d is not present if < 1 day

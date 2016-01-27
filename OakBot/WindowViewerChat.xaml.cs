@@ -13,35 +13,35 @@ namespace OakBot
     {
         #region Fields
 
-        private MainWindow _mW;
-        private TwitchUser _viewer;
+        private MainWindow window;
+        private TwitchViewer viewer;
 
         private ObservableCollection<TwitchChatMessage> colViewerMessages;
-        private object _lock = new object();
+        private object colLock = new object();
 
         #endregion
 
         #region Constructors
 
-        public WindowViewerChat(MainWindow mW, TwitchUser viewer)
+        public WindowViewerChat(MainWindow window, TwitchViewer viewer)
         {
             // Set fields
-            _mW = mW;
-            _viewer = viewer;
+            this.window = window;
+            this.viewer = viewer;
 
             // Init Window and set datacontext to this
-            // for databinding to the attached TwitchUser
+            // for databinding to the attached TwitchViewer
             InitializeComponent();
             DataContext = this;
 
             // Init TwitchChatMessage collection and enable sync between threads
             colViewerMessages = new ObservableCollection<TwitchChatMessage>();
-            BindingOperations.EnableCollectionSynchronization(colViewerMessages, _lock);
+            BindingOperations.EnableCollectionSynchronization(colViewerMessages, colLock);
 
             // Rather than copying all messages just collect the selected viewers
             // messages to save system resources in case of huge global chat history.
             var viewerMessages = MainWindow.colChatMessages.Where(
-                TwitchChatMessage => TwitchChatMessage.author == viewer.username);
+                TwitchChatMessage => TwitchChatMessage.Author == viewer.UserName);
             foreach(TwitchChatMessage message in viewerMessages)
             {
                 colViewerMessages.Add(message);
@@ -66,37 +66,37 @@ namespace OakBot
 
         private void btnPurge_Click(object sender, RoutedEventArgs e)
         {
-            _mW.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 1", _viewer.username));
+            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 1", viewer.UserName));
         }
 
         private void btnTimeout5_Click(object sender, RoutedEventArgs e)
         {
-            _mW.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 300", _viewer.username));
+            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 300", viewer.UserName));
         }
 
         private void btnTimeout10_Click(object sender, RoutedEventArgs e)
         {
-            _mW.streamerChatConnection.SendChatMessage(string.Format("/timeout {0}", _viewer.username));
+            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0}", viewer.UserName));
         }
 
         private void btnBan_Click(object sender, RoutedEventArgs e)
         {
-            _mW.streamerChatConnection.SendChatMessage(string.Format("/ban {0}", _viewer.username));
+            window.streamerChatConnection.SendChatMessage(string.Format("/ban {0}", viewer.UserName));
         }
 
         private void btnUnban_Click(object sender, RoutedEventArgs e)
         {
-            _mW.streamerChatConnection.SendChatMessage(string.Format("/unban {0}", _viewer.username)); 
+            window.streamerChatConnection.SendChatMessage(string.Format("/unban {0}", viewer.UserName)); 
         }
 
         private void btnTwitchProfile_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(string.Format("http://www.twitch.tv/{0}/profile", _viewer.username));
+            Process.Start(string.Format("http://www.twitch.tv/{0}/profile", viewer.UserName));
         }
 
         private void btnTwitchCompose_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(string.Format("http://www.twitch.tv/message/compose?to={0}", _viewer.username));
+            Process.Start(string.Format("http://www.twitch.tv/message/compose?to={0}", viewer.UserName));
         }
 
         private void windowViewerChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -108,11 +108,11 @@ namespace OakBot
 
         #region Properties
 
-        public TwitchUser viewer
+        public TwitchViewer Viewer
         {
             get
             {
-                return _viewer;
+                return viewer;
             }
         }
 

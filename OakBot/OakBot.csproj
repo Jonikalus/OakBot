@@ -118,7 +118,7 @@
     <Compile Include="TwitchChatConnection.cs" />
     <Compile Include="TwitchChatMessage.cs" />
     <Compile Include="TwitchCredentials.cs" />
-    <Compile Include="TwitchUser.cs" />
+    <Compile Include="TwitchViewer.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="WindowImportData.xaml">
