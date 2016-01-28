@@ -5,6 +5,6 @@
              StartupUri="MainWindow.xaml"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
-         
+        <local:Config x:Key="Config" />
     </Application.Resources>
 </Application>

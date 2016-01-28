@@ -1,18 +1,45 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SQLite;
+using System.ComponentModel;
 using System.Windows;
+using System.Data.SQLite;
 using System.IO;
 
 namespace OakBot
 {
-    class Config
+    public class Config
     {
-        // Methods
+        #region Fields
+
+        public static readonly string TwitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+        public static readonly string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
+
+        private static string channelName;
+        private static string serverIP;
+        private static int serverPort;
+
+        private static string botUsername;
+        private static string botOAuthKey;
+        private static bool autoConnectBot;
+
+        private static string streamerUsername;
+        private static string streamerOAuthKey;
+        private static bool autoConnectStreamer;
+
+        #endregion
+
+        #region Static Property Changed Event and Handler
+
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static void RaiseStaticPropertyChanged(string propName)
+        {
+            if (StaticPropertyChanged != null)
+                StaticPropertyChanged(null, new PropertyChangedEventArgs(propName));
+        }
+
+        #endregion
+
+        #region Methods
+
         public static void GetConfigFromDb()
         {
             // Set filename
@@ -119,6 +146,7 @@ namespace OakBot
                 MessageBox.Show(ex.ToString());
             }
         }
+
         public static void SaveSettingPropertyToDB(string settingName, string settingsValue)
         {
             try
@@ -145,18 +173,123 @@ namespace OakBot
             }
         }
 
-        // Twitch Application
-        public static string TwitchClientID
+        #endregion
+
+        #region Properties
+
+        public static string ChannelName
         {
             get
             {
-                return "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
+                return channelName;
+            }
+            set
+            {
+                if (value != channelName && !string.IsNullOrWhiteSpace(value))
+                {
+                    channelName = value.Trim().ToLower();
+                    SaveSettingPropertyToDB("ChannelName", value);
+                    RaiseStaticPropertyChanged("ChannelName");
+                }
             }
         }
-        public static string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
 
-        // Settings fields and properties
-        private static string streamerOAuthKey;
+        public static string ServerIP
+        {
+            get
+            {
+                return serverIP;
+            }
+            set
+            {
+                if (value != serverIP)
+                {
+                    serverIP = value;
+                    SaveSettingPropertyToDB("ServerIP", value);
+                }
+            }
+        }
+
+        public static int ServerPort
+        {
+            get
+            {
+                return serverPort;
+            }
+            set
+            {
+                if (value != serverPort)
+                {
+                    serverPort = value;
+                    SaveSettingPropertyToDB("ServerPort", value.ToString());
+                }
+            }
+        }
+
+
+        public static string BotUsername
+        {
+            get
+            {
+                return botUsername;
+            }
+            set
+            {
+                if (value != botUsername)
+                {
+                    botUsername = value;
+                    SaveSettingPropertyToDB("BotTwitchUsername", value);
+                }
+            }
+        }
+
+        public static string BotOAuthKey {
+            get
+            {
+                return botOAuthKey;
+            }
+            set
+            {
+                if (value != botOAuthKey)
+                {
+                    botOAuthKey = value;
+                    SaveSettingPropertyToDB("BotOAuthToken", value);
+                }
+            }
+        }
+
+        public static bool AutoConnectBot
+        {
+            get
+            {
+                return autoConnectBot;
+            }
+            set
+            {
+                if (value != autoConnectBot)
+                {
+                    autoConnectBot = value;
+                    SaveSettingPropertyToDB("AutoConnectBot", value.ToString());
+                }
+            }
+        }
+
+
+        public static string StreamerUsername {
+            get
+            {
+                return streamerUsername;
+            }
+            set
+            {
+                if (value != streamerUsername)
+                {
+                    streamerUsername = value;
+                    SaveSettingPropertyToDB("StreamerTwitchUsername", value);
+                }
+            }
+        }
+
         public static string StreamerOAuthKey
         {
             get
@@ -173,120 +306,6 @@ namespace OakBot
             }
         }
 
-        private static string botOAuthKey;
-        public static string BotOAuthKey {
-            get
-            {
-                return botOAuthKey;
-            }
-            set
-            {
-                if (value != botOAuthKey)
-                {
-                    botOAuthKey = value;
-                    SaveSettingPropertyToDB("BotOAuthToken", value);
-                }
-            }
-        }
-
-        private static string streamerUsername;
-        public static string StreamerUsername {
-            get
-            {
-                return streamerUsername;
-            }
-            set
-            {
-                if (value != streamerUsername)
-                {
-                    streamerUsername = value;
-                    SaveSettingPropertyToDB("StreamerTwitchUsername", value);
-                }
-            }
-        }
-
-        private static string botUsername;
-        public static string BotUsername {
-            get
-            {
-                return botUsername;
-            }
-            set
-            {
-                if (value != botUsername)
-                {
-                    botUsername = value;
-                    SaveSettingPropertyToDB("BotTwitchUsername", value);
-                }
-            }
-        }
-
-        private static string channelName;
-        public static string ChannelName {
-            get
-            {
-                return channelName;
-            }
-            set
-            {
-                if (value != channelName)
-                {
-                    channelName = value;
-                    SaveSettingPropertyToDB("ChannelName", value);
-                }
-            }
-        }
-
-        private static string serverIP;
-        public static string ServerIP {
-            get
-            {
-                return serverIP;
-            }
-            set
-            {
-                if (value != serverIP)
-                {
-                    serverIP = value;
-                    SaveSettingPropertyToDB("ServerIP", value);
-                }
-            }
-        }
-
-        private static int serverPort;
-        public static int ServerPort {
-            get
-            {
-                return serverPort;
-            }
-            set
-            {
-                if (value != serverPort)
-                {
-                    serverPort = value;
-                    SaveSettingPropertyToDB("ServerPort", value.ToString());
-                }
-            }
-        }
-
-        private static bool autoConnectBot;
-        public static bool AutoConnectBot
-        {
-            get
-            {
-                return autoConnectBot;
-            }
-            set
-            {
-                if(value != autoConnectBot)
-                {
-                    autoConnectBot = value;
-                    SaveSettingPropertyToDB("AutoConnectBot", value.ToString());
-                }
-            }
-        }
-
-        private static bool autoConnectStreamer;
         public static bool AutoConnectStreamer
         {
             get
@@ -303,5 +322,6 @@ namespace OakBot
             }
         }
 
+        #endregion
     }
 }

@@ -264,19 +264,6 @@ namespace OakBot
             }
         }
 
-        private void tbChannelName_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(tbChannelName.Text))
-            {
-                MessageBox.Show("Please enter a channel which the bot (and streamer) account should enter.",
-                    "Joining Channel Name", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                Config.ChannelName = tbChannelName.Text.Trim().ToLower();
-            }
-        }
-
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // TODO
