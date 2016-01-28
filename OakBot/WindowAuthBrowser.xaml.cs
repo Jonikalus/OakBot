@@ -43,11 +43,11 @@ namespace OakBot
             {
                 if (_isStreamer)
                 {
-                    Config.StreamerOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
+                    Config.StreamerOAuthKey = "oauth:" + Utils.GetTwitchAuthToken(e.Uri.AbsoluteUri);
                 }
                 else
                 {
-                    Config.BotOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Uri.AbsoluteUri);
+                    Config.BotOAuthKey = "oauth:" + Utils.GetTwitchAuthToken(e.Uri.AbsoluteUri);
                 }
                 this.Close();
             }
@@ -61,11 +61,11 @@ namespace OakBot
             {
                 if (_isStreamer)
                 {
-                    Config.StreamerOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Url.AbsoluteUri);
+                    Config.StreamerOAuthKey = "oauth:" + Utils.GetTwitchAuthToken(e.Url.AbsoluteUri);
                 }
                 else
                 {
-                    Config.BotOAuthKey = "oauth:" + Utils.getAuthTokenFromUrl(e.Url.AbsoluteUri);
+                    Config.BotOAuthKey = "oauth:" + Utils.GetTwitchAuthToken(e.Url.AbsoluteUri);
                 }
                 this.Close();
             }

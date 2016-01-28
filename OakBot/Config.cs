@@ -11,7 +11,10 @@ namespace OakBot
         #region Fields
 
         public static readonly string TwitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
-        public static readonly string twitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
+        public static readonly string TwitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
+
+        public static readonly string TwitchAlertsClientID = "kriqzeVxRHIbIHMPZzilYEDjFgfGkR7088gSx3KM";
+        public static readonly string TwitchAlertsClientSecret = "7gGEWwG0i5E1LQDkEe9C9xwI3dgR6Y93v9kjrsYZ";
 
         private static string channelName;
         private static string serverIP;

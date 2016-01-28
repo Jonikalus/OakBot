@@ -16,12 +16,18 @@ namespace OakBot
 {
     public class Utils
     {
-        //Extracts the OAuth token from an URL
-        public static string getAuthTokenFromUrl(string absoluteUrl)
+        // Extracts the OAuth token from an Twitch URL
+        public static string GetTwitchAuthToken(string absoluteUrl)
         {
-            Match url = Regex.Match(absoluteUrl, "access_token=(?<token>[a-zA-Z0-9]+)&");
-            string token = url.Groups["token"].Value.Trim();
-            return token;
+            Match url = Regex.Match(absoluteUrl, "access_token=(?<token>[a-zA-Z0-9]+)");
+            return url.Groups["token"].Value.Trim();
+        }
+
+        // Extracts the OAuth token from a TwitchAlerts URL
+        public static string GetTwitchAlertsAuthToken(string absoluteUrl)
+        {
+            Match url = Regex.Match(absoluteUrl, "code=(?<token>[a-zA-Z0-9]+)");
+            return url.Groups["token"].Value.Trim();
         }
 
         public static void clearIECache()
