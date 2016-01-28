@@ -108,6 +108,15 @@ namespace OakBot
                             // Seeing that JOIN Message is not that fast ...
                             Utils.AddToViewersCol(ircMessage.Author);
                             MainWindow.colChatMessages.Add(ircMessage);
+                            if (ircMessage.Message.StartsWith(Config.CommandPrefix.ToString()))
+                            {
+                                // Handle commands
+                                //Example command
+                                if(ircMessage.Message.Remove(0, 1).ToLower() == "ocgineeriskawaii")
+                                {
+                                    MainWindow.instance.botChatConnection.SendChatMessage("Ocginner is really kawaii! :3");
+                                }
+                            }
                         break;
                     }
                 }

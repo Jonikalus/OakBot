@@ -28,6 +28,8 @@ namespace OakBot
         private static string streamerOAuthKey;
         private static bool autoConnectStreamer;
 
+        private static char commandPrefix;
+
         #endregion
 
         #region Static Property Changed Event and Handler
@@ -76,7 +78,8 @@ namespace OakBot
                         "('AutoConnectBot', 'false'), " +
                         "('StreamerTwitchUsername', 'notSet'), " +
                         "('StreamerOAuthToken', 'notSet'), " +
-                        "('AutoConnectStreamer', 'false') ", dbConnection);
+                        "('AutoConnectStreamer', 'false'), "  +
+                        "('CommandPrefix', '!')" , dbConnection);
                     sqlCmd.ExecuteNonQuery();
 
                     // Close database file
@@ -136,6 +139,9 @@ namespace OakBot
 
                         case "AutoConnectStreamer":
                             autoConnectStreamer = bool.Parse((string)sqlReader["value"]);
+                            break;
+                        case "CommandPrefix":
+                            commandPrefix = ((string)sqlReader["value"])[0];
                             break;
 
                         default:
@@ -321,6 +327,22 @@ namespace OakBot
                 {
                     autoConnectStreamer = value;
                     SaveSettingPropertyToDB("AutoConnectStreamer", value.ToString());
+                }
+            }
+        }
+
+        public static char CommandPrefix
+        {
+            get
+            {
+                return commandPrefix;
+            }
+            set
+            {
+                if(value != commandPrefix)
+                {
+                    commandPrefix = value;
+                    SaveSettingPropertyToDB("CommandPrefix", value.ToString());
                 }
             }
         }

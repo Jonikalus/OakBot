@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using System.Reflection;
 using System.Windows;
+using System.Net;
 
 namespace OakBot
 {
@@ -225,5 +226,7 @@ namespace OakBot
             return false;
 
         }
+
+        
     }
 }

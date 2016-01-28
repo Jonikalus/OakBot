@@ -27,6 +27,9 @@ namespace OakBot
     {
         #region Fields
 
+        // Instance of itself
+        public static MainWindow instance;
+
         // Streamer and Bot account info
         private TwitchCredentials accountStreamer;
         private TwitchCredentials accountBot;
@@ -56,6 +59,9 @@ namespace OakBot
         public MainWindow()
         {
             InitializeComponent();
+
+            // Initialize instance
+            instance = this;
 
             // Initialize config
             Config.GetConfigFromDb();
@@ -95,6 +101,7 @@ namespace OakBot
                 }
             }
 
+            
         }
 
         #endregion
