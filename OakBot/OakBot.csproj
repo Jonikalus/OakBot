@@ -109,6 +109,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BotCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="WindowImportData.xaml.cs">
       <DependentUpon>WindowImportData.xaml</DependentUpon>

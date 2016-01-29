@@ -48,6 +48,8 @@ namespace OakBot
         private ICollectionView databaseView;
         public static ObservableCollection<WindowViewerChat> colChatWindows;
 
+        public static ObservableCollection<BotCommand> colBotCommands;
+
         // Threads
         private Thread streamerChat;
         private Thread botChat;
@@ -88,6 +90,12 @@ namespace OakBot
             lvViewerDatabase.ItemsSource = viewerDatabase;
             databaseView = CollectionViewSource.GetDefaultView(lvViewerDatabase.ItemsSource);
             databaseView.Filter = DatabaseFilter;
+
+            // Testing commands
+            colBotCommands = new ObservableCollection<BotCommand>();
+            colBotCommands.Add(new BotCommand("!test", "Test received!", 30));
+            colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 60));
+
 
             // Auto connect
             if (Config.AutoConnectBot)

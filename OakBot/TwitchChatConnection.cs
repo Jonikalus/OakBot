@@ -107,14 +107,17 @@ namespace OakBot
                         case "PRIVMSG":
                             // Seeing that JOIN Message is not that fast ...
                             Utils.AddToViewersCol(ircMessage.Author);
+
+                            // Add the message to the collection
                             MainWindow.colChatMessages.Add(ircMessage);
-                            if (ircMessage.Message.StartsWith(Config.CommandPrefix.ToString()))
+
+                            // Execute command if there is any
+                            foreach (BotCommand botCommand in MainWindow.colBotCommands)
                             {
-                                // Handle commands
-                                //Example command
-                                if(ircMessage.Message.Remove(0, 1).ToLower() == "ocgineeriskawaii")
+                                if (ircMessage.Message.ToLower().StartsWith(botCommand.Command))
                                 {
-                                    MainWindow.instance.botChatConnection.SendChatMessage("Ocginner is really kawaii! :3");
+                                    botCommand.ExecuteCommand(connectedUser, ircMessage.Author);
+                                    break;
                                 }
                             }
                         break;
