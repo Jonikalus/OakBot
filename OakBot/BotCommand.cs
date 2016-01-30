@@ -38,7 +38,7 @@ namespace OakBot
         private rank rankRequired;
 
         private DateTime lastUsed;
-        private Dictionary<string, DateTime> viewerLastUsed = new Dictionary<string, DateTime>();
+        private Dictionary<string, DateTime> dictLastUsed = new Dictionary<string, DateTime>();
 
         #endregion
 
@@ -65,22 +65,26 @@ namespace OakBot
 
         #region Methods
 
-        public void ExecuteCommand(string receivedLine, string user)
+        public void ExecuteCommand(string receivedLine, string cmdUser)
         {
             // Check if not on global cooldown
             // using Substract on DateTime creates TimeSpan which as TotalSeconds
             if (gCooldownSec == 0 || DateTime.Now.Subtract(lastUsed).TotalSeconds > gCooldownSec)
             {
-                // Check if user is not on cooldown
-                DateTime viewerLastUse;
-                viewerLastUsed.TryGetValue(user, out viewerLastUse);
-                if (uCooldownSec == 0 ||                                                // If cooldown is 0
-                    viewerLastUse == null ||                                            // If "user" is not in CD list
-                    DateTime.Now.Subtract(viewerLastUse).TotalSeconds > uCooldownSec)   // If "user" is not on cooldown
+                
+                // Add user key if not exists to prevent exceptions if key not exists
+                // and it saves us another check when setting new timestamp, as this
+                // will already make sure they key exists.
+                if (!dictLastUsed.ContainsKey(cmdUser))
                 {
+                    dictLastUsed.Add(cmdUser, DateTime.MinValue);
+                }
 
+                // Check if user is not on cooldown
+                if (uCooldownSec == 0 || DateTime.Now.Subtract(dictLastUsed[cmdUser]).TotalSeconds > uCooldownSec)
+                {
                     // Get viewer's TwitchViewer object
-                    TwitchViewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == user);
+                    TwitchViewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == cmdUser);
 
                     // Check rank
                     if(true)
@@ -90,15 +94,7 @@ namespace OakBot
 
                         // Set timestamps
                         lastUsed = DateTime.Now;
-                        if (viewerLastUse == null)
-                        {
-                            viewerLastUsed.Add(user, DateTime.Now);
-                        }
-                        else
-                        {
-                            viewerLastUsed[user] = DateTime.Now;
-                        }
-
+                        dictLastUsed[cmdUser] = DateTime.Now;
 
                         // Send the response
                         if (sendAsStreamer)
