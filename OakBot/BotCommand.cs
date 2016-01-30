@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace OakBot
 {
-    public enum rank
+    public enum Rank
     {
-        viewer,
-        regular,
-        vip1,
-        vip2,
-        vip3,
-        mod,
-        bot
+        VIEWER,
+        REGULAR,
+        VIP1,
+        VIP2,
+        VIP3,
+        MODERATOR,
+        BOT
     }
 
     public class BotCommand
