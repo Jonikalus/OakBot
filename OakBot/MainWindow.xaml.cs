@@ -31,24 +31,25 @@ namespace OakBot
         public static MainWindow instance;
 
         // Streamer and Bot account info
-        private TwitchCredentials accountStreamer;
-        private TwitchCredentials accountBot;
+        public TwitchCredentials accountStreamer;
+        public TwitchCredentials accountBot;
 
         // Chat connections
         public TwitchChatConnection botChatConnection;
         public TwitchChatConnection streamerChatConnection;
 
         // Collections
-        public static ObservableCollection<TwitchChatMessage> colChatMessages;
-        private object _lockChat = new object();
-        public static ObservableCollection<TwitchViewer> colViewers;
-        private object _lockViewers = new object();
-        public static ObservableCollection<TwitchViewer> viewerDatabase;
-        private object _lockDatabase = new object();
-        private ICollectionView databaseView;
-        public static ObservableCollection<WindowViewerChat> colChatWindows;
+        public static ObservableCollection<TwitchChatMessage> colChatMessages = new ObservableCollection<TwitchChatMessage>();
+        public static ObservableCollection<TwitchViewer> colViewers = new ObservableCollection<TwitchViewer>();
+        public static ObservableCollection<TwitchViewer> colDatabase = new ObservableCollection<TwitchViewer>();
+        public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
+        public static ObservableCollection<BotCommand> colBotCommands = new ObservableCollection<BotCommand>();
 
-        public static ObservableCollection<BotCommand> colBotCommands;
+        private object _lockChat = new object();
+        private object _lockViewers = new object(); 
+        private object _lockDatabase = new object();
+
+        private ICollectionView databaseView;
 
         // Threads
         private Thread streamerChat;
@@ -69,32 +70,26 @@ namespace OakBot
             Config.GetConfigFromDb();
             LoadConfigToUI();
 
-            // Initiaze Collections and enable sync between threads
-            colChatWindows = new ObservableCollection<WindowViewerChat>();
-            
-            colChatMessages = new ObservableCollection<TwitchChatMessage>();
+            // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
-            colChatMessages.CollectionChanged += colChatMessages_Changed;
-
-            colViewers = new ObservableCollection<TwitchViewer>();
             BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
+            BindingOperations.EnableCollectionSynchronization(colDatabase, _lockDatabase);
 
-            viewerDatabase = new ObservableCollection<TwitchViewer>();
-            BindingOperations.EnableCollectionSynchronization(viewerDatabase, _lockDatabase);
+            // Create Event for collection changed
+            colChatMessages.CollectionChanged += colChatMessages_Changed;
 
             // Link listViews with collections
             listViewChat.ItemsSource = colChatMessages;
             listViewViewers.ItemsSource = colViewers;
 
             // Database listView with filter
-            lvViewerDatabase.ItemsSource = viewerDatabase;
+            lvViewerDatabase.ItemsSource = colDatabase;
             databaseView = CollectionViewSource.GetDefaultView(lvViewerDatabase.ItemsSource);
             databaseView.Filter = DatabaseFilter;
 
-            // Testing commands
-            colBotCommands = new ObservableCollection<BotCommand>();
-            colBotCommands.Add(new BotCommand("!test", "Test received!", 30));
-            colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 60));
+            // Testing commands 
+            colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0));
+            colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 30));
 
 
             // Auto connect
@@ -485,7 +480,7 @@ namespace OakBot
                 // Get viewer's TwitchViewer object to attach to the new chat window
                 // This also prevents chat opening of "OakBot" system messages
                 // Creating new TwitchViewer objects is handled by TwitchChatConnection on time
-                var isInDatabase = viewerDatabase.FirstOrDefault(x => x.UserName == selectedMessage.Author);
+                var isInDatabase = colDatabase.FirstOrDefault(x => x.UserName == selectedMessage.Author);
                 if (isInDatabase != null)
                 {
                     // Check if the child chat window is open already

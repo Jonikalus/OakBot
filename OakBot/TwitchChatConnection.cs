@@ -116,7 +116,7 @@ namespace OakBot
                             {
                                 if (ircMessage.Message.ToLower().StartsWith(botCommand.Command))
                                 {
-                                    botCommand.ExecuteCommand(connectedUser, ircMessage.Author);
+                                    botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
                                     break;
                                 }
                             }

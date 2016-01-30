@@ -111,7 +111,7 @@ namespace OakBot
             if (isInViewList == null)
             {
                 // Check if viewer exists in database to refer to
-                var isInDatabase = MainWindow.viewerDatabase.FirstOrDefault(x => x.UserName == viewerName);
+                var isInDatabase = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == viewerName);
                 if (isInDatabase != null)
                 { // is in database
                     MainWindow.colViewers.Add(isInDatabase);
@@ -119,7 +119,7 @@ namespace OakBot
                 else
                 { // is not in database
                     TwitchViewer newViewer = new TwitchViewer(viewerName);
-                    MainWindow.viewerDatabase.Add(newViewer);
+                    MainWindow.colDatabase.Add(newViewer);
                     MainWindow.colViewers.Add(newViewer);
                 }
             }
@@ -169,7 +169,7 @@ namespace OakBot
                     dbConnection.Open();
 
                     // If database file can be opened, clear current collection
-                    MainWindow.viewerDatabase.Clear();
+                    MainWindow.colDatabase.Clear();
 
                     SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
                     SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
@@ -195,7 +195,7 @@ namespace OakBot
                         }
                         viewer.watchedTimeSpan = watchedHours;
 
-                        MainWindow.viewerDatabase.Add(viewer);
+                        MainWindow.colDatabase.Add(viewer);
                         counter++;
                     }
 
