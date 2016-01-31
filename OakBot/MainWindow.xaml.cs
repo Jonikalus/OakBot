@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.IO;
 
 namespace OakBot
 {
@@ -66,6 +67,10 @@ namespace OakBot
             // Initialize instance
             instance = this;
 
+            if (!Directory.Exists(Config.AppDataPath)) Directory.CreateDirectory(Config.AppDataPath);
+
+            if (!Directory.Exists(Config.AppDataPath + "\\Webserver")) Directory.CreateDirectory(Config.AppDataPath + "\\Webserver");
+
             // Initialize config
             Config.GetConfigFromDb();
             LoadConfigToUI();
@@ -91,6 +96,7 @@ namespace OakBot
             colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0));
             colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60));
 
+            
 
             // Auto connect
             if (Config.AutoConnectBot)
@@ -564,5 +570,9 @@ namespace OakBot
 
         #endregion
 
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.StartWebserver();
+        }
     }
 }

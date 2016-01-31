@@ -16,6 +16,8 @@ namespace OakBot
         public static readonly string TwitchAlertsClientID = "kriqzeVxRHIbIHMPZzilYEDjFgfGkR7088gSx3KM";
         public static readonly string TwitchAlertsClientSecret = "7gGEWwG0i5E1LQDkEe9C9xwI3dgR6Y93v9kjrsYZ";
 
+        public static readonly string AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OakBot";
+
         private static string channelName;
         private static string serverIP;
         private static int serverPort;
@@ -48,7 +50,7 @@ namespace OakBot
         public static void GetConfigFromDb()
         {
             // Set filename
-            string filename = "OakBotDatabase.sqlite";
+            string filename = AppDataPath + "\\" + "OakBotDatabase.sqlite";
 
             // Create database file if not exists
             if (!File.Exists(filename))

@@ -31,6 +31,8 @@ namespace OakBot
             return url.Groups["token"].Value.Trim();
         }
 
+        public static SimpleHTTPServer botHttp;
+
         public static void clearIECache()
         {
             ClearFolder(new DirectoryInfo(Environment.GetFolderPath
@@ -227,6 +229,10 @@ namespace OakBot
 
         }
 
+        public static void StartWebserver()
+        {
+            botHttp = new SimpleHTTPServer(Config.AppDataPath + "\\Webserver", 8080);
+        }
         
     }
 }

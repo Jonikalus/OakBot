@@ -35,7 +35,7 @@ namespace OakBot
         private int costVIP3;
         private int costMod;
 
-        private rank rankRequired;
+        private Rank rankRequired;
 
         private DateTime lastUsed;
         private Dictionary<string, DateTime> dictLastUsed = new Dictionary<string, DateTime>();

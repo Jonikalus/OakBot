@@ -52,6 +52,7 @@
                             <CheckBox x:Name="cbAutoConnectBot" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,15,0,0" VerticalAlignment="Top" Checked="cbAutoConnectBot_Checked" Unchecked="cbAutoConnectBot_Unchecked"/>
                         </Grid>
                     </GroupBox>
+                    <Button x:Name="button" Content="Start Webserver" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Width="112" Click="button_Click"/>
 
                 </Grid>
             </TabItem>
