@@ -86,7 +86,7 @@ namespace OakBot
             {".xpi", "application/x-xpinstall"},
             {".zip", "application/zip"},
         #endregion
-    };
+        };
         private Thread _serverThread;
         private string _rootDirectory;
         private HttpListener _listener;
