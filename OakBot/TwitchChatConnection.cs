@@ -121,7 +121,7 @@ namespace OakBot
                                 {
                                     // Regex to check for complete command
                                     string pattern = @"^(" + botCommand.Command + @")\b";
-                                    if (Regex.Match(ircMessage.Message, pattern).Success)
+                                    if (Regex.Match(ircMessage.Message, pattern, RegexOptions.IgnoreCase).Success)
                                     {
                                         botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
                                         break;
