@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Threading.Tasks;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -116,7 +118,7 @@ namespace OakBot
                             {
                                 if (ircMessage.Message.ToLower().StartsWith(botCommand.Command))
                                 {
-                                    botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
+                                    new Task( () => botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author)).Start();
                                     break;
                                 }
                             }

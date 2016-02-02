@@ -187,17 +187,16 @@ namespace OakBot
                         viewer.dateLastSeen = DateTime.Parse((string)dataReader["LastSeen"]);
 
                         // AnkhBot's time format d.HH:MM:SS where d is not present if < 1 day
-                        string ankhbotHours = (string)dataReader["Hours"];
+                        string[] tFormats = {"d.hh:mm:ss", "hh:mm:ss"};
                         TimeSpan watchedHours = new TimeSpan();
-                        if (ankhbotHours.Contains("."))
+                        if (TimeSpan.TryParseExact((string)dataReader["Hours"], tFormats, null, out watchedHours))
                         {
-                            TimeSpan.TryParseExact(ankhbotHours, @"d\.hh\:mm\:ss", null, out watchedHours);
+                            viewer.watchedTimeSpan = watchedHours;
                         }
                         else
                         {
-                            TimeSpan.TryParseExact(ankhbotHours, @"hh\:mm\:ss", null, out watchedHours);
+                            viewer.watchedTimeSpan = TimeSpan.FromMinutes(0);
                         }
-                        viewer.watchedTimeSpan = watchedHours;
 
                         MainWindow.colDatabase.Add(viewer);
                         counter++;
@@ -234,31 +233,6 @@ namespace OakBot
         public static void StartWebserver()
         {
             botHttp = new SimpleHTTPServer(Config.AppDataPath + "\\Webserver", 8080);
-        }
-
-        public static string GetFollowDate(string username)
-        {
-            if(username == Config.StreamerUsername.ToLower())
-            {
-                return "the beginning of time";
-            }else
-            {
-                try
-                {
-                    string url = string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", username, Config.StreamerUsername), response = "";
-                    using (WebClient wc = new WebClient())
-                    {
-                        response = wc.DownloadString(url);
-                        JObject json = JObject.Parse(response);
-                        string date = (string)json.GetValue("created_at");
-                        return date;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return "never";
-                }
-            }
         }
         
     }

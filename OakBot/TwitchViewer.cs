@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Net;
-using System.Diagnostics;
+using System.Globalization;
+using Newtonsoft.Json.Linq;
+
 
 namespace OakBot
 {
@@ -73,6 +74,26 @@ namespace OakBot
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public string GetFollowDateTime(string dtFormat)
+        {
+            try
+            {
+                using (WebClient wc = new WebClient())
+                {
+                    string webResponse = wc.DownloadString(string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", UserName, Config.StreamerUsername));
+                    JObject json = JObject.Parse(webResponse);
+
+                    // Twitch datetime format: yyyy-mm-ddThh:mm:ss+00:00
+                    // Parse it as invariantCulture and roundtrip and ouput shortdate as yyyy-mm-dd ISO format
+                    return DateTime.Parse((string)json.GetValue("created_at"), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind).ToString(dtFormat, CultureInfo.InvariantCulture);
+                }
+            }
+            catch (Exception)
+            {
+                return "Never";
             }
         }
 

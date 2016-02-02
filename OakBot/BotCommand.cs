@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Net;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,8 +121,10 @@ namespace OakBot
                                         blockError = true;
                                     }
                                     return "";
+
                                 case "followdate":
-                                    return Utils.GetFollowDate(viewer.UserName);
+                                    return viewer.GetFollowDateTime("yyyy-MM-dd");
+
                                 case "var1":
                                     string[] vars = Regex.Split(receivedLine, @"\s+");
                                     if (vars.Count() == 2)
