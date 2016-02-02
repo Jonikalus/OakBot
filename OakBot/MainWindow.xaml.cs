@@ -98,6 +98,7 @@ namespace OakBot
             colBotCommands.Add(new BotCommand("!who", "You are @user@", 0, 0));
             colBotCommands.Add(new BotCommand("!block", "@block@ Hello thur!", 0, 0));
             colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0));
+            colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0));
             colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0));
 
 

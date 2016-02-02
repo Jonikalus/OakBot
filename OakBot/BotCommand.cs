@@ -125,6 +125,9 @@ namespace OakBot
                                 case "followdate":
                                     return viewer.GetFollowDateTime("yyyy-MM-dd");
 
+                                case "followdatetime":
+                                    return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
+
                                 case "var1":
                                     string[] vars = Regex.Split(receivedLine, @"\s+");
                                     if (vars.Count() == 2)

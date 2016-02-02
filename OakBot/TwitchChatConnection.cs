@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -113,15 +114,20 @@ namespace OakBot
                             // Add the message to the collection
                             MainWindow.colChatMessages.Add(ircMessage);
 
-                            // Execute command if there is any
-                            foreach (BotCommand botCommand in MainWindow.colBotCommands)
-                            {
-                                if (ircMessage.Message.ToLower().StartsWith(botCommand.Command))
+                            // Execute command checking and executing in a task to offload
+                            // this thread incase of many commands it is going to loop through.
+                            new Task(() => {
+                                foreach (BotCommand botCommand in MainWindow.colBotCommands)
                                 {
-                                    new Task( () => botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author)).Start();
-                                    break;
+                                    // Regex to check for complete command
+                                    string pattern = @"^(" + botCommand.Command + @")\b";
+                                    if (Regex.Match(ircMessage.Message, pattern).Success)
+                                    {
+                                        botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
+                                        break;
+                                    }
                                 }
-                            }
+                            }).Start();
                         break;
                     }
                 }
