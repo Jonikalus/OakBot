@@ -12,6 +12,8 @@ using System.Windows.Controls;
 using System.Reflection;
 using System.Windows;
 using System.Net;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace OakBot
 {
@@ -232,6 +234,25 @@ namespace OakBot
         public static void StartWebserver()
         {
             botHttp = new SimpleHTTPServer(Config.AppDataPath + "\\Webserver", 8080);
+        }
+
+        public static string GetFollowDate(string username)
+        {
+            try
+            {
+                string url = string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", username, Config.StreamerUsername), response = "";
+                using (WebClient wc = new WebClient())
+                {
+                    response = wc.DownloadString(url);
+                    JObject json = JObject.Parse(response);
+                    string date = (string)json.GetValue("created_at");
+                    return date;
+                }
+            }
+            catch (Exception ex)
+            {
+                return "never";
+            }
         }
         
     }

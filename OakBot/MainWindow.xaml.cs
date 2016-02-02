@@ -576,5 +576,10 @@ namespace OakBot
         {
             Utils.StartWebserver();
         }
+
+        private void btnFollowDateTest_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(Utils.GetFollowDate(tbFilterOnName.Text));
+        }
     }
 }

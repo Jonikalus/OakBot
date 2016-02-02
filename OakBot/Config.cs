@@ -30,7 +30,7 @@ namespace OakBot
         private static string streamerOAuthKey;
         private static bool autoConnectStreamer;
 
-        private static char commandPrefix;
+        // private static char commandPrefix;
 
         #endregion
 
@@ -142,9 +142,9 @@ namespace OakBot
                         case "AutoConnectStreamer":
                             autoConnectStreamer = bool.Parse((string)sqlReader["value"]);
                             break;
-                        case "CommandPrefix":
-                            commandPrefix = ((string)sqlReader["value"])[0];
-                            break;
+                        //case "CommandPrefix":
+                        //    commandPrefix = ((string)sqlReader["value"])[0];
+                        //    break;
 
                         default:
                             break;
@@ -333,21 +333,21 @@ namespace OakBot
             }
         }
 
-        public static char CommandPrefix
-        {
-            get
-            {
-                return commandPrefix;
-            }
-            set
-            {
-                if(value != commandPrefix)
-                {
-                    commandPrefix = value;
-                    SaveSettingPropertyToDB("CommandPrefix", value.ToString());
-                }
-            }
-        }
+        //public static char CommandPrefix
+        //{
+        //    get
+        //    {
+        //        return commandPrefix;
+        //    }
+        //    set
+        //    {
+        //        if(value != commandPrefix)
+        //        {
+        //            commandPrefix = value;
+        //            SaveSettingPropertyToDB("CommandPrefix", value.ToString());
+        //        }
+        //    }
+        //}
 
         #endregion
     }
