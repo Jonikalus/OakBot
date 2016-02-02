@@ -251,7 +251,7 @@ namespace OakBot
                         response = wc.DownloadString(url);
                         JObject json = JObject.Parse(response);
                         string date = (string)json.GetValue("created_at");
-                        return "the " + date;
+                        return date;
                     }
                 }
                 catch (Exception ex)

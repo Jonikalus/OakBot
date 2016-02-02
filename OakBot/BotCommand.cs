@@ -37,6 +37,10 @@ namespace OakBot
         private int costVIP3;
         private int costMod;
 
+        private string var1;
+        private string var2;
+        private string var3;
+
         private Rank rankRequired;
 
         private DateTime lastUsed;
@@ -117,7 +121,14 @@ namespace OakBot
                                     return "";
                                 case "followdate":
                                     return Utils.GetFollowDate(viewer.UserName);
-
+                                case "var1":
+                                    string[] vars = Regex.Split(receivedLine, @"\s+");
+                                    if (vars.Count() == 2)
+                                    {
+                                        var1 = vars[1];
+                                        return var1;
+                                    }
+                                    return "";
                                 default:
                                     return "CMD-DOES-NOT-EXIST";
                             }

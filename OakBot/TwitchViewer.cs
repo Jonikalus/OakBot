@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.ComponentModel;
+using System.Net;
 
 namespace OakBot
 {
@@ -22,9 +24,6 @@ namespace OakBot
             raids = 0;
             rank = "";
 
-            following = false;
-            subscriber = false;
-
             watchedTimeSpan = new TimeSpan(0);
         }
 
@@ -37,6 +36,43 @@ namespace OakBot
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
+        public bool isFollowing()
+        {
+            try
+            {
+                string url = string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", userName, Config.StreamerUsername), response = "";
+                using (WebClient wc = new WebClient())
+                {
+                    response = wc.DownloadString(url);
+                    JObject json = JObject.Parse(response);
+                    string date = (string)json.GetValue("created_at");
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool isSubscribed()
+        {
+            try
+            {
+                string url = string.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions/{1}&oauth_token={2}", Config.StreamerUsername, userName, Config.StreamerOAuthKey), response;
+                using (WebClient wc = new WebClient())
+                {
+                    response = wc.DownloadString(url);
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+
+                return false;
             }
         }
 
@@ -67,39 +103,7 @@ namespace OakBot
             }
         }
 
-        private bool following;
-        public bool Following
-        {
-            get
-            {
-                return following;
-            }
-            set
-            {
-                if (value != following)
-                {
-                    following = value;
-                    NotifyPropertyChanged("Following");
-                }
-            }
-        }
-
-        private bool subscriber;
-        public bool Subscriber
-        {
-            get
-            {
-                return subscriber;
-            }
-            set
-            {
-                if(value != subscriber)
-                {
-                    subscriber = value;
-                    NotifyPropertyChanged("Subscriber");
-                }
-            }
-        }
+        
 
         private long points;       // BigInt SQL
         public long Points
