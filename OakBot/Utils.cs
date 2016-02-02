@@ -238,20 +238,26 @@ namespace OakBot
 
         public static string GetFollowDate(string username)
         {
-            try
+            if(username == Config.StreamerUsername.ToLower())
             {
-                string url = string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", username, Config.StreamerUsername), response = "";
-                using (WebClient wc = new WebClient())
+                return "the beginning of time";
+            }else
+            {
+                try
                 {
-                    response = wc.DownloadString(url);
-                    JObject json = JObject.Parse(response);
-                    string date = (string)json.GetValue("created_at");
-                    return date;
+                    string url = string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", username, Config.StreamerUsername), response = "";
+                    using (WebClient wc = new WebClient())
+                    {
+                        response = wc.DownloadString(url);
+                        JObject json = JObject.Parse(response);
+                        string date = (string)json.GetValue("created_at");
+                        return "the " + date;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                return "never";
+                catch (Exception ex)
+                {
+                    return "never";
+                }
             }
         }
         
