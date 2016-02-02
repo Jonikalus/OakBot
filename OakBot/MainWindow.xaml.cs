@@ -97,6 +97,7 @@ namespace OakBot
             colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60));
             colBotCommands.Add(new BotCommand("!who", "You are @user@", 0, 0));
             colBotCommands.Add(new BotCommand("!block", "@block@ Hello thur!", 0, 0));
+            colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since the @followdate@", 0, 0));
 
 
 
@@ -575,11 +576,6 @@ namespace OakBot
         private void button_Click(object sender, RoutedEventArgs e)
         {
             Utils.StartWebserver();
-        }
-
-        private void btnFollowDateTest_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(Utils.GetFollowDate(tbFilterOnName.Text));
         }
     }
 }

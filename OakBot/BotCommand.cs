@@ -115,6 +115,8 @@ namespace OakBot
                                         blockError = true;
                                     }
                                     return "";
+                                case "followdate":
+                                    return Utils.GetFollowDate(viewer.UserName);
 
                                 default:
                                     return "CMD-DOES-NOT-EXIST";
@@ -165,6 +167,7 @@ namespace OakBot
                 return response;
             }
         }
+
 
         #endregion
 
