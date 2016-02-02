@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Net;
+using System.Diagnostics;
 
 namespace OakBot
 {
@@ -62,7 +63,7 @@ namespace OakBot
         {
             try
             {
-                string url = string.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions/{1}&oauth_token={2}", Config.StreamerUsername, userName, Config.StreamerOAuthKey), response;
+                string url = string.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions/{1}?oauth_token={2}", Config.StreamerUsername, userName, Config.StreamerOAuthKey), response;
                 using (WebClient wc = new WebClient())
                 {
                     response = wc.DownloadString(url);
@@ -71,7 +72,6 @@ namespace OakBot
             }
             catch (Exception)
             {
-
                 return false;
             }
         }

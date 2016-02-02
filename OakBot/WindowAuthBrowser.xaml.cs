@@ -43,11 +43,11 @@ namespace OakBot
             {
                 if (_isStreamer)
                 {
-                    Config.StreamerOAuthKey = "oauth:" + Utils.GetTwitchAuthToken(e.Uri.AbsoluteUri);
+                    Config.StreamerOAuthKey = Utils.GetTwitchAuthToken(e.Uri.AbsoluteUri);
                 }
                 else
                 {
-                    Config.BotOAuthKey = "oauth:" + Utils.GetTwitchAuthToken(e.Uri.AbsoluteUri);
+                    Config.BotOAuthKey = Utils.GetTwitchAuthToken(e.Uri.AbsoluteUri);
                 }
                 this.Close();
             }

@@ -49,6 +49,10 @@ namespace OakBot
 
             // Set item source for the listView and apply filter
             listViewChat.ItemsSource = colViewerMessages;
+
+            // TODO quick and dirty isFollowing / isSub test
+            cbFollowing.IsChecked = viewer.isFollowing();
+            cbSubscribed.IsChecked = viewer.isSubscribed();
         }
 
         #endregion

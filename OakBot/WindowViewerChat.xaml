@@ -33,7 +33,9 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        
+        <CheckBox x:Name="cbFollowing" Content="Following" HorizontalAlignment="Left" Margin="479,59,0,0" Grid.Row="1" VerticalAlignment="Top" IsEnabled="False"/>
+        <CheckBox x:Name="cbSubscribed" Content="Subscribed" HorizontalAlignment="Left" Margin="479,78,0,0" Grid.Row="1" VerticalAlignment="Top" IsEnabled="False"/>
+
 
     </Grid>
 </Window>

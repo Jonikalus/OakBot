@@ -578,5 +578,28 @@ namespace OakBot
         {
             Utils.StartWebserver();
         }
+
+        private void lvViewerDatabase_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (lvViewerDatabase.SelectedIndex != -1)
+            {
+                // Get the selected TwitchViewer object
+                TwitchViewer selectedViewer = (TwitchViewer)lvViewerDatabase.SelectedItem;
+
+                // Check if the child chat window is open already
+                // No need for validation as the TwitchViewer is opened directly from the database collection
+                var isChatOpen = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == selectedViewer.UserName);
+                if (isChatOpen != null)
+                {
+                    isChatOpen.Activate();
+                }
+                else
+                {
+                    WindowViewerChat userChat = new WindowViewerChat(this, selectedViewer);
+                    colChatWindows.Add(userChat);
+                    userChat.Show();
+                }
+            }
+        }
     }
 }

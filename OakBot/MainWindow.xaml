@@ -103,7 +103,7 @@
                         <RowDefinition Height="64*"/>
                         <RowDefinition Height="317*"/>
                     </Grid.RowDefinitions>
-                    <ListView x:Name="lvViewerDatabase" Margin="10" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                    <ListView x:Name="lvViewerDatabase" Margin="10" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="lvViewerDatabase_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding UserName}"/>
