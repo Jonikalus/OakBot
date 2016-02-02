@@ -95,8 +95,10 @@ namespace OakBot
             // Testing commands 
             colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0));
             colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60));
+            colBotCommands.Add(new BotCommand("!who", "You are @user@", 0, 0));
+            colBotCommands.Add(new BotCommand("!block", "@block@ Hello thur!", 0, 0));
 
-            
+
 
             // Auto connect
             if (Config.AutoConnectBot)

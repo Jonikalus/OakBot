@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -89,23 +91,55 @@ namespace OakBot
                     // Check rank
                     if(true)
                     {
-                        // Parse response here with fancy doodly-does $user $target $time eg
+                        // Block error to prevent output when no arguments are given
+                        bool blockError = false;
 
+                        // Parse response line here
+                        // @user@ -> Display name of the user of the command
+                        // @target@
+                        // @realtarget@
 
-                        // Set timestamps
-                        lastUsed = DateTime.Now;
-                        dictLastUsed[cmdUser] = DateTime.Now;
+                        // @block@ will not output anything if no arguments are given with the command
 
-                        // Send the response
-                        if (sendAsStreamer)
+                        string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
                         {
-                            MainWindow.instance.streamerChatConnection.SendChatMessage(response);
-                        }
-                        else
+                            switch (m.Groups["item"].Value.ToLower())
+                            {
+                                case "user":
+                                    return viewer.DisplayName;
+
+                                case "block":
+                                    string[] split = Regex.Split(receivedLine, @"\s+");
+                                    if(split.Count() == 1)
+                                    {
+                                        blockError = true;
+                                    }
+                                    return "";
+
+                                default:
+                                    return "CMD-DOES-NOT-EXIST";
+                            }
+                            
+                        });
+
+                        // Continue if there is no @block@ error
+                        if (!blockError)
                         {
-                            MainWindow.instance.botChatConnection.SendChatMessage(response);
-                            MainWindow.colChatMessages.Add(new TwitchChatMessage(
-                                MainWindow.instance.accountBot.UserName, response));
+                            // Set timestamps
+                            lastUsed = DateTime.Now;
+                            dictLastUsed[cmdUser] = DateTime.Now;
+
+                            // Send the response
+                            if (sendAsStreamer)
+                            {
+                                MainWindow.instance.streamerChatConnection.SendChatMessage(parsedResponse.Trim());
+                            }
+                            else
+                            {
+                                MainWindow.instance.botChatConnection.SendChatMessage(parsedResponse.Trim());
+                                MainWindow.colChatMessages.Add(new TwitchChatMessage(
+                                    MainWindow.instance.accountBot.UserName, parsedResponse.Trim()));
+                            }
                         }
                     }
                 }  

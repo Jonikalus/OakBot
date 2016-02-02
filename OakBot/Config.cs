@@ -50,7 +50,7 @@ namespace OakBot
         public static void GetConfigFromDb()
         {
             // Set filename
-            string filename = AppDataPath + "\\" + "OakBotDatabase.sqlite";
+            string filename = AppDataPath + @"\OakBotDatabase.sqlite";
 
             // Create database file if not exists
             if (!File.Exists(filename))
@@ -80,8 +80,8 @@ namespace OakBot
                         "('AutoConnectBot', 'false'), " +
                         "('StreamerTwitchUsername', 'notSet'), " +
                         "('StreamerOAuthToken', 'notSet'), " +
-                        "('AutoConnectStreamer', 'false'), "  +
-                        "('CommandPrefix', '!')" , dbConnection);
+                        "('AutoConnectStreamer', 'false')",
+                        dbConnection);
                     sqlCmd.ExecuteNonQuery();
 
                     // Close database file
@@ -163,7 +163,7 @@ namespace OakBot
             try
             {
                 // Set filename
-                string filename = "OakBotDatabase.sqlite";
+                string filename = AppDataPath + @"\OakBotDatabase.sqlite";
 
                 // Start connection to the database file
                 SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0};Version=3", filename));
