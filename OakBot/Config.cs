@@ -6,7 +6,7 @@ using System.IO;
 
 namespace OakBot
 {
-    public class Config
+    public static class Config
     {
         #region Fields
 

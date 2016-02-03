@@ -20,13 +20,23 @@ namespace OakBot
         public TwitchViewer(string username)
         {
             this.userName = username;
-            displayName = username;
 
             points = 0;
             raids = 0;
             rank = "";
 
             watchedTimeSpan = new TimeSpan(0);
+        }
+
+        public TwitchViewer(string username, int points, int raids, string rank, TimeSpan watched, DateTime LastSeen, bool regular)
+        {
+            userName = username;
+            this.points = points;
+            this.raids = raids;
+            this.rank = rank;
+            this.watchedTimeSpan = watched;
+            this.dateLastSeen = LastSeen;
+            this.regular = regular;
         }
 
         #endregion
@@ -115,14 +125,6 @@ namespace OakBot
             }
         }
 
-        private string displayName;
-        public string DisplayName
-        {
-            get
-            {
-                return displayName;
-            }
-        }
 
         
 
@@ -196,7 +198,6 @@ namespace OakBot
 
         // First seen and last message (seen)
         public DateTime dateLastSeen { get; set; }
-        public DateTime dateFollow { get; set; }
 
         // Regular and indicator that streamer/mod removed regular
         public bool regular { get; set; }

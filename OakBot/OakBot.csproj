@@ -116,6 +116,7 @@
     <Compile Include="BotCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="SimpleHTTPServer.cs" />
+    <Compile Include="ViewerDB.cs" />
     <Compile Include="WindowImportData.xaml.cs">
       <DependentUpon>WindowImportData.xaml</DependentUpon>
     </Compile>
