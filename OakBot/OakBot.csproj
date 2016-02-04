@@ -120,6 +120,7 @@
     <Compile Include="BotCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="SimpleHTTPServer.cs" />
+    <Compile Include="Song.cs" />
     <Compile Include="ViewerDB.cs" />
     <Compile Include="WindowDatabaseCleanup.xaml.cs">
       <DependentUpon>WindowDatabaseCleanup.xaml</DependentUpon>
