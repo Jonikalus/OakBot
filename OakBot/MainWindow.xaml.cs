@@ -74,6 +74,7 @@ namespace OakBot
             // Initialize config
             Config.GetConfigFromDb();
             LoadConfigToUI();
+            ViewerDB.LoadAllViewers();
 
             // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
@@ -601,6 +602,12 @@ namespace OakBot
                     userChat.Show();
                 }
             }
+        }
+
+        private void btnDatabaseCleanup_Click(object sender, RoutedEventArgs e)
+        {
+            WindowDatabaseCleanup windowCleanup = new WindowDatabaseCleanup();
+            windowCleanup.ShowDialog();
         }
     }
 }

@@ -26,7 +26,7 @@
         <Button x:Name="btnImportDeep" Content="Import" Margin="0,0,10,7" Grid.Row="2" VerticalAlignment="Bottom" Click="btnImportDeep_Click" TabIndex="3" Height="20" HorizontalAlignment="Right" Width="75"/>
         <Button x:Name="btnImportOak" Content="Import" HorizontalAlignment="Right" Margin="0,0,10,9" Width="75" Click="btnImportAnkh_Click" TabIndex="0" Height="20" VerticalAlignment="Bottom"/>
         
-        <Button x:Name="btnDone" IsDefault="True" IsCancel="True" Content="Done" Margin="0,0,10,10" Grid.Row="3" VerticalAlignment="Bottom" Click="btnImportDeep_Click" TabIndex="4" Height="20" HorizontalAlignment="Right" Width="75"/>
+        <Button x:Name="btnCancel" IsDefault="True" IsCancel="True" Content="Cancel" Margin="0,0,10,10" Grid.Row="3" VerticalAlignment="Bottom" Click="btnImportDeep_Click" TabIndex="4" Height="20" HorizontalAlignment="Right" Width="75"/>
 
     </Grid>
 </Window>

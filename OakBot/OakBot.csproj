@@ -117,6 +117,9 @@
     <Compile Include="Config.cs" />
     <Compile Include="SimpleHTTPServer.cs" />
     <Compile Include="ViewerDB.cs" />
+    <Compile Include="WindowDatabaseCleanup.xaml.cs">
+      <DependentUpon>WindowDatabaseCleanup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowImportData.xaml.cs">
       <DependentUpon>WindowImportData.xaml</DependentUpon>
     </Compile>
@@ -132,6 +135,10 @@
     <Compile Include="TwitchViewer.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
     <Compile Include="Utils.cs" />
+    <Page Include="WindowDatabaseCleanup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WindowImportData.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

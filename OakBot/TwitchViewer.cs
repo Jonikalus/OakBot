@@ -25,17 +25,17 @@ namespace OakBot
             raids = 0;
             rank = "";
 
-            watchedTimeSpan = new TimeSpan(0);
+            watched = new TimeSpan(0);
         }
 
-        public TwitchViewer(string username, int points, int raids, string rank, TimeSpan watched, DateTime LastSeen, bool regular)
+        public TwitchViewer(string username, long points, long raids, string rank, TimeSpan watched, DateTime LastSeen, bool regular)
         {
             userName = username;
             this.points = points;
             this.raids = raids;
             this.rank = rank;
-            this.watchedTimeSpan = watched;
-            this.dateLastSeen = LastSeen;
+            this.watched = watched;
+            this.LastSeen = LastSeen;
             this.regular = regular;
         }
 
@@ -55,12 +55,9 @@ namespace OakBot
         {
             try
             {
-                string url = string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", userName, Config.StreamerUsername), response = "";
                 using (WebClient wc = new WebClient())
                 {
-                    response = wc.DownloadString(url);
-                    JObject json = JObject.Parse(response);
-                    string date = (string)json.GetValue("created_at");
+                    wc.DownloadString(string.Format("https://api.twitch.tv/kraken/users/{0}/follows/channels/{1}", userName, Config.StreamerUsername));
                     return true;
                 }
             }
@@ -74,10 +71,9 @@ namespace OakBot
         {
             try
             {
-                string url = string.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions/{1}?oauth_token={2}", Config.StreamerUsername, userName, Config.StreamerOAuthKey), response;
                 using (WebClient wc = new WebClient())
                 {
-                    response = wc.DownloadString(url);
+                    wc.DownloadString(string.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions/{1}?oauth_token={2}", Config.StreamerUsername, userName, Config.StreamerOAuthKey));
                     return true;
                 }
             }
@@ -125,10 +121,7 @@ namespace OakBot
             }
         }
 
-
-        
-
-        private long points;       // BigInt SQL
+        private long points;
         public long Points
         {
             get
@@ -145,7 +138,7 @@ namespace OakBot
             }
         }
 
-        private long raids;        // BigInt SQL
+        private long raids;
         public long Raids
         {
             get
@@ -180,24 +173,46 @@ namespace OakBot
         }
 
         // Watched timespan
-        public TimeSpan watchedTimeSpan { get; set; }
+        private TimeSpan watched;
+        public TimeSpan Watched
+        {
+            get
+            {
+                return watched;
+            }
+            set
+            {
+                watched = value;
+            }
+        }
         public double Hours
         {
             get
             {
-                return Math.Round(watchedTimeSpan.TotalHours, 1, MidpointRounding.AwayFromZero);
+                return Math.Round(watched.TotalHours, 1, MidpointRounding.AwayFromZero);
             }
         }
-        public long Minutes // BigInt SQL
+        public long Minutes
         {
             get
             {
-                return Convert.ToInt64(watchedTimeSpan.TotalMinutes);
+                return Convert.ToInt64(watched.TotalMinutes);
             }
         }
 
         // First seen and last message (seen)
-        public DateTime dateLastSeen { get; set; }
+        private DateTime lastSeen;
+        public DateTime LastSeen
+        {
+            get
+            {
+                return lastSeen;
+            }
+            set
+            {
+                lastSeen = value;
+            }
+        }
 
         // Regular and indicator that streamer/mod removed regular
         public bool regular { get; set; }

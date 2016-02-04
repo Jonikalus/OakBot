@@ -112,7 +112,7 @@ namespace OakBot
                             switch (m.Groups["item"].Value.ToLower())
                             {
                                 case "user":
-                                    return viewer.DisplayName;
+                                    return viewer.UserName;
 
                                 case "block":
                                     string[] split = Regex.Split(receivedLine, @"\s+");
