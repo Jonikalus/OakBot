@@ -42,12 +42,16 @@ namespace OakBot
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".sqlite";
             dlg.Filter = "AnkhBot CurrencyDB|CurrencyDB.sqlite";
-            dlg.InitialDirectory = @"%appdata%\AnkhHeart\AnkhBotR2\Twitch\Databases";
+            dlg.InitialDirectory = Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData) + "\\AnkhHeart\\AnkhBotR2\\Twitch\\Databases";
 
             // Show file dialog
             if (dlg.ShowDialog() == true)
             {
                 int cntRecords = 0;
+
+                // Set status
+                lblStatusText.Content = "Reading Ankhbot Data and Writing to file. This window will close automatically when finished.";
 
                 try
                 {
@@ -59,7 +63,18 @@ namespace OakBot
                     SQLiteCommand sqlCmd = new SQLiteCommand("SELECT * FROM CurrencyUser", dbConnection);
                     SQLiteDataReader dataReader = sqlCmd.ExecuteReader();
 
-                    // If database-file can be opened and be read clear colDatabase
+                    // TODO close active chat connections
+                    try
+                    {
+                        MainWindow.instance.DisconnectBot();
+                        MainWindow.instance.DisconnectStreamer();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+
+                    MainWindow.colViewers.Clear();
                     MainWindow.colDatabase.Clear();
 
                     // Itterate over found rows and insert a new TwitchViewer in colDatabase
@@ -67,7 +82,7 @@ namespace OakBot
                     {
                         TwitchViewer viewer = new TwitchViewer((string)dataReader["Name"]);
 
-                        viewer.Rank = (string)dataReader["Rank"];
+                        viewer.Title = (string)dataReader["Rank"];
                         viewer.Points = (long)dataReader["Points"];
                         viewer.Raids = (long)dataReader["Raids"];
 
@@ -86,16 +101,61 @@ namespace OakBot
                         // Counter for parsed records                      
                         cntRecords++;
                     }
+
+                    dbConnection.Close();
+                    dbConnection.Dispose();
+
+                    // Open DBfile
+                    dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", ViewerDB.filename));
+                    dbConnection.Open();
+
+                    // Set status
+                    lblStatusText.Content = "Clearing existing database...";
+
+                    // Purge DBfile
+                    sqlCmd = new SQLiteCommand("DELETE FROM `Viewers`", dbConnection);
+                    sqlCmd.ExecuteNonQuery();
+
+                    int cntWriteViewer = 0;
+
+                    // Insert new TwitchViewer in `Viewers`
+                    foreach (TwitchViewer viewer in MainWindow.colDatabase)
+                    {
+                        // Set status
+                        //http://stackoverflow.com/questions/32680826/wpf-mvvm-thread-keep-running-and-show-progress-in-wpf-windows
+                        //http://stackoverflow.com/questions/1952201/display-progress-bar-while-doing-some-work-in-c
+                        lblStatusText.Content = string.Format("Writing viewer {0} of {1} to file...", cntWriteViewer, cntRecords);
+                        pbStatus.Value = cntWriteViewer / cntRecords * 100;
+                        cntWriteViewer++;
+
+                        sqlCmd = new SQLiteCommand(
+                            string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
+                                viewer.UserName,
+                                viewer.Points,
+                                viewer.Spent,
+                                viewer.Watched.ToString(),
+                                viewer.LastSeen.ToString("o"),
+                                viewer.Raids,
+                                viewer.Title,
+                                viewer.regular.ToString(),
+                                viewer.IGN),
+                            dbConnection);
+                        sqlCmd.ExecuteNonQuery();
+                    }
+
+                    // Close DBfile
                     dbConnection.Close();
 
-                    // Purge and Save DBfile with new data
-                    ViewerDB.RemoveAddAllViewers();
+                    // Return success
+                    return true;
 
                 }
                 catch (SQLiteException ex)
                 {
                     MessageBox.Show(string.Format("Could not open or read the selected sqlite database file.\n\n{0}", ex.ToString()),
                         "AnkhBot User Data Import", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    lblStatusText.Content = "Error reading file.";
 
                     return false;
                 }
@@ -104,13 +164,10 @@ namespace OakBot
                     MessageBox.Show(string.Format("The following program error has occured:\n\n{0}", ex.ToString()),
                         "AnkhBot User Data Import", MessageBoxButton.OK, MessageBoxImage.Error);
 
+                    lblStatusText.Content = "Unknown error occured.";
+
                     return false;
                 }
-
-                // Succesfull import
-                MessageBox.Show(string.Format("Completed import from AnkhBot.\nAdded {0} records.", cntRecords),
-                    "AnkhBot Import", MessageBoxButton.OK, MessageBoxImage.Information);
-                return true;
             }
 
             // User canceled the file selection

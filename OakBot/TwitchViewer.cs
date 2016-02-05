@@ -17,26 +17,18 @@ namespace OakBot
 
         #region Constructors
 
-        public TwitchViewer(string username)
+        public TwitchViewer(string userName)
         {
-            this.userName = username;
+            this.userName = userName;
 
-            points = 0;
-            raids = 0;
-            rank = "";
-
-            watched = new TimeSpan(0);
-        }
-
-        public TwitchViewer(string username, long points, long raids, string rank, TimeSpan watched, DateTime LastSeen, bool regular)
-        {
-            userName = username;
-            this.points = points;
-            this.raids = raids;
-            this.rank = rank;
-            this.watched = watched;
-            this.LastSeen = LastSeen;
-            this.regular = regular;
+            this.points = 0;
+            this.spent = 0;
+            this.watched = new TimeSpan(0);
+            this.lastSeen = new DateTime(0, DateTimeKind.Utc);
+            this.raids = 0;
+            this.title = "";
+            this.regular = false;
+            this.ign = "";
         }
 
         #endregion
@@ -112,6 +104,7 @@ namespace OakBot
 
         #region Fields and Properties
 
+        // Username of the viewer
         private string userName;
         public string UserName
         {
@@ -121,6 +114,7 @@ namespace OakBot
             }
         }
 
+        // Points the user has
         private long points;
         public long Points
         {
@@ -138,6 +132,26 @@ namespace OakBot
             }
         }
 
+        // Points the user have spent
+        private long spent;
+        public long Spent
+        {
+            get
+            {
+                return spent;
+            }
+            set
+            {
+                if (value != spent)
+                {
+                    spent = value;
+                    NotifyPropertyChanged("Spent");
+                }
+            }
+        }
+
+        // Amount of raids this user did on
+        // the users channel (mostly other streamers)
         private long raids;
         public long Raids
         {
@@ -155,24 +169,25 @@ namespace OakBot
             }
         }
         
-        private string rank;
-        public string Rank
+        // Title earned by points/hours or bought
+        private string title;
+        public string Title
         {
             get
             {
-                return rank;
+                return title;
             }
             set
             {
-                if (value != rank)
+                if (value != title)
                 {
-                    rank = value;
-                    NotifyPropertyChanged("Rank");
+                    title = value;
+                    NotifyPropertyChanged("Title");
                 }
             }
         }
 
-        // Watched timespan
+        // Watched timespan of the viewer
         private TimeSpan watched;
         public TimeSpan Watched
         {
@@ -200,7 +215,8 @@ namespace OakBot
             }
         }
 
-        // First seen and last message (seen)
+        // Timestamp of last seen
+        // This will be updated each background check
         private DateTime lastSeen;
         public DateTime LastSeen
         {
@@ -214,7 +230,26 @@ namespace OakBot
             }
         }
 
-        // Regular and indicator that streamer/mod removed regular
+        // In-Game-Name field that viewers can set
+        private string ign;
+        public string IGN
+        {
+            get
+            {
+                return ign;
+            }
+            set
+            {
+                if(value != ign)
+                {
+                    title = value;
+                    NotifyPropertyChanged("IGN");
+                }
+            }
+        }
+
+        // Regular indicator once point/hours goal has been met
+        // Won't be revoked by the bot but can be by the user
         public bool regular { get; set; }
         public bool forcedRegRemove { get; set; }
 

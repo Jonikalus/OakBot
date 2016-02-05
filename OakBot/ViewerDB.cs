@@ -25,10 +25,10 @@ namespace OakBot
             {
                 SQLiteConnection.CreateFile(filename);
 
-                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3 Read Only=True;", filename));
+                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3;", filename));
                 dbConnection.Open();
 
-                SQLiteCommand sqlCmd = new SQLiteCommand("CREATE TABLE `Viewers` (`Username` TEXT NOT NULL, `Points` INTEGER, `Raids` INTEGER, `Rank` TEXT, `Watched` TEXT, `LastSeen` TEXT, `Regular` BOOLEAN, PRIMARY KEY(Username))", dbConnection);
+                SQLiteCommand sqlCmd = new SQLiteCommand("CREATE TABLE `Viewers` (`Username` TEXT NOT NULL, `Points` INTEGER, `Spent` INTEGER, `Watched` TEXT, `LastSeen` TEXT, `Raids` INTEGER, `Title` TEXT, `Regular` BOOLEAN, `IGN` TEXT, PRIMARY KEY(Username))", dbConnection);
                 sqlCmd.ExecuteNonQuery();
 
                 dbConnection.Close();
@@ -36,7 +36,7 @@ namespace OakBot
             // Load database-file otherwise
             else
             {
-                dbConnection = new SQLiteConnection(string.Format("Data Source={0};Version=3", filename));
+                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3; Read Only=True;", filename));
                 dbConnection.Open();
 
                 SQLiteCommand read = new SQLiteCommand("SELECT * FROM `Viewers`", dbConnection);
@@ -44,15 +44,14 @@ namespace OakBot
 
                 while (reader.Read())
                 {
-                    //MainWindow.colDatabase.Add(new TwitchViewer((string)reader["Username"], (long)reader["Points"], (long)reader["Raids"], (string)reader["Rank"], TimeSpan.Parse((string)reader["Watched"]), DateTime.Parse((string)reader["LastSeen"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), (bool)reader["Regular"]));
-
                     TwitchViewer loadedViewer = new TwitchViewer((string)reader["Username"]);
                     loadedViewer.Points = (long)reader["Points"];
-                    loadedViewer.Raids = (long)reader["Raids"];
-                    loadedViewer.Rank = (string)reader["Rank"];
                     loadedViewer.Watched = TimeSpan.Parse((string)reader["Watched"]);
                     loadedViewer.LastSeen = DateTime.Parse((string)reader["LastSeen"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                    loadedViewer.Raids = (long)reader["Raids"];
+                    loadedViewer.Title = (string)reader["Title"];
                     loadedViewer.regular = (bool)reader["Regular"];
+                    loadedViewer.IGN = (string)reader["IGN"];
 
                     MainWindow.colDatabase.Add(loadedViewer);
                 }
@@ -61,10 +60,13 @@ namespace OakBot
             }
         }
 
+
+
         /// <summary>
-        /// Purges and append viewers in DBfile from colDatabase.
+        /// Add all viewers to DBfile in colDatabase.
+        /// Does not check if viewers already exists, make sure they don't prior calling.
         /// </summary>
-        public static void RemoveAddAllViewers()
+        public static void AddAllViewers()
         {
             SQLiteCommand sqlCmd;
 
@@ -72,22 +74,20 @@ namespace OakBot
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();
 
-            // Delete all rows in `Viewers`
-            sqlCmd = new SQLiteCommand("DELETE FROM `Viewers`", dbConnection);
-            sqlCmd.ExecuteNonQuery();
-
             // Insert new TwitchViewer in `Viewers`
             foreach (TwitchViewer viewer in MainWindow.colDatabase)
             {
                 sqlCmd = new SQLiteCommand(
-                    string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
+                    string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
                         viewer.UserName,
                         viewer.Points,
-                        viewer.Raids,
-                        viewer.Rank,
+                        viewer.Spent,
                         viewer.Watched.ToString(),
                         viewer.LastSeen.ToString("o"),
-                        viewer.regular.ToString()),
+                        viewer.Raids,
+                        viewer.Title,
+                        viewer.regular.ToString(),
+                        viewer.IGN),
                     dbConnection);
                 sqlCmd.ExecuteNonQuery();
             }
@@ -110,14 +110,16 @@ namespace OakBot
             foreach(TwitchViewer viewer in MainWindow.colDatabase)
             {
                 sqlCmd = new SQLiteCommand(
-                    string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Raids` = '{2}', `Rank` = '{3}', `Watched` = '{4}', `LastSeen` = '{5}', `Regular` = '{6}' WHERE `Username` = '{0}'",
+                    string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}' WHERE `Username` = '{0}'",
                         viewer.UserName,
                         viewer.Points,
-                        viewer.Raids,
-                        viewer.Rank,
+                        viewer.Spent,
                         viewer.Watched.ToString(),
                         viewer.LastSeen.ToString("o"),
-                        viewer.regular.ToString()),
+                        viewer.Raids,
+                        viewer.Title,
+                        viewer.regular.ToString(),
+                        viewer.IGN),
                 dbConnection);
 
                 sqlCmd.ExecuteNonQuery();
@@ -125,6 +127,27 @@ namespace OakBot
 
             dbConnection.Close();
         }
+
+        /// <summary>
+        /// Remove all viewers from DBfile
+        /// </summary>
+        public static void RemoveAllViewers()
+        {
+            SQLiteCommand sqlCmd;
+
+            // Open DBfile
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            dbConnection.Open();
+
+            // Delete all rows in `Viewers`
+            sqlCmd = new SQLiteCommand("DELETE FROM `Viewers`", dbConnection);
+            sqlCmd.ExecuteNonQuery();
+
+            // Close DBfile
+            dbConnection.Close();
+        }
+
+
 
         /// <summary>
         /// Add new viewer to DBfile with specified TwitchViewer.
@@ -136,7 +159,18 @@ namespace OakBot
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();
 
-            SQLiteCommand sqlCmd = new SQLiteCommand(string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", viewer.UserName, viewer.Points, viewer.Raids, viewer.Rank, viewer.Watched.ToString(), viewer.LastSeen.ToString("o", CultureInfo.InvariantCulture), viewer.regular.ToString()), dbConnection);
+            SQLiteCommand sqlCmd = new SQLiteCommand(
+                string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
+                    viewer.UserName,
+                    viewer.Points,
+                    viewer.Spent,
+                    viewer.Watched.ToString(),
+                    viewer.LastSeen.ToString("o"),
+                    viewer.Raids,
+                    viewer.Title,
+                    viewer.regular.ToString(),
+                    viewer.IGN),
+                dbConnection);
             sqlCmd.ExecuteNonQuery();
 
             dbConnection.Close();
@@ -152,7 +186,18 @@ namespace OakBot
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();
 
-            SQLiteCommand sqlCmd = new SQLiteCommand(string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Raids` = '{2}', `Rank` = '{3}', `Hours` = '{4}', `LastSeen` = '{5}', `Regular` = '{6}' WHERE `Username` = '{0}'", viewer.UserName, viewer.Points, viewer.Raids, viewer.Rank, viewer.Watched.ToString(), viewer.LastSeen.ToString("o", CultureInfo.InvariantCulture), viewer.regular.ToString()), dbConnection);
+            SQLiteCommand sqlCmd = new SQLiteCommand(
+                string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}' WHERE `Username` = '{0}'",
+                    viewer.UserName,
+                    viewer.Points,
+                    viewer.Spent,
+                    viewer.Watched.ToString(),
+                    viewer.LastSeen.ToString("o"),
+                    viewer.Raids,
+                    viewer.Title,
+                    viewer.regular.ToString(),
+                    viewer.IGN),
+            dbConnection);
             sqlCmd.ExecuteNonQuery();
 
             dbConnection.Close();

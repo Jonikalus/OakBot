@@ -18,6 +18,9 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.IO;
+using System.Globalization;
+
+// http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 
 namespace OakBot
 {
@@ -67,8 +70,9 @@ namespace OakBot
             // Initialize instance
             instance = this;
 
-            if (!Directory.Exists(Config.AppDataPath)) Directory.CreateDirectory(Config.AppDataPath);
+            this.DataContext = this;
 
+            if (!Directory.Exists(Config.AppDataPath)) Directory.CreateDirectory(Config.AppDataPath);
             if (!Directory.Exists(Config.AppDataPath + "\\Webserver")) Directory.CreateDirectory(Config.AppDataPath + "\\Webserver");
 
             // Initialize config
@@ -92,6 +96,7 @@ namespace OakBot
             lvViewerDatabase.ItemsSource = colDatabase;
             databaseView = CollectionViewSource.GetDefaultView(lvViewerDatabase.ItemsSource);
             databaseView.Filter = DatabaseFilter;
+            lblFilterCnt.Content = databaseView.Cast<TwitchViewer>().Count();
 
             // Testing commands 
             colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0));
@@ -161,7 +166,7 @@ namespace OakBot
             botChat.Start();
         }
 
-        private void DisconnectBot()
+        public void DisconnectBot()
         {
             try
             {
@@ -221,7 +226,7 @@ namespace OakBot
             streamerChat.Start();
         }
 
-        private void DisconnectStreamer()
+        public void DisconnectStreamer()
         {
             try
             {
@@ -528,6 +533,7 @@ namespace OakBot
             if(databaseView != null)
             {
                 databaseView.Refresh();
+                lblFilterCnt.Content = databaseView.Cast<TwitchViewer>().Count();
             }
         }
 
@@ -609,5 +615,25 @@ namespace OakBot
             WindowDatabaseCleanup windowCleanup = new WindowDatabaseCleanup();
             windowCleanup.ShowDialog();
         }
+
+        // This doesn't work as it doesnt contain an INotify
+        // These should be properties later on in a MVVM.
+        // Now the filter count is updated after refresh of the view.
+        //public int TotalDatabaseCount
+        //{
+        //    get
+        //    {
+        //        return colDatabase.Count();
+        //    }
+        //}
+        //
+        //public int FilterDatabaseCount
+        //{
+        //    get
+        //    {
+        //        return databaseView.Cast<TwitchViewer>().Count();
+        //    }
+        //}
+
     }
 }
