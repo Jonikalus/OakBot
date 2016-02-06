@@ -127,6 +127,7 @@
     </ApplicationDefinition>
     <Compile Include="BotCommand.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Giveaway.cs" />
     <Compile Include="SimpleHTTPServer.cs" />
     <Compile Include="Song.cs" />
     <Compile Include="ViewerDB.cs" />
