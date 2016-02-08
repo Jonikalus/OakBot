@@ -37,7 +37,7 @@ namespace OakBot
                     Int32.TryParse(tbPoints.Text, out pointsCutoff) &&
                     Int32.TryParse(tbDays.Text, out daysCutoff))
                 {
-                    foreach (TwitchViewer viewer in MainWindow.colDatabase.Reverse())
+                    foreach (Viewer viewer in MainWindow.colDatabase.Reverse())
                     {
                         if (cbHours.IsChecked == true && viewer.Minutes < watchedCutoff ||
                             cbPoints.IsChecked == true && viewer.Points < pointsCutoff ||

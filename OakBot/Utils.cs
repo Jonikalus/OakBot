@@ -104,8 +104,8 @@ namespace OakBot
         }
 
         /// <summary>
-        /// Add the viewer as TwitchViewer to the viewers collection.
-        /// Creates a new TwitchViewer and adds it to the database if needed.
+        /// Add the viewer as Viewer to the viewers collection.
+        /// Creates a new Viewer and adds it to the database if needed.
         /// </summary>
         /// <param name="viewerName">Viewers Twitch username to add</param>
         public static void AddToViewersCol(string viewerName)
@@ -122,7 +122,7 @@ namespace OakBot
                 }
                 else
                 { // is not in database
-                    TwitchViewer newViewer = new TwitchViewer(viewerName);
+                    Viewer newViewer = new Viewer(viewerName);
                     MainWindow.colDatabase.Add(newViewer);
                     MainWindow.colViewers.Add(newViewer);
                 }

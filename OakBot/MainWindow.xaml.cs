@@ -44,8 +44,8 @@ namespace OakBot
 
         // Collections
         public static ObservableCollection<TwitchChatMessage> colChatMessages = new ObservableCollection<TwitchChatMessage>();
-        public static ObservableCollection<TwitchViewer> colViewers = new ObservableCollection<TwitchViewer>();
-        public static ObservableCollection<TwitchViewer> colDatabase = new ObservableCollection<TwitchViewer>();
+        public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
+        public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
         public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
         public static ObservableCollection<BotCommand> colBotCommands = new ObservableCollection<BotCommand>();
 
@@ -96,7 +96,7 @@ namespace OakBot
             lvViewerDatabase.ItemsSource = colDatabase;
             databaseView = CollectionViewSource.GetDefaultView(lvViewerDatabase.ItemsSource);
             databaseView.Filter = DatabaseFilter;
-            lblFilterCnt.Content = databaseView.Cast<TwitchViewer>().Count();
+            lblFilterCnt.Content = databaseView.Cast<Viewer>().Count();
 
             // Testing commands 
             colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0));
@@ -494,9 +494,9 @@ namespace OakBot
                 // Get the selected TwitchChatMessage object
                 TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
 
-                // Get viewer's TwitchViewer object to attach to the new chat window
+                // Get viewer's Viewer object to attach to the new chat window
                 // This also prevents chat opening of "OakBot" system messages
-                // Creating new TwitchViewer objects is handled by TwitchChatConnection on time
+                // Creating new Viewer objects is handled by TwitchChatConnection on time
                 var isInDatabase = colDatabase.FirstOrDefault(x => x.UserName == selectedMessage.Author);
                 if (isInDatabase != null)
                 {
@@ -518,7 +518,7 @@ namespace OakBot
 
         private void btnViewerAddPoints_Click(object sender, RoutedEventArgs e)
         {
-            foreach (TwitchViewer viewer in colViewers)
+            foreach (Viewer viewer in colViewers)
             {
                 viewer.Points += 10;
             }
@@ -533,13 +533,13 @@ namespace OakBot
             if(databaseView != null)
             {
                 databaseView.Refresh();
-                lblFilterCnt.Content = databaseView.Cast<TwitchViewer>().Count();
+                lblFilterCnt.Content = databaseView.Cast<Viewer>().Count();
             }
         }
 
         private bool DatabaseFilter(object item)
         {
-            TwitchViewer viewer = item as TwitchViewer;
+            Viewer viewer = item as Viewer;
             return viewer.UserName.Contains(tbFilterOnName.Text);
         }
 
@@ -591,11 +591,11 @@ namespace OakBot
         {
             if (lvViewerDatabase.SelectedIndex != -1)
             {
-                // Get the selected TwitchViewer object
-                TwitchViewer selectedViewer = (TwitchViewer)lvViewerDatabase.SelectedItem;
+                // Get the selected Viewer object
+                Viewer selectedViewer = (Viewer)lvViewerDatabase.SelectedItem;
 
                 // Check if the child chat window is open already
-                // No need for validation as the TwitchViewer is opened directly from the database collection
+                // No need for validation as the Viewer is opened directly from the database collection
                 var isChatOpen = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == selectedViewer.UserName);
                 if (isChatOpen != null)
                 {
@@ -631,7 +631,7 @@ namespace OakBot
         //{
         //    get
         //    {
-        //        return databaseView.Cast<TwitchViewer>().Count();
+        //        return databaseView.Cast<Viewer>().Count();
         //    }
         //}
 

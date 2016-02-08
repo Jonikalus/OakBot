@@ -14,7 +14,7 @@ namespace OakBot
         #region Fields
 
         private MainWindow window;
-        private TwitchViewer viewer;
+        private Viewer viewer;
 
         private ObservableCollection<TwitchChatMessage> colViewerMessages;
         private object colLock = new object();
@@ -23,14 +23,14 @@ namespace OakBot
 
         #region Constructors
 
-        public WindowViewerChat(MainWindow window, TwitchViewer viewer)
+        public WindowViewerChat(MainWindow window, Viewer viewer)
         {
             // Set fields
             this.window = window;
             this.viewer = viewer;
 
             // Init Window and set datacontext to this
-            // for databinding to the attached TwitchViewer
+            // for databinding to the attached Viewer
             InitializeComponent();
             DataContext = this;
 
@@ -112,7 +112,7 @@ namespace OakBot
 
         #region Properties
 
-        public TwitchViewer Viewer
+        public Viewer Viewer
         {
             get
             {

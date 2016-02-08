@@ -44,7 +44,7 @@ namespace OakBot
 
                 while (reader.Read())
                 {
-                    TwitchViewer loadedViewer = new TwitchViewer((string)reader["Username"]);
+                    Viewer loadedViewer = new Viewer((string)reader["Username"]);
                     loadedViewer.Points = (long)reader["Points"];
                     loadedViewer.Watched = TimeSpan.Parse((string)reader["Watched"]);
                     loadedViewer.LastSeen = DateTime.Parse((string)reader["LastSeen"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
@@ -74,8 +74,8 @@ namespace OakBot
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();
 
-            // Insert new TwitchViewer in `Viewers`
-            foreach (TwitchViewer viewer in MainWindow.colDatabase)
+            // Insert new Viewer in `Viewers`
+            foreach (Viewer viewer in MainWindow.colDatabase)
             {
                 sqlCmd = new SQLiteCommand(
                     string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
@@ -107,7 +107,7 @@ namespace OakBot
 
             SQLiteCommand sqlCmd;
 
-            foreach(TwitchViewer viewer in MainWindow.colDatabase)
+            foreach(Viewer viewer in MainWindow.colDatabase)
             {
                 sqlCmd = new SQLiteCommand(
                     string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}' WHERE `Username` = '{0}'",
@@ -150,11 +150,11 @@ namespace OakBot
 
 
         /// <summary>
-        /// Add new viewer to DBfile with specified TwitchViewer.
+        /// Add new viewer to DBfile with specified Viewer.
         /// Does not check if viewer exists, make sure it doesn't prior calling.
         /// </summary>
         /// <param name="viewer">Viewer to be added</param>
-        public static void AddViewer(TwitchViewer viewer)
+        public static void AddViewer(Viewer viewer)
         {
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();
@@ -177,11 +177,11 @@ namespace OakBot
         }
 
         /// <summary>
-        /// Update viewer in the DBfile with specified TwitchViewer.
+        /// Update viewer in the DBfile with specified Viewer.
         /// Does not check if viewer exists, make sure it does prior calling.
         /// </summary>
         /// <param name="viewer">Viewer to be updated</param>
-        public static void UpdateViewer(TwitchViewer viewer)
+        public static void UpdateViewer(Viewer viewer)
         {
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();
@@ -204,11 +204,11 @@ namespace OakBot
         }
 
         /// <summary>
-        /// Remove viewer from DBfile specified by TwitchViewer.
+        /// Remove viewer from DBfile specified by Viewer.
         /// Does not check if viewer exists, make sure it does prior calling.
         /// </summary>
         /// <param name="viewer">Viewer to be removed</param>
-        public static void RemoveViewer(TwitchViewer viewer)
+        public static void RemoveViewer(Viewer viewer)
         {
             SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
             dbConnection.Open();

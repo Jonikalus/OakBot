@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace OakBot
 {
-    public class TwitchViewer : INotifyPropertyChanged
+    public class Viewer : INotifyPropertyChanged
     {
         #region Fields
 
@@ -17,7 +17,7 @@ namespace OakBot
 
         #region Constructors
 
-        public TwitchViewer(string userName)
+        public Viewer(string userName)
         {
             this.userName = userName;
 

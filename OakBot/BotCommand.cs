@@ -91,8 +91,8 @@ namespace OakBot
                 // Check if user is not on cooldown
                 if (uCooldownSec == 0 || DateTime.Now.Subtract(dictLastUsed[cmdUser]).TotalSeconds > uCooldownSec)
                 {
-                    // Get viewer's TwitchViewer object
-                    TwitchViewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == cmdUser);
+                    // Get viewer's Viewer object
+                    Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == cmdUser);
 
                     // Check rank
                     if(true)

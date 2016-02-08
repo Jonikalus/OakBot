@@ -77,10 +77,10 @@ namespace OakBot
                     MainWindow.colViewers.Clear();
                     MainWindow.colDatabase.Clear();
 
-                    // Itterate over found rows and insert a new TwitchViewer in colDatabase
+                    // Itterate over found rows and insert a new Viewer in colDatabase
                     while (dataReader.Read())
                     {
-                        TwitchViewer viewer = new TwitchViewer((string)dataReader["Name"]);
+                        Viewer viewer = new Viewer((string)dataReader["Name"]);
 
                         viewer.Title = (string)dataReader["Rank"];
                         viewer.Points = (long)dataReader["Points"];
@@ -95,7 +95,7 @@ namespace OakBot
                         // This is the value for timespan.toString(), .Parse() and .TryParse()
                         viewer.Watched = TimeSpan.Parse((string)dataReader["Hours"]);
 
-                        // Add new TwitchViewer to colDatabase
+                        // Add new Viewer to colDatabase
                         MainWindow.colDatabase.Add(viewer);
 
                         // Counter for parsed records                      
@@ -104,6 +104,8 @@ namespace OakBot
 
                     dbConnection.Close();
                     dbConnection.Dispose();
+
+/*
 
                     // Open DBfile
                     dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", ViewerDB.filename));
@@ -118,8 +120,8 @@ namespace OakBot
 
                     int cntWriteViewer = 0;
 
-                    // Insert new TwitchViewer in `Viewers`
-                    foreach (TwitchViewer viewer in MainWindow.colDatabase)
+                    // Insert new Viewer in `Viewers`
+                    foreach (Viewer viewer in MainWindow.colDatabase)
                     {
                         // Set status
                         //http://stackoverflow.com/questions/32680826/wpf-mvvm-thread-keep-running-and-show-progress-in-wpf-windows
@@ -145,6 +147,8 @@ namespace OakBot
 
                     // Close DBfile
                     dbConnection.Close();
+
+*/
 
                     // Return success
                     return true;
