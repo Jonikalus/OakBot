@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OakBot.Args;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -18,7 +19,15 @@ namespace OakBot
         private bool needsFollow;
         private byte subscriberLuck;
         private TimeSpan responseTime, giveawayTime;
+        private Viewer winner;
         #endregion Fields
+
+        #region Handlers
+
+        public delegate void WinnerChosenEventHandler(object o, WinnerChosenEventArgs e);
+        public event WinnerChosenEventHandler WinnerChosen;
+
+        #endregion Handlers
 
         #region Methods
         private void NotifyPropertyChanged(string info)
@@ -36,6 +45,19 @@ namespace OakBot
             giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
             giveawayTimer.AutoReset = false;
             giveawayTimer.Start();
+        }
+
+        public void DrawWinner()
+        {
+            // Rolling method
+            // Checking for response
+            WinnerChosenEventArgs args = new WinnerChosenEventArgs(winner);
+            OnWinnerChosen(args);
+        }
+
+        protected void OnWinnerChosen(WinnerChosenEventArgs e)
+        {
+            WinnerChosen(this, e);
         }
         #endregion Methods
 
@@ -145,6 +167,13 @@ namespace OakBot
             }
         }
 
+        public Viewer Winner
+        {
+            get
+            {
+                return winner;
+            }
+        }
         #endregion Properties
 
         #region Constructors
