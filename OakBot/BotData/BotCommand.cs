@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,13 +21,17 @@ namespace OakBot
         BOT
     }
 
-    public class BotCommand
+    public class BotCommand : INotifyPropertyChanged
     {
         #region Fields
 
-        private bool sendAsStreamer;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private string command;
         private string response;
+        private bool enabled;
+        private bool sendAsStreamer;
+
 
         private int gCooldownSec;
         private int uCooldownSec;
@@ -53,12 +57,13 @@ namespace OakBot
         #region Constructor
 
         public BotCommand(string command, string response, int gCooldownSec,
-            int uCooldownSec, bool sendAsStreamer = false)
+            int uCooldownSec, bool enabled, bool sendAsStreamer = false)
         {
             this.command = command.ToLower();
             this.response = response;
             this.gCooldownSec = gCooldownSec;
             this.uCooldownSec = uCooldownSec;
+            this.enabled = enabled;
             this.sendAsStreamer = sendAsStreamer;
 
             this.costViewer = 0;
@@ -72,6 +77,14 @@ namespace OakBot
         #endregion
 
         #region Methods
+
+        private void NotifyPropertyChanged(string info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
 
         public void ExecuteCommand(string receivedLine, string cmdUser)
         {
@@ -146,8 +159,11 @@ namespace OakBot
                         if (!blockError)
                         {
                             // Set timestamps
-                            lastUsed = DateTime.Now;
-                            dictLastUsed[cmdUser] = DateTime.Now;
+                            lastUsed = DateTime.UtcNow;
+                            dictLastUsed[cmdUser] = DateTime.UtcNow;
+
+                            // Notify the UI of the new last used date
+                            NotifyPropertyChanged("LastUsed");
 
                             // Send the response
                             if (sendAsStreamer)
@@ -186,6 +202,35 @@ namespace OakBot
             }
         }
 
+        public string Status
+        {
+            get
+            {
+                if (enabled)
+                {
+                    return "Enabled";
+                }
+                else
+                {
+                    return "Disabled";
+                }
+            }
+        }
+
+        public string LastUsed
+        {
+            get
+            {
+                if (lastUsed == DateTime.MinValue)
+                {
+                    return "Never";
+                }
+                else
+                {
+                    return lastUsed.ToString("yyyy-MM-dd hh:mm");
+                } 
+            }
+        }
 
         #endregion
 

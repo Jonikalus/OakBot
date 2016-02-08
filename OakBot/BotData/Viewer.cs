@@ -24,7 +24,7 @@ namespace OakBot
             this.points = 0;
             this.spent = 0;
             this.watched = new TimeSpan(0);
-            this.lastSeen = new DateTime(0, DateTimeKind.Utc);
+            this.lastSeen = DateTime.UtcNow;
             this.raids = 0;
             this.title = "";
             this.regular = false;

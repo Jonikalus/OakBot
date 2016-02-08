@@ -120,9 +120,36 @@
                     <Label x:Name="lblFilterCnt" Content="results..." ContentStringFormat="Matches: {0}." HorizontalAlignment="Left" Margin="257,31,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Twitch Chat Test">
+            <TabItem Header="Commands">
                 <Grid Background="#FF363636" Margin="0">
-                    <TextBlock x:Name="tbkChat" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="361" Width="806" Background="White"/>
+                    <ListView x:Name="lvCommands" Margin="10,74,10,10" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="lvViewerDatabase_MouseDoubleClick">
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn Width="100" Header="Command" DisplayMemberBinding="{Binding Command}"/>
+                                <GridViewColumn Width="70" Header="Status" DisplayMemberBinding="{Binding Status}"/>
+                                <GridViewColumn Width="300" Header="Response" DisplayMemberBinding="{Binding Response}"/>
+                                <GridViewColumn Width="150" Header="Last Used" DisplayMemberBinding="{Binding LastUsed}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Quotes">
+                <Grid Background="#FF363636" Margin="0">
+                    <ListView x:Name="lvQuotes" Margin="10,74,10,10" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="lvViewerDatabase_MouseDoubleClick">
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn Width="40" Header="ID" DisplayMemberBinding="{Binding Id}"/>
+                                <GridViewColumn Width="300" Header="Quote" DisplayMemberBinding="{Binding QuoteString}"/>
+                                <GridViewColumn Width="120" Header="Quoter" DisplayMemberBinding="{Binding Quoter}"/>
+                                <GridViewColumn Width="100" Header="Date" DisplayMemberBinding="{Binding DateString}"/>
+                                <GridViewColumn Width="100" Header="Game" DisplayMemberBinding="{Binding GameString}"/>
+                                <GridViewColumn Width="100" Header="Added By" DisplayMemberBinding="{Binding AddedBy}"/>
+                                <GridViewColumn Width="100" Header="Last Displayed" DisplayMemberBinding="{Binding LastDisplayedString}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
                 </Grid>
             </TabItem>
         </TabControl>

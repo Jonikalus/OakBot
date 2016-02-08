@@ -48,6 +48,7 @@ namespace OakBot
         public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
         public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
         public static ObservableCollection<BotCommand> colBotCommands = new ObservableCollection<BotCommand>();
+        public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
 
         private object _lockChat = new object();
         private object _lockViewers = new object(); 
@@ -98,16 +99,22 @@ namespace OakBot
             databaseView.Filter = DatabaseFilter;
             lblFilterCnt.Content = databaseView.Cast<Viewer>().Count();
 
-            // Testing commands 
-            colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0));
-            colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60));
-            colBotCommands.Add(new BotCommand("!who", "You are @user@", 0, 0));
-            colBotCommands.Add(new BotCommand("!block", "@block@ Hello thur!", 0, 0));
-            colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0));
-            colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0));
-            colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0));
+            lvCommands.ItemsSource = colBotCommands;
+            lvQuotes.ItemsSource = colQuotes;
 
+            // Testing Commands 
+            colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0, true));
+            colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60, true));
+            colBotCommands.Add(new BotCommand("!who", "You are @user@", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!block", "@block@ Hello thur!", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0, true));
 
+            // Testing Quotes
+            colQuotes.Add(new Quote(1, "Hello world!", "Ocgineer", "Trove", false, "Ocgineer"));
+            colQuotes.Add(new Quote(2, "Hi! I'm tEM!", "TGR", "Undertale", true, "Legendary_Studios"));
+            colQuotes.Add(new Quote(3, "You can walk over water if you run fast enough.", "Ocgineer", "Trove", true, "Lucanus"));
 
             // Auto connect
             if (Config.AutoConnectBot)

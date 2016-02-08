@@ -125,10 +125,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BotCommand.cs" />
+    <Compile Include="BotData\BotCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="BotData\Giveaway.cs" />
     <Compile Include="BotData\Quote.cs" />
+    <Compile Include="Dialogs\DialogEditCommand.xaml.cs">
+      <DependentUpon>DialogEditCommand.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DialogEditQuote.xaml.cs">
+      <DependentUpon>DialogEditQuote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DialogEditViewer.xaml.cs">
+      <DependentUpon>DialogEditViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SimpleHTTPServer.cs" />
     <Compile Include="BotData\Song.cs" />
     <Compile Include="ViewerDB.cs" />
@@ -150,6 +159,18 @@
     <Compile Include="BotData\Viewer.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
     <Compile Include="Utils.cs" />
+    <Page Include="Dialogs\DialogEditCommand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DialogEditQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DialogEditViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WindowDatabaseCleanup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
