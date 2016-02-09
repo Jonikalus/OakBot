@@ -116,6 +116,13 @@ namespace OakBot
             colQuotes.Add(new Quote(2, "Hi! I'm tEM!", "TGR", "Undertale", true, "Legendary_Studios"));
             colQuotes.Add(new Quote(3, "You can walk over water if you run fast enough.", "Ocgineer", "Trove", true, "Lucanus"));
 
+            // BackgroundTask Thread
+            BackgroundTasks bg = new BackgroundTasks(60, 120);
+            var timer = new System.Threading.Timer(
+                (e) => bg.Run(),
+                null, 60000, 60000);
+
+
             // Auto connect
             if (Config.AutoConnectBot)
             {

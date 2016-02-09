@@ -126,6 +126,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Args\WinnerChosenEventArgs.cs" />
+    <Compile Include="BackgroundTasks.cs" />
     <Compile Include="BotData\BotCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="BotData\Giveaway.cs" />
@@ -155,7 +156,7 @@
       <DependentUpon>WindowAuthBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="TwitchChatConnection.cs" />
-    <Compile Include="TwitchChatMessage.cs" />
+    <Compile Include="BotData\TwitchChatMessage.cs" />
     <Compile Include="TwitchCredentials.cs" />
     <Compile Include="BotData\Viewer.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />
