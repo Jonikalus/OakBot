@@ -1,6 +1,7 @@
 ﻿using OakBot.Args;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -16,10 +17,11 @@ namespace OakBot
         public event PropertyChangedEventHandler PropertyChanged;
         private string giveawayName, keyword;
         private int price;
-        private bool needsFollow;
+        private bool needsFollow, running;
         private byte subscriberLuck;
         private TimeSpan responseTime, giveawayTime;
         private Viewer winner;
+        private ObservableCollection<GiveawayEntry> entries;
         #endregion Fields
 
         #region Handlers
@@ -45,14 +47,51 @@ namespace OakBot
             giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
             giveawayTimer.AutoReset = false;
             giveawayTimer.Start();
+            running = true;
+        }
+
+        public void Stop()
+        {
+            giveawayTimer.Stop();
+            giveawayTimer.Dispose();
+            running = false;
         }
 
         public void DrawWinner()
         {
-            // Rolling method
-            // Checking for response
+            Viewer roll = Roll();
+            while (!MeetsRequirements(roll))
+            {
+                roll = Roll();
+            }
+            winner = roll;
             WinnerChosenEventArgs args = new WinnerChosenEventArgs(winner);
             OnWinnerChosen(args);
+        }
+
+        private Viewer Roll()
+        {
+            Random rnd = new Random();
+            return entries[rnd.Next(0, entries.Count)].User;
+        }
+
+        private bool MeetsRequirements(Viewer user)
+        {
+            if(needsFollow)
+            {
+                if (!user.isFollowing())
+                {
+                    return false;
+                }
+            }
+            if(subscriberLuck == 10)
+            {
+                if (!user.isSubscribed())
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         protected void OnWinnerChosen(WinnerChosenEventArgs e)
@@ -123,7 +162,7 @@ namespace OakBot
         }
 
         /// <summary>
-        /// Luck for Subscribers (0 is no additional luck, 255 is only subscribers can win)
+        /// Luck for Subscribers (0 is no additional luck, 10 is only subscribers can win). Can only be from 0 to 10, if not in this range, it will be 0
         /// </summary>
         public byte SubscriberLuck {
             get
@@ -132,8 +171,16 @@ namespace OakBot
             }
             set
             {
-                subscriberLuck = value;
-                NotifyPropertyChanged("SubscriberLuck");
+                if(subscriberLuck < 10 && subscriberLuck > 0)
+                {
+                    subscriberLuck = value;
+                    NotifyPropertyChanged("SubscriberLuck");
+                }else
+                {
+                    subscriberLuck = 0;
+                    NotifyPropertyChanged("SubscriberLuck");
+                }
+                
             }
         }
 
@@ -172,6 +219,22 @@ namespace OakBot
             get
             {
                 return winner;
+            }
+        }
+
+        public ObservableCollection<GiveawayEntry> Entries
+        {
+            get
+            {
+                return entries;
+            }
+        }
+
+        public bool Running
+        {
+            get
+            {
+                return running;
             }
         }
         #endregion Properties
@@ -386,9 +449,27 @@ namespace OakBot
         private void GiveawayTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             giveawayTimer.Dispose();
-            // Notify
+            running = false;
         }
         #endregion Events
 
+    }
+
+    public class GiveawayEntry
+    {
+        public Viewer User { get; set; }
+        public byte Weight { get; set; }
+
+        public GiveawayEntry(byte weight, Viewer user)
+        {
+            Weight = weight;
+            User = user;
+        }
+
+        public GiveawayEntry(Viewer user)
+        {
+            Weight = 1;
+            User = user;
+        }
     }
 }
