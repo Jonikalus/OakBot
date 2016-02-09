@@ -21,7 +21,7 @@ namespace OakBot
         private byte subscriberLuck;
         private TimeSpan responseTime, giveawayTime;
         private Viewer winner;
-        private ObservableCollection<GiveawayEntry> entries;
+        private ObservableCollection<Viewer> entries, winners;
         #endregion Fields
 
         #region Handlers
@@ -59,21 +59,21 @@ namespace OakBot
 
         public void DrawWinner()
         {
-            Viewer roll = Roll();
+            Random rnd = new Random((int)DateTime.Now.Ticks);
+            List<Viewer> list = new List<Viewer>(entries);
+            Viewer roll = list[rnd.Next(0, list.Count)];
             while (!MeetsRequirements(roll))
             {
-                roll = Roll();
+                list.RemoveAll(v => v.UserName == roll.UserName);
+                
+                roll = list[rnd.Next(0, list.Count)];
             }
+            winners.Add(roll);
             winner = roll;
             WinnerChosenEventArgs args = new WinnerChosenEventArgs(winner);
             OnWinnerChosen(args);
         }
 
-        private Viewer Roll()
-        {
-            Random rnd = new Random();
-            return entries[rnd.Next(0, entries.Count)].User;
-        }
 
         private bool MeetsRequirements(Viewer user)
         {
@@ -222,7 +222,7 @@ namespace OakBot
             }
         }
 
-        public ObservableCollection<GiveawayEntry> Entries
+        public ObservableCollection<Viewer> Entries
         {
             get
             {
@@ -240,197 +240,7 @@ namespace OakBot
         #endregion Properties
 
         #region Constructors
-        public Giveaway(string name, TimeSpan time)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-
-            Keyword = "";
-            Price = 0;
-            NeedsFollow = false;
-            SubscriberLuck = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            Keyword = word;
-            
-            Price = 0;
-            NeedsFollow = false;
-            SubscriberLuck = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            Keyword = word;
-            Price = cost;
-
-            NeedsFollow = false;
-            SubscriberLuck = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, bool followed)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            NeedsFollow = followed;
-
-            Keyword = "";
-            Price = 0;
-            SubscriberLuck = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, bool followed)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            Keyword = word;
-            NeedsFollow = followed;
-
-            Price = 0;
-            SubscriberLuck = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, bool followed)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            Keyword = word;
-            NeedsFollow = followed;
-            Price = cost;
-
-            SubscriberLuck = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, byte luck)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            SubscriberLuck = luck;
-
-            Keyword = "";
-            NeedsFollow = false;
-            Price = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, byte luck)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            SubscriberLuck = luck;
-            Keyword = word;
-
-            NeedsFollow = false;
-            Price = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, byte luck, bool followed)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            SubscriberLuck = luck;
-            Keyword = word;
-            NeedsFollow = followed;
-
-            Price = 0;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, byte luck)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            SubscriberLuck = luck;
-            Keyword = word;
-            Price = cost;
-
-            NeedsFollow = false;
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, byte luck, bool followed)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            SubscriberLuck = luck;
-            Keyword = word;
-            Price = cost;
-            NeedsFollow = followed;
-
-            ResponseTime = new TimeSpan(0, 0, 0);
-        }
-
-        public Giveaway(string name, TimeSpan time, TimeSpan response)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            ResponseTime = response;
-
-            SubscriberLuck = 0;
-            Keyword = "";
-            Price = 0;
-            NeedsFollow = false;
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, TimeSpan response)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            ResponseTime = response;
-            Keyword = word;
-
-            SubscriberLuck = 0;
-            Price = 0;
-            NeedsFollow = false;
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, TimeSpan response)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            ResponseTime = response;
-            Keyword = word;
-            Price = cost;
-
-            SubscriberLuck = 0;
-            NeedsFollow = false;
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, byte luck, TimeSpan response)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            ResponseTime = response;
-            Keyword = word;
-            Price = cost;
-            SubscriberLuck = luck;
-
-            NeedsFollow = false;
-        }
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, bool followed, TimeSpan response)
-        {
-            GiveawayName = name;
-            GiveawayTime = time;
-            ResponseTime = response;
-            Keyword = word;
-            Price = cost;
-            NeedsFollow = followed;
-
-            SubscriberLuck = 0;
-        }
+        
 
         public Giveaway(string name, TimeSpan time, string word, int cost, bool followed, byte luck, TimeSpan response)
         {
@@ -441,6 +251,8 @@ namespace OakBot
             Price = cost;
             NeedsFollow = followed;
             ResponseTime = response;
+            entries = new ObservableCollection<Viewer>();
+            winners = new ObservableCollection<Viewer>();
         }
 
         #endregion Constructors
@@ -455,21 +267,4 @@ namespace OakBot
 
     }
 
-    public class GiveawayEntry
-    {
-        public Viewer User { get; set; }
-        public byte Weight { get; set; }
-
-        public GiveawayEntry(byte weight, Viewer user)
-        {
-            Weight = weight;
-            User = user;
-        }
-
-        public GiveawayEntry(Viewer user)
-        {
-            Weight = 1;
-            User = user;
-        }
-    }
 }
