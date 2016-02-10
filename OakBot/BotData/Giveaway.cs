@@ -21,7 +21,7 @@ namespace OakBot
         private byte subscriberLuck;
         private TimeSpan responseTime, giveawayTime;
         private Viewer winner;
-        private ObservableCollection<Viewer> entries, winners;
+        private ObservableCollection<string> entries, winners;
         #endregion Fields
 
         #region Handlers
@@ -59,18 +59,58 @@ namespace OakBot
 
         public void DrawWinner()
         {
+            // Create a random instance with timebased seed
             Random rnd = new Random((int)DateTime.Now.Ticks);
-            List<Viewer> list = new List<Viewer>(entries);
-            Viewer roll = list[rnd.Next(0, list.Count)];
-            while (!MeetsRequirements(roll))
+
+            // Create a copy of the current entry list to work with
+            // This also prevents people to enter when rolling is happening
+            List<string> workList = new List<string>(entries);
+
+            // Manupilate workList to add subscriber luck
+
+            /*
+            // Fetch subscribers, in try/catch if user is not partnered.
+            // For each sub in the workList add that person to the end of the
+            // workList an x amount of times depending on the sub luck
+
+            List<string> subList = new List<string>();
+
+            // Get new IEnumerable back intersecting workList with subList
+            // TODO: might need to reverse workList [ Reverse<string>() ] before
+            foreach (string entrySub in workList.Intersect(subList))
             {
-                list.RemoveAll(v => v.UserName == roll.UserName);
-                
-                roll = list[rnd.Next(0, list.Count)];
+                for (int i = 0; i < subscriberLuck; i++)
+                {
+                    workList.Add(entrySub);
+                }
             }
-            winners.Add(roll);
-            winner = roll;
-            WinnerChosenEventArgs args = new WinnerChosenEventArgs(winner);
+
+            */
+
+
+
+            // Roll initial winner and get the Viewer object
+            // No need to verify if user exist as it SHOULD exist
+            Viewer rolledViewer = MainWindow.colDatabase.FirstOrDefault(x => 
+                x.UserName == workList[rnd.Next(0, workList.Count)]);
+
+            // Verify if the winner is eligable, if not remove from
+            // the workList and reroll a winner without user interaction
+            while (!MeetsRequirements(rolledViewer))
+            {
+                // Remove failed winner from workList
+                workList.RemoveAll(x => x == rolledViewer.UserName);
+
+                // Reroll winner
+                rolledViewer = MainWindow.colDatabase.FirstOrDefault(x =>
+                    x.UserName == workList[rnd.Next(0, workList.Count)]);
+            }
+
+            // We finally have a winner!
+            winners.Add(rolledViewer.UserName);
+            winner = rolledViewer;
+
+            WinnerChosenEventArgs args = new WinnerChosenEventArgs(rolledViewer);
             OnWinnerChosen(args);
         }
 
@@ -222,7 +262,7 @@ namespace OakBot
             }
         }
 
-        public ObservableCollection<Viewer> Entries
+        public ObservableCollection<string> Entries
         {
             get
             {
@@ -251,8 +291,8 @@ namespace OakBot
             Price = cost;
             NeedsFollow = followed;
             ResponseTime = response;
-            entries = new ObservableCollection<Viewer>();
-            winners = new ObservableCollection<Viewer>();
+            entries = new ObservableCollection<string>();
+            winners = new ObservableCollection<string>();
         }
 
         #endregion Constructors

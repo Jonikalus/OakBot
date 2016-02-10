@@ -118,9 +118,7 @@ namespace OakBot
 
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
-            var timer = new System.Threading.Timer(
-                (e) => bg.Run(),
-                null, 60000, 60000);
+            new Thread(new ThreadStart(bg.Run)) { IsBackground = true }.Start();
 
 
             // Auto connect
