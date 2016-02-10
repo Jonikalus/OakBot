@@ -68,25 +68,27 @@ namespace OakBot
 
             // Manupilate workList to add subscriber luck
 
-            /*
-            // Fetch subscribers, in try/catch if user is not partnered.
-            // For each sub in the workList add that person to the end of the
-            // workList an x amount of times depending on the sub luck
-
-            List<string> subList = new List<string>();
-
-            // Get new IEnumerable back intersecting workList with subList
-            // TODO: might need to reverse workList [ Reverse<string>() ] before
-            foreach (string entrySub in workList.Intersect(subList))
+    /*
+            // Not really needed as the forloop will limit this but to increase performance
+            // it won't load subscriber list if subluck is set to 1 (off)
+            if (SubscriberLuck > 1)
             {
-                for (int i = 0; i < subscriberLuck; i++)
+                List<string> subList = new List<string>();
+
+                // TODO: Fetch complete subscriber list from Twitch API and add to subList
+
+                // Create another list with Intersect restult as it is going to enumerate
+                // over this while editing workList to prevent modified execeptions.
+                List<string> crossCheck = new List<string>(workList.Intersect(subList));
+                foreach (string subEntry in crossCheck)
                 {
-                    workList.Add(entrySub);
+                    for (int i = 1; i < subscriberLuck; i++)
+                    {
+                        workList.Insert(rnd.Next(0, workList.Count), subEntry);
+                    }
                 }
             }
-
-            */
-
+    */
 
 
             // Roll initial winner and get the Viewer object
