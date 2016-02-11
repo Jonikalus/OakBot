@@ -62,6 +62,10 @@ namespace OakBot
         private Thread streamerChat;
         private Thread botChat;
 
+        // Song Info
+        private bool playState = false;
+        private int indexSong = -1;
+
         #endregion
 
         #region Constructor
@@ -92,6 +96,7 @@ namespace OakBot
             // Create Event for collection changed
             colChatMessages.CollectionChanged += colChatMessages_Changed;
 
+
             // Link listViews with collections
             listViewChat.ItemsSource = colChatMessages;
             listViewViewers.ItemsSource = colViewers;
@@ -115,15 +120,15 @@ namespace OakBot
             colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0, true));
             colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
             colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!songrequest", "@songrequest@", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!songrequest", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
 
             // Testing Quotes
             colQuotes.Add(new Quote(1, "Hello world!", "Ocgineer", "Trove", false, "Ocgineer"));
             colQuotes.Add(new Quote(2, "Hi! I'm tEM!", "TGR", "Undertale", true, "Legendary_Studios"));
             colQuotes.Add(new Quote(3, "You can walk over water if you run fast enough.", "Ocgineer", "Trove", true, "Lucanus"));
 
-            colSongs.Add(new Song("Undertale OST - Tem Shop Ten Hours", "https://www.youtube.com/watch?v=VEAy700YGuU"));
-            colSongs.Add(new Song("Steven Universe - Strong In The Real Way", "https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
+            colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
+            colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 
            
 
@@ -645,17 +650,78 @@ namespace OakBot
             {
                 Song selectedSong = (Song)lvSongs.SelectedItem;
                 cefSong.Load(selectedSong.Link);
+                playState = true;
+                indexSong = lvSongs.SelectedIndex;
             }
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-            cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.pauseVideo(); ");
+            try
+            {
+                Song first = (Song)lvSongs.Items[0];
+                cefSong.Load(first.Link);
+                playState = true;
+                indexSong = 0;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("No songs in the playlist!");
+                playState = false;
+            }
         }
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.setVolume(" + e.NewValue + "); ");
+        }
+
+        private void btnPlayerCtl_Click(object sender, RoutedEventArgs e)
+        {
+            if (playState)
+            {
+                // Pause
+                cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.pauseVideo();");
+                btnPlayerCtl.Content = "Play";
+                
+            }
+            else
+            {
+                // Play
+                cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.playVideo();");
+                btnPlayerCtl.Content = "Pause";
+            }
+            playState = !playState;
+        }
+
+        private void btnPrev_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(indexSong.ToString());
+            if(indexSong == 0)
+            {
+                indexSong = colSongs.Count - 1;
+            }else
+            {
+                indexSong--;
+            }
+            Song play = colSongs[indexSong];
+            cefSong.Load(play.Link);
+            MessageBox.Show(indexSong.ToString());
+        }
+
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(indexSong.ToString());
+            if (indexSong == colSongs.Count - 1)
+            {
+                indexSong = 0;
+            }else
+            {
+                indexSong++;
+            }
+            Song play = colSongs[indexSong];
+            cefSong.Load(play.Link);
+            MessageBox.Show(indexSong.ToString());
         }
 
         // This doesn't work as it doesnt contain an INotify

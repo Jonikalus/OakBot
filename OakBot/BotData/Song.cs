@@ -5,6 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Net;
+using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
+using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace OakBot
 {
@@ -21,11 +26,6 @@ namespace OakBot
             {
                 return songName;
             }
-            set
-            {
-                songName = value;
-                NotifyPropertyChanged("SongName");
-            }
         }
         public string Link {
             get
@@ -35,7 +35,7 @@ namespace OakBot
             set
             {
                 link = value;
-                NotifyPropertyChanged("Link");
+                OnPropertyChanged(Link);
             }
         }
         public SongType Type {
@@ -45,30 +45,36 @@ namespace OakBot
             }
         }
 
-        public Song(string songname, string link)
+        public Song(string link)
         {
-            SongName = songname;
             string tmpLink = link;
             if (Regex.IsMatch(link, "soundcloud", RegexOptions.IgnoreCase))
             {
                 type = SongType.SOUNDCLOUD;
+                songName = "Song from Soundcloud";
             }else if(Regex.IsMatch(link, "youtube", RegexOptions.IgnoreCase))
             {
                 type = SongType.YOUTUBE_LINK;
-            }else
+                Thread sn = new Thread(new ThreadStart(delegate ()
+                {
+                    songName = Utils.getTitleFromYouTube(link);
+                    OnPropertyChanged(SongName);
+                }));
+                sn.Start();
+            }
+            else
             {
                 type = SongType.INVALID;
             }
             Link = tmpLink;
         }
 
-        private void NotifyPropertyChanged(string info)
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        
     }
 
     public enum SongType

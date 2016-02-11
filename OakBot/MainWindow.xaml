@@ -165,10 +165,13 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Button x:Name="btnPlay" Content="Pause" HorizontalAlignment="Left" Margin="10,241,0,0" VerticalAlignment="Top" Width="75" Click="btnPlay_Click"/>
-                    <Slider x:Name="sldVol" HorizontalAlignment="Left" Margin="10,292,0,0" VerticalAlignment="Top" Width="234" Maximum="100" ValueChanged="slider_ValueChanged" Value="50"/>
-                    <Label x:Name="lblVolume" Content="Volume:" HorizontalAlignment="Left" Margin="10,266,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lblVol" Content="{Binding Value, ElementName=sldVol}" HorizontalAlignment="Left" Margin="249,284,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btnPlayerCtl" Content="Play" HorizontalAlignment="Left" Margin="90,245,0,0" VerticalAlignment="Top" Width="75" Click="btnPlayerCtl_Click"/>
+                    <Slider x:Name="sldVol" HorizontalAlignment="Left" Margin="10,296,0,0" VerticalAlignment="Top" Width="234" Maximum="100" ValueChanged="slider_ValueChanged" Value="50"/>
+                    <Label x:Name="lblVolume" Content="Volume:" HorizontalAlignment="Left" Margin="10,270,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblVol" Content="{Binding Value, ElementName=sldVol}" HorizontalAlignment="Left" Margin="249,288,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btnPlay" Content="Start Playing" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="75" Click="btnPlay_Click"/>
+                    <Button x:Name="btnPrev" Content="Previous Song" HorizontalAlignment="Left" Margin="170,245,0,0" VerticalAlignment="Top" Width="86" Click="btnPrev_Click"/>
+                    <Button x:Name="btnNext" Content="Next Song" HorizontalAlignment="Left" Margin="261,245,0,0" VerticalAlignment="Top" Width="75" Click="btnNext_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>

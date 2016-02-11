@@ -7,6 +7,7 @@ using System.Net;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace OakBot
 {
@@ -122,13 +123,13 @@ namespace OakBot
 
                         string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
                         {
+                            string[] split = Regex.Split(receivedLine, @"\s+");
                             switch (m.Groups["item"].Value.ToLower())
                             {
                                 case "user":
                                     return viewer.UserName;
 
                                 case "block":
-                                    string[] split = Regex.Split(receivedLine, @"\s+");
                                     if(split.Count() == 1)
                                     {
                                         blockError = true;
@@ -142,23 +143,22 @@ namespace OakBot
                                     return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
 
                                 case "var1":
-                                    string[] vars = Regex.Split(receivedLine, @"\s+");
-                                    if (vars.Count() == 2)
+                                    if (split.Count() == 2)
                                     {
-                                        var1 = vars[1];
+                                        var1 = split[1];
                                         return var1;
                                     }
                                     return "";
                                 case "songrequest":
-                                    string[] songSplt = Regex.Split(receivedLine, @"\s+");
-                                    if (songSplt.Count() == 2)
+                                    if (split.Count() == 2)
                                     {
-                                        string link = songSplt[1];
-                                        Song request = new Song("Added by cmd", link);
+                                        string link = split[1];
+                                        Song request = new Song(link);
                                         if(request.Type != SongType.INVALID)
                                         {
                                             MainWindow.colSongs.Add(request);
-                                            return "Song " + link + " has been requested!";
+                                            string name = Utils.getTitleFromYouTube(link);
+                                            return name;
                                         }
                                         
                                     }

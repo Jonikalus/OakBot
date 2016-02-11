@@ -41,6 +41,36 @@ namespace OakBot
             (Environment.SpecialFolder.InternetCache)));
         }
 
+        public static string getTitleFromYouTube(string link)
+        {
+
+            try
+            {
+                string id = getIdFromYouTube(link);
+                string title = "";
+                string gApi = string.Format("https://www.googleapis.com/youtube/v3/videos?id={0}&key=AIzaSyDZCvKa1EPsf1mkN7bA48-_WOO3T6pWgJc&part=snippet&fields=items(snippet(title))", id);
+                using (WebClient wc = new WebClient())
+                {
+                    JObject items = JObject.Parse(wc.DownloadString(gApi));
+                    JArray itemArray = JArray.Parse(items.GetValue("items").ToString());
+                    JObject snippet = JObject.Parse(((JObject)itemArray[0]).GetValue("snippet").ToString());
+                    title = snippet.GetValue("title").ToString();
+                    return title;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public static string getIdFromYouTube(string youtube)
+        {
+            Match id = Regex.Match(youtube, "v=(?<id>[a-zA-Z0-9-]+)");
+            return id.Groups["id"].Value.Trim();
+        }
+
         public static void ClearFolder(DirectoryInfo folder)
         {
             try
