@@ -63,8 +63,8 @@ namespace OakBot
         private Thread botChat;
 
         // Song Info
-        private bool playState = false;
-        private int indexSong = -1;
+        public static bool playState = false;
+        public static int indexSong = -1;
 
         #endregion
 
@@ -121,6 +121,11 @@ namespace OakBot
             colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
             colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0, true));
             colBotCommands.Add(new BotCommand("!songrequest", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!requestsong", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!song", "Currently playing: @song@!", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!quote", "@quote@", 0, 0, true));
+            colBotCommands.Add(new BotCommand("Giveaway", "Just stop...", 0, 0, true, true));
+            colBotCommands.Add(new BotCommand("!slap", "@user@ slaps @target@ so hard, he bursts into pieces!", 0, 0, true));
 
             // Testing Quotes
             colQuotes.Add(new Quote(1, "Hello world!", "Ocgineer", "Trove", false, "Ocgineer"));

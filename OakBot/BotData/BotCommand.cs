@@ -107,9 +107,10 @@ namespace OakBot
                 {
                     // Get viewer's Viewer object
                     Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == cmdUser);
-
+                    Match targetMatch = Regex.Match(receivedLine, @"@(?<name>[a-zA-Z0-9_]{4,25})");
+                    string target = targetMatch.Groups["name"].Value;
                     // Check rank
-                    if(true)
+                    if (true)
                     {
                         // Block error to prevent output when no arguments are given
                         bool blockError = false;
@@ -124,6 +125,7 @@ namespace OakBot
                         string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
                         {
                             string[] split = Regex.Split(receivedLine, @"\s+");
+                            
                             switch (m.Groups["item"].Value.ToLower())
                             {
                                 case "user":
@@ -163,6 +165,41 @@ namespace OakBot
                                         
                                     }
                                     return "Sorry, invalid song!";
+                                case "song":
+                                    if (MainWindow.playState)
+                                    {
+                                        return MainWindow.colSongs[MainWindow.indexSong].SongName;
+                                    }else
+                                    {
+                                        return "None";
+                                    }
+                                case "quote":
+                                    if(split.Count() == 1)
+                                    {
+                                        Random rnd = new Random((int)DateTime.Now.Ticks);
+                                        int i = rnd.Next(MainWindow.colQuotes.Count);
+                                        Quote q = MainWindow.colQuotes[i];
+                                        return string.Format("Quote #{0}: \"{1}\" - {2}{3}{4}", i, q.QuoteString, q.Quoter, q.DisplayGame ? " [" + q.Game + "] " : " ", q.DateString);
+                                    }else if(split.Count() == 2)
+                                    {
+                                        try
+                                        {
+                                            int i = int.Parse(split[1]);
+                                            Quote q = MainWindow.colQuotes[i];
+                                            return string.Format("Quote #{0}: \"{1}\" - {2}{3}{4}", i, q.QuoteString, q.Quoter, q.DisplayGame ? " [" + q.Game + "] " : " ", q.DateString);
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                            return "There is no quote with that number!";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return "";
+                                    }
+                                case "target":
+                                    return target;
                                 default:
                                     return "CMD-DOES-NOT-EXIST";
                             }
