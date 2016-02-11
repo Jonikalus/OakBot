@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,22 +8,65 @@ using System.Threading.Tasks;
 
 namespace OakBot
 {
-    public class Song
+    public class Song :INotifyPropertyChanged
     {
-        public string SongName { get; set; }
-        public string Link { get; set; }
-        public SongType Type { get; }
+        private string songName;
+        private string link;
+        private SongType type;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string SongName {
+            get
+            {
+                return songName;
+            }
+            set
+            {
+                songName = value;
+                NotifyPropertyChanged("SongName");
+            }
+        }
+        public string Link {
+            get
+            {
+                return link;
+            }
+            set
+            {
+                link = value;
+                NotifyPropertyChanged("Link");
+            }
+        }
+        public SongType Type {
+            get
+            {
+                return type;
+            }
+        }
 
         public Song(string songname, string link)
         {
             SongName = songname;
-            Link = link;
-            if (Regex.IsMatch(Link, "soundcloud", RegexOptions.IgnoreCase))
+            string tmpLink = link;
+            if (Regex.IsMatch(link, "soundcloud", RegexOptions.IgnoreCase))
             {
-                Type = SongType.SOUNDCLOUD;
+                type = SongType.SOUNDCLOUD;
+            }else if(Regex.IsMatch(link, "youtube", RegexOptions.IgnoreCase))
+            {
+                type = SongType.YOUTUBE_LINK;
             }else
             {
-                Type = SongType.YOUTUBE;
+                type = SongType.INVALID;
+            }
+            Link = tmpLink;
+        }
+
+        private void NotifyPropertyChanged(string info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
     }
@@ -30,6 +74,8 @@ namespace OakBot
     public enum SongType
     {
         YOUTUBE,
-        SOUNDCLOUD
+        YOUTUBE_LINK,
+        SOUNDCLOUD,
+        INVALID
     }
 }

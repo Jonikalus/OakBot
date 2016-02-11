@@ -49,10 +49,12 @@ namespace OakBot
         public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
         public static ObservableCollection<BotCommand> colBotCommands = new ObservableCollection<BotCommand>();
         public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
+        public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
 
         private object _lockChat = new object();
         private object _lockViewers = new object(); 
         private object _lockDatabase = new object();
+        private object _lockSongs = new object();
 
         private ICollectionView databaseView;
 
@@ -85,6 +87,7 @@ namespace OakBot
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
             BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
             BindingOperations.EnableCollectionSynchronization(colDatabase, _lockDatabase);
+            BindingOperations.EnableCollectionSynchronization(colSongs, _lockSongs);
 
             // Create Event for collection changed
             colChatMessages.CollectionChanged += colChatMessages_Changed;
@@ -102,6 +105,8 @@ namespace OakBot
             lvCommands.ItemsSource = colBotCommands;
             lvQuotes.ItemsSource = colQuotes;
 
+            lvSongs.ItemsSource = colSongs;
+
             // Testing Commands 
             colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0, true));
             colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60, true));
@@ -110,11 +115,17 @@ namespace OakBot
             colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0, true));
             colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
             colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0, true));
+            colBotCommands.Add(new BotCommand("!songrequest", "@songrequest@", 0, 0, true));
 
             // Testing Quotes
             colQuotes.Add(new Quote(1, "Hello world!", "Ocgineer", "Trove", false, "Ocgineer"));
             colQuotes.Add(new Quote(2, "Hi! I'm tEM!", "TGR", "Undertale", true, "Legendary_Studios"));
             colQuotes.Add(new Quote(3, "You can walk over water if you run fast enough.", "Ocgineer", "Trove", true, "Lucanus"));
+
+            colSongs.Add(new Song("Undertale OST - Tem Shop Ten Hours", "https://www.youtube.com/watch?v=VEAy700YGuU"));
+            colSongs.Add(new Song("Steven Universe - Strong In The Real Way", "https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
+
+           
 
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
@@ -626,6 +637,25 @@ namespace OakBot
         {
             WindowDatabaseCleanup windowCleanup = new WindowDatabaseCleanup();
             windowCleanup.ShowDialog();
+        }
+
+        private void lvSongs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(lvSongs.SelectedIndex != -1)
+            {
+                Song selectedSong = (Song)lvSongs.SelectedItem;
+                cefSong.Load(selectedSong.Link);
+            }
+        }
+
+        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        {
+            cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.pauseVideo(); ");
+        }
+
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.setVolume(" + e.NewValue + "); ");
         }
 
         // This doesn't work as it doesnt contain an INotify

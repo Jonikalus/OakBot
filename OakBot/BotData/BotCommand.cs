@@ -149,6 +149,20 @@ namespace OakBot
                                         return var1;
                                     }
                                     return "";
+                                case "songrequest":
+                                    string[] songSplt = Regex.Split(receivedLine, @"\s+");
+                                    if (songSplt.Count() == 2)
+                                    {
+                                        string link = songSplt[1];
+                                        Song request = new Song("Added by cmd", link);
+                                        if(request.Type != SongType.INVALID)
+                                        {
+                                            MainWindow.colSongs.Add(request);
+                                            return "Song " + link + " has been requested!";
+                                        }
+                                        
+                                    }
+                                    return "Sorry, invalid song!";
                                 default:
                                     return "CMD-DOES-NOT-EXIST";
                             }
