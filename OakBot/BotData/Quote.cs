@@ -216,7 +216,7 @@ namespace OakBot
         {
             get
             {
-                return Date.ToString("yyyy-MM-dd hh:mm");
+                return Date.ToString("yyyy-MM-dd");
             }
         }
 
@@ -250,7 +250,7 @@ namespace OakBot
                 }
                 else
                 {
-                    return lastDisplayed.ToString("yyyy-MM-dd hh:mm");
+                    return lastDisplayed.ToString("yyyy-MM-dd");
                 }
             }
         }

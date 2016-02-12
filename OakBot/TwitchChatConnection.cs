@@ -117,16 +117,26 @@ namespace OakBot
                             // Execute command checking and executing in a task to offload
                             // this thread incase of many commands it is going to loop through.
                             new Task(() => {
-                                foreach (BotCommand botCommand in MainWindow.colBotCommands)
+
+                                //foreach (BotCommand botCommand in MainWindow.colBotCommands)
+                                //{
+                                //    // Regex to check for complete command
+                                //    string pattern = @"^(" + botCommand.Command + @")\b";
+                                //    if (Regex.Match(ircMessage.Message, pattern, RegexOptions.IgnoreCase).Success)
+                                //    {
+                                //        botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
+                                //        break;
+                                //    }
+                                //}
+
+                                BotCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x => 
+                                    x.Command == Regex.Match(ircMessage.Message, @"^\S+\b").Value);
+
+                                if (foundCommand != null)
                                 {
-                                    // Regex to check for complete command
-                                    string pattern = @"^(" + botCommand.Command + @")\b";
-                                    if (Regex.Match(ircMessage.Message, pattern, RegexOptions.IgnoreCase).Success)
-                                    {
-                                        botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
-                                        break;
-                                    }
+                                    foundCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
                                 }
+
                             }).Start();
                         break;
                     }
