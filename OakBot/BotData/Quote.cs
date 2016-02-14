@@ -40,7 +40,7 @@ namespace OakBot
             this.quoter = quoter;
             this.game = game;
 
-            this.id = MainWindow.colQuotes.Count();
+            this.id = MainWindow.colQuotes.Count()-1;
             this.displayDate = true;
             this.displayGame = true;
             this.date = DateTime.UtcNow;

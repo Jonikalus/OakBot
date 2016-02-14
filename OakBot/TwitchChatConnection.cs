@@ -113,7 +113,7 @@ namespace OakBot
                             Utils.AddToViewersCol(ircMessage.Author);
 
                             // Add the message to the collection
-                            //MainWindow.colChatMessages.Add(ircMessage);
+                            MainWindow.colChatMessages.Add(ircMessage);
 
                             //MainWindow.instance.Dispatcher.BeginInvoke(new Action(delegate
                             //{

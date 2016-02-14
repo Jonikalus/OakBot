@@ -126,12 +126,7 @@ namespace OakBot
             colBotCommands.Add(new UserCommand("!song", "Currently playing: @song@!", 0, 0, true));
             colBotCommands.Add(new UserCommand("Giveaway", "Just stop...", 0, 0, true, true));
             colBotCommands.Add(new UserCommand("!slap", "@user@ slaps @target@ so hard, he bursts into pieces!", 0, 0, true));
-            
-            // Testing Quotes
-            colQuotes.Add(new Quote("Hello world!", "Ocgineer", "Trove"));
-            colQuotes.Add(new Quote("Hi! I'm tEM!", "TGR", "Undertale"));
-            colQuotes.Add(new Quote("You can walk over water if you run fast enough.", "Ocgineer", "Trove"));
-            
+                        
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 

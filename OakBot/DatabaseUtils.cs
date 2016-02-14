@@ -277,6 +277,32 @@ namespace OakBot
             }
         }
 
+        /// <summary>
+        /// Add new quote to DBfile with specified Quote.
+        /// Does not check if quote exists, make sure it doesn't prior calling.
+        /// </summary>
+        /// <param name="newQuote">The new quote to be added to the database</param>
+        public static void AddQuote(Quote newQuote)
+        {
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileQuotes));
+            dbConnection.Open();
+
+            SQLiteCommand sqlCmd = new SQLiteCommand(
+                string.Format("INSERT INTO `Quotes` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')",
+                    newQuote.Id,
+                    newQuote.QuoteString,
+                    newQuote.Quoter,
+                    newQuote.Date.ToString("o"),
+                    newQuote.DisplayDate,
+                    newQuote.Game,
+                    newQuote.DisplayGame,
+                    newQuote.LastDisplayed.ToString("o")),
+                dbConnection);
+            sqlCmd.ExecuteNonQuery();
+
+            dbConnection.Close();
+        }
+
         #endregion
 
     }
