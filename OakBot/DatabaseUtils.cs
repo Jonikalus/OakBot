@@ -9,9 +9,13 @@ using System.Globalization;
 
 namespace OakBot
 {
-    public static class ViewerDB
+    public static class DatabaseUtils
     {
-        public static readonly string filename = Config.AppDataPath + "\\OakBotViewers.sqlite";
+        public static readonly string fileViewers = Config.AppDataPath + "\\OakBotViewers.sqlite";
+        public static readonly string fileQuotes = Config.AppDataPath + "\\OakBotQuotes.sqlite";
+        public static readonly string fileCommands = Config.AppDataPath + "\\OakBotCommands.sqlite";
+
+        #region Database Viewers
 
         /// <summary>
         /// Load viewers from DBfile to colDatabase.
@@ -21,11 +25,11 @@ namespace OakBot
             SQLiteConnection dbConnection;
 
             // Create new database-file and table if not exists
-            if (!File.Exists(filename))
+            if (!File.Exists(fileViewers))
             {
-                SQLiteConnection.CreateFile(filename);
+                SQLiteConnection.CreateFile(fileViewers);
 
-                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3;", filename));
+                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3;", fileViewers));
                 dbConnection.Open();
 
                 SQLiteCommand sqlCmd = new SQLiteCommand("CREATE TABLE `Viewers` (`Username` TEXT NOT NULL, `Points` INTEGER, `Spent` INTEGER, `Watched` TEXT, `LastSeen` TEXT, `Raids` INTEGER, `Title` TEXT, `Regular` BOOLEAN, `IGN` TEXT, PRIMARY KEY(Username))", dbConnection);
@@ -36,7 +40,7 @@ namespace OakBot
             // Load database-file otherwise
             else
             {
-                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3; Read Only=True;", filename));
+                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3; Read Only=True;", fileViewers));
                 dbConnection.Open();
 
                 SQLiteCommand read = new SQLiteCommand("SELECT * FROM `Viewers`", dbConnection);
@@ -71,7 +75,7 @@ namespace OakBot
             SQLiteCommand sqlCmd;
 
             // Open DBfile
-            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileViewers));
             dbConnection.Open();
 
             // Insert new Viewer in `Viewers`
@@ -102,7 +106,7 @@ namespace OakBot
         /// </summary>
         public static void UpdateAllViewers()
         {
-            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileViewers));
             dbConnection.Open();
 
             SQLiteCommand sqlCmd;
@@ -136,7 +140,7 @@ namespace OakBot
             SQLiteCommand sqlCmd;
 
             // Open DBfile
-            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileViewers));
             dbConnection.Open();
 
             // Delete all rows in `Viewers`
@@ -156,7 +160,7 @@ namespace OakBot
         /// <param name="viewer">Viewer to be added</param>
         public static void AddViewer(Viewer viewer)
         {
-            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileViewers));
             dbConnection.Open();
 
             SQLiteCommand sqlCmd = new SQLiteCommand(
@@ -183,7 +187,7 @@ namespace OakBot
         /// <param name="viewer">Viewer to be updated</param>
         public static void UpdateViewer(Viewer viewer)
         {
-            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileViewers));
             dbConnection.Open();
 
             SQLiteCommand sqlCmd = new SQLiteCommand(
@@ -210,13 +214,70 @@ namespace OakBot
         /// <param name="viewer">Viewer to be removed</param>
         public static void RemoveViewer(Viewer viewer)
         {
-            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", filename));
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileViewers));
             dbConnection.Open();
 
             SQLiteCommand sqlCmd = new SQLiteCommand(string.Format("DELETE FROM `Viewers` WHERE `Username` = '{0}'", viewer.UserName), dbConnection);
             sqlCmd.ExecuteNonQuery();
             dbConnection.Close();
         }
+
+        #endregion
+
+        #region Database Quotes
+
+        // Table `Quotes` contains: `Id`, `Quote`, `Quoter`, `Date`, `DisplayDate`, `Game`, `DisplayGame`, and `LastDisplayed`
+
+        /// <summary>
+        /// Load viewers from DBfile to colDatabase.
+        /// </summary>
+        public static void LoadAllQuotes()
+        {
+            SQLiteConnection dbConnection;
+
+            // Create new database-file and table if not exists
+            if (!File.Exists(fileQuotes))
+            {
+                SQLiteConnection.CreateFile(fileQuotes);
+
+                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3;", fileQuotes));
+                dbConnection.Open();
+
+                SQLiteCommand sqlCmd = new SQLiteCommand("CREATE TABLE `Quotes` (`Id` INTERGER NOT NULL, `Quote` TEXT, `Quoter` TEXT, `Date` TEXT, `DisplayDate` BOOLEAN, `Game` TEXT, `DisplayGame` BOOLEAN, `LastDisplayed` TEXT, PRIMARY KEY(Id))", dbConnection);
+                sqlCmd.ExecuteNonQuery();
+
+                dbConnection.Close();
+            }
+            // Load database-file otherwise
+            else
+            {
+                dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3; Read Only=True;", fileQuotes));
+                dbConnection.Open();
+
+                SQLiteCommand read = new SQLiteCommand("SELECT * FROM `Quotes`", dbConnection);
+                SQLiteDataReader reader = read.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Quote loadedQuote = new Quote(   
+                        (long)reader["Id"],
+                        (string)reader["Quote"],
+                        (string)reader["Quoter"],
+                        DateTime.Parse((string)reader["Date"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
+                        (bool)reader["DisplayDate"],
+                        (string)reader["Game"],
+                        (bool)reader["DisplayGame"],
+                        DateTime.Parse((string)reader["Date"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)
+                    );
+
+                    MainWindow.colQuotes.Add(loadedQuote);
+                }
+
+                dbConnection.Close();
+            }
+        }
+
+        #endregion
 
     }
 }

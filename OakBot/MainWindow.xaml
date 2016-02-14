@@ -144,8 +144,9 @@
                                 <GridViewColumn Width="300" Header="Quote" DisplayMemberBinding="{Binding QuoteString}"/>
                                 <GridViewColumn Width="120" Header="Quoter" DisplayMemberBinding="{Binding Quoter}"/>
                                 <GridViewColumn Width="100" Header="Date" DisplayMemberBinding="{Binding DateString}"/>
-                                <GridViewColumn Width="100" Header="Game" DisplayMemberBinding="{Binding GameString}"/>
-                                <GridViewColumn Width="100" Header="Added By" DisplayMemberBinding="{Binding AddedBy}"/>
+                                <GridViewColumn Width="100" Header="Game" DisplayMemberBinding="{Binding Game}"/>
+                                <GridViewColumn Width="100" Header="Display Date" DisplayMemberBinding="{Binding DisplayDateString}"/>
+                                <GridViewColumn Width="100" Header="Display Game" DisplayMemberBinding="{Binding DisplayGameString}"/>
                                 <GridViewColumn Width="100" Header="Last Displayed" DisplayMemberBinding="{Binding LastDisplayedString}"/>
                             </GridView>
                         </ListView.View>

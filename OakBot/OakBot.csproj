@@ -127,7 +127,8 @@
     </ApplicationDefinition>
     <Compile Include="Args\WinnerChosenEventArgs.cs" />
     <Compile Include="BackgroundTasks.cs" />
-    <Compile Include="BotData\BotCommand.cs" />
+    <Compile Include="BotCommands.cs" />
+    <Compile Include="BotData\UserCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="BotData\Giveaway.cs" />
     <Compile Include="BotData\Quote.cs" />
@@ -142,7 +143,7 @@
     </Compile>
     <Compile Include="SimpleHTTPServer.cs" />
     <Compile Include="BotData\Song.cs" />
-    <Compile Include="ViewerDB.cs" />
+    <Compile Include="DatabaseUtils.cs" />
     <Compile Include="WindowDatabaseCleanup.xaml.cs">
       <DependentUpon>WindowDatabaseCleanup.xaml</DependentUpon>
     </Compile>

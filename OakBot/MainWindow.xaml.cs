@@ -47,7 +47,7 @@ namespace OakBot
         public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
         public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
         public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
-        public static ObservableCollection<BotCommand> colBotCommands = new ObservableCollection<BotCommand>();
+        public static ObservableCollection<UserCommand> colBotCommands = new ObservableCollection<UserCommand>();
         public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
         public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
 
@@ -85,7 +85,8 @@ namespace OakBot
             // Initialize config
             Config.GetConfigFromDb();
             LoadConfigToUI();
-            ViewerDB.LoadAllViewers();
+            DatabaseUtils.LoadAllViewers();
+            DatabaseUtils.LoadAllQuotes();
 
             // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
@@ -113,25 +114,24 @@ namespace OakBot
             lvSongs.ItemsSource = colSongs;
 
             // Testing Commands 
-            colBotCommands.Add(new BotCommand("!test", "Test received!", 30, 0, true));
-            colBotCommands.Add(new BotCommand(":yatb", "Yet Another Twitch Bot.", 30, 60, true));
-            colBotCommands.Add(new BotCommand("!who", "You are @user@", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!block", "@block@ Hello thur!", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!vartest", "@var1@ m8", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!songrequest", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!requestsong", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!song", "Currently playing: @song@!", 0, 0, true));
-            colBotCommands.Add(new BotCommand("!quote", "@quote@", 0, 0, true));
-            colBotCommands.Add(new BotCommand("Giveaway", "Just stop...", 0, 0, true, true));
-            colBotCommands.Add(new BotCommand("!slap", "@user@ slaps @target@ so hard, he bursts into pieces!", 0, 0, true));
-
+            colBotCommands.Add(new UserCommand("!test", "Test received!", 30, 0, true));
+            colBotCommands.Add(new UserCommand(":yatb", "Yet Another Twitch Bot.", 30, 60, true));
+            colBotCommands.Add(new UserCommand("!who", "You are @user@", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!block", "@block@ Hello thur!", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!vartest", "@var1@ m8", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!songrequest", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!requestsong", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
+            colBotCommands.Add(new UserCommand("!song", "Currently playing: @song@!", 0, 0, true));
+            colBotCommands.Add(new UserCommand("Giveaway", "Just stop...", 0, 0, true, true));
+            colBotCommands.Add(new UserCommand("!slap", "@user@ slaps @target@ so hard, he bursts into pieces!", 0, 0, true));
+            
             // Testing Quotes
-            colQuotes.Add(new Quote(1, "Hello world!", "Ocgineer", "Trove", false, "Ocgineer"));
-            colQuotes.Add(new Quote(2, "Hi! I'm tEM!", "TGR", "Undertale", true, "Legendary_Studios"));
-            colQuotes.Add(new Quote(3, "You can walk over water if you run fast enough.", "Ocgineer", "Trove", true, "Lucanus"));
-
+            colQuotes.Add(new Quote("Hello world!", "Ocgineer", "Trove"));
+            colQuotes.Add(new Quote("Hi! I'm tEM!", "TGR", "Undertale"));
+            colQuotes.Add(new Quote("You can walk over water if you run fast enough.", "Ocgineer", "Trove"));
+            
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 

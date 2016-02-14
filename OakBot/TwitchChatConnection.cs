@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace OakBot
 {
@@ -112,29 +113,33 @@ namespace OakBot
                             Utils.AddToViewersCol(ircMessage.Author);
 
                             // Add the message to the collection
-                            MainWindow.colChatMessages.Add(ircMessage);
+                            //MainWindow.colChatMessages.Add(ircMessage);
 
-                            // Execute command checking and executing in a task to offload
-                            // this thread incase of many commands it is going to loop through.
+                            //MainWindow.instance.Dispatcher.BeginInvoke(new Action(delegate
+                            //{
+                            //    MainWindow.colChatMessages.Add(ircMessage);
+                            //}));
+
+                            //App.Current.Dispatcher.BeginInvoke(new Action(delegate
+                            //{
+                            //    MainWindow.colChatMessages.Add(ircMessage);
+                            //}));
+
+
+                            // Execute command checking and executing in a task to offload receiving
                             new Task(() => {
 
-                                //foreach (BotCommand botCommand in MainWindow.colBotCommands)
-                                //{
-                                //    // Regex to check for complete command
-                                //    string pattern = @"^(" + botCommand.Command + @")\b";
-                                //    if (Regex.Match(ircMessage.Message, pattern, RegexOptions.IgnoreCase).Success)
-                                //    {
-                                //        botCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
-                                //        break;
-                                //    }
-                                //}
-
-                                BotCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x => 
-                                    x.Command == Regex.Match(ircMessage.Message, @"^\S+\b").Value);
+                                string firstWord = Regex.Match(ircMessage.Message, @"^\S+\b").Value.ToLower();
+                                UserCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x => 
+                                    x.Command == firstWord);
 
                                 if (foundCommand != null)
                                 {
-                                    foundCommand.ExecuteCommand(ircMessage.Message, ircMessage.Author);
+                                    foundCommand.ExecuteCommand(ircMessage);
+                                }
+                                else
+                                {
+                                    BotCommands.RunBotCommand(firstWord, ircMessage);
                                 }
 
                             }).Start();
