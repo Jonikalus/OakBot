@@ -141,6 +141,9 @@
     <Compile Include="Dialogs\DialogEditViewer.xaml.cs">
       <DependentUpon>DialogEditViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameWisp API\GameWispAuth.xaml.cs">
+      <DependentUpon>GameWispAuth.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SimpleHTTPServer.cs" />
     <Compile Include="BotData\Song.cs" />
     <Compile Include="DatabaseUtils.cs" />
@@ -171,6 +174,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\DialogEditViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GameWisp API\GameWispAuth.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -252,6 +259,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets" Condition="Exists('packages\cef.redist.x64.3.2526.1362\build\cef.redist.x64.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
