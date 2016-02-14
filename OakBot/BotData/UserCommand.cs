@@ -22,7 +22,7 @@ namespace OakBot
         BOT
     }
 
-    public class BotCommand : INotifyPropertyChanged
+    public class UserCommand : INotifyPropertyChanged
     {
         #region Fields
 
@@ -57,7 +57,7 @@ namespace OakBot
 
         #region Constructor
 
-        public BotCommand(string command, string response, int gCooldownSec,
+        public UserCommand(string command, string response, int gCooldownSec,
             int uCooldownSec, bool enabled, bool sendAsStreamer = false)
         {
             this.command = command.ToLower();
@@ -87,7 +87,7 @@ namespace OakBot
             }
         }
 
-        public void ExecuteCommand(string receivedLine, string cmdUser)
+        public void ExecuteCommand(TwitchChatMessage message)
         {
             // Check if not on global cooldown
             // using Substract on DateTime creates TimeSpan which as TotalSeconds
@@ -97,17 +97,17 @@ namespace OakBot
                 // Add user key if not exists to prevent exceptions if key not exists
                 // and it saves us another check when setting new timestamp, as this
                 // will already make sure they key exists.
-                if (!dictLastUsed.ContainsKey(cmdUser))
+                if (!dictLastUsed.ContainsKey(message.Author))
                 {
-                    dictLastUsed.Add(cmdUser, DateTime.MinValue);
+                    dictLastUsed.Add(message.Author, DateTime.MinValue);
                 }
 
                 // Check if user is not on cooldown
-                if (uCooldownSec == 0 || DateTime.Now.Subtract(dictLastUsed[cmdUser]).TotalSeconds > uCooldownSec)
+                if (uCooldownSec == 0 || DateTime.Now.Subtract(dictLastUsed[message.Author]).TotalSeconds > uCooldownSec)
                 {
                     // Get viewer's Viewer object
-                    Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == cmdUser);
-                    Match targetMatch = Regex.Match(receivedLine, @"@(?<name>[a-zA-Z0-9_]{4,25})");
+                    Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == message.Author);
+                    Match targetMatch = Regex.Match(message.Message, @"@(?<name>[a-zA-Z0-9_]{4,25})");
                     string target = targetMatch.Groups["name"].Value;
                     // Check rank
                     if (true)
@@ -124,7 +124,7 @@ namespace OakBot
 
                         string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
                         {
-                            string[] split = Regex.Split(receivedLine, @"\s+");
+                            string[] split = Regex.Split(message.Message, @"\s+");
                             
                             switch (m.Groups["item"].Value.ToLower())
                             {
@@ -173,31 +173,7 @@ namespace OakBot
                                     {
                                         return "None";
                                     }
-                                case "quote":
-                                    if(split.Count() == 1)
-                                    {
-                                        Random rnd = new Random((int)DateTime.Now.Ticks);
-                                        int i = rnd.Next(MainWindow.colQuotes.Count);
-                                        Quote q = MainWindow.colQuotes[i];
-                                        return string.Format("Quote #{0}: \"{1}\" - {2}{3}{4}", i, q.QuoteString, q.Quoter, q.DisplayGame ? " [" + q.Game + "] " : " ", q.DateString);
-                                    }else if(split.Count() == 2)
-                                    {
-                                        try
-                                        {
-                                            int i = int.Parse(split[1]);
-                                            Quote q = MainWindow.colQuotes[i];
-                                            return string.Format("Quote #{0}: \"{1}\" - {2}{3}{4}", i, q.QuoteString, q.Quoter, q.DisplayGame ? " [" + q.Game + "] " : " ", q.DateString);
-                                        }
-                                        catch (Exception)
-                                        {
 
-                                            return "There is no quote with that number!";
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return "";
-                                    }
                                 case "target":
                                     return target;
                                 default:
@@ -211,7 +187,7 @@ namespace OakBot
                         {
                             // Set timestamps
                             lastUsed = DateTime.UtcNow;
-                            dictLastUsed[cmdUser] = DateTime.UtcNow;
+                            dictLastUsed[message.Author] = DateTime.UtcNow;
 
                             // Notify the UI of the new last used date
                             NotifyPropertyChanged("LastUsed");

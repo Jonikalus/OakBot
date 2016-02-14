@@ -17,11 +17,11 @@ namespace OakBot
         private long id;
         private string quote;
         private string quoter;
+        private DateTime date;
+        private bool displayDate;
         private string game;
         private bool displayGame;
-        private DateTime date;
-
-        private string addedBy;
+        
         private DateTime lastDisplayed;
 
         #endregion
@@ -29,46 +29,46 @@ namespace OakBot
         #region Constructor
 
         /// <summary>
-        /// Use to add new quote to the bot
+        /// Use to add new quote to the bot by command
         /// </summary>
-        /// <param name="id">Unique ID of the quote, verfify before adding</param>
         /// <param name="quote">The quote itself</param>
         /// <param name="quoter">The person saying the quote</param>
         /// <param name="game">The game that the streamer was playing when the quote was made</param>
-        /// <param name="displayName">Displaying of the game</param>
-        /// <param name="addedBy">Name of the viewer that added the quote</param>
-        public Quote (long id, string quote, string quoter, string game, bool displayGame, string addedBy)
+        public Quote (string quote, string quoter, string game)
         {
-            this.id = id;
             this.quote = quote;
             this.quoter = quoter;
             this.game = game;
-            this.displayGame = displayGame;
-            this.addedBy = addedBy;
+
+            this.id = MainWindow.colQuotes.Count();
+            this.displayDate = true;
+            this.displayGame = true;
             this.date = DateTime.UtcNow;
             this.lastDisplayed = DateTime.MinValue;
         }
 
         /// <summary>
-        /// Use to load in existing quotes from a database
+        /// Use to load in existing quotes from a database or from UI
         /// </summary>
         /// <param name="id">Unique ID of the quote, verfify before adding</param>
         /// <param name="quote">The quote itself</param>
         /// <param name="quoter">The person saying the quote</param>
-        /// <param name="game">The game that the streamer was playing when the quote was made</param>
-        /// <param name="displayName">Displaying of the game</param>
-        /// <param name="addedBy">Name of the viewer that added the quote</param>
         /// <param name="date">DateTime of the quote was made</param>
+        /// <param name="displayDate">Displaying of the quote date</param>
+        /// <param name="game">The game that the streamer was playing when the quote was made</param>
+        /// <param name="displayGame">Displaying of the game</param>
+        /// <param name="addedBy">Name of the viewer that added the quote</param>
         /// <param name="lastDisplayed">DateTime of when the quote was last displayed (in chat)</param>
-        public Quote(long id, string quote, string quoter, string game, bool displayGame, string addedBy, DateTime date, DateTime lastDisplayed)
+        public Quote (long id, string quote, string quoter, DateTime date, bool displayDate, string game,
+            bool displayGame, DateTime lastDisplayed)
         {
             this.id = id;
             this.quote = quote;
             this.quoter = quoter;
+            this.date = date;
+            this.displayDate = displayDate;
             this.game = game;
             this.displayGame = displayGame;
-            this.addedBy = addedBy;
-            this.date = date;
             this.lastDisplayed = lastDisplayed;
         }
 
@@ -136,19 +136,70 @@ namespace OakBot
             }
         }
 
+        // Date is editable, INotify required
+        public DateTime Date
+        {
+            get
+            {
+                return date;
+            }
+            set
+            {
+                if (value != date)
+                {
+                    date = value;
+                    NotifyPropertyChanged("Date");
+                }
+            }
+        }
+
+        // DateString is depended on Date
+        public string DateString
+        {
+            get
+            {
+                return Date.ToString("yyyy-MM-dd");
+            }
+        }
+
+        // DisplayDate is editable, INotify required
+        public bool DisplayDate
+        {
+            get
+            {
+                return displayDate;
+            }
+            set
+            {
+                if(value != displayDate)
+                {
+                    displayDate = value;
+                    NotifyPropertyChanged("DisplayDate");
+                }
+            }
+        }
+
+        public string DisplayDateString
+        {
+            get
+            {
+                if (displayDate)
+                {
+                    return "Yes";
+                }
+                else
+                {
+                    return "No";
+                }
+            }
+        }
+
         // Game is editable, INotify required
         public string Game
         {
             get
             {
-                if (displayGame)
-                {
-                    return game;
-                }
-                else
-                {
-                    return "";
-                }
+                return game;
             }
             set
             {
@@ -177,57 +228,21 @@ namespace OakBot
             }
         }
 
-        // GameString is depended on Game and displayGame
-        // Returns an empty string if displayGame is false
-        public string GameString
+        public string DisplayGameString
         {
             get
             {
                 if (displayGame)
                 {
-                    return game;
+                    return "Yes";
                 }
                 else
                 {
-                    return "";
+                    return "No";
                 }
             }
         }
 
-        // Date is editable, INotify required
-        public DateTime Date
-        {
-            get
-            {
-                return date;
-            }
-            set
-            {
-                if (value != date)
-                {
-                    date = value;
-                    NotifyPropertyChanged("Date");
-                }
-            }
-        }
-        
-        // DateString is depended on Date
-        public string DateString
-        {
-            get
-            {
-                return Date.ToString("yyyy-MM-dd");
-            }
-        }
-
-        // AddedBy cannot be changed by the user
-        public string AddedBy
-        {
-            get
-            {
-                return addedBy;
-            }
-        }
 
         // LastDisplayed cannot bt changed by the user
         public DateTime LastDisplayed
