@@ -10,6 +10,8 @@ namespace OakBot
     public class Quote : INotifyPropertyChanged
     {
 
+        // comment to retrigger sync
+
         #region Fields
 
         public event PropertyChangedEventHandler PropertyChanged;
