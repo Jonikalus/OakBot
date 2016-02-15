@@ -19,6 +19,9 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.IO;
 using System.Globalization;
+using System.Net;
+using Microsoft.Win32;
+using RestSharp;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 
@@ -130,8 +133,20 @@ namespace OakBot
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 
-            txtGame.Text = Utils.GetClient().GetMyChannel().Game;
-            txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
+            if(Config.StreamerOAuthKey != "notSet")
+            {
+                MessageBox.Show(Utils.GetClient().GetChannel("INVALID$$$CHANNEL").Game);
+                using (WebClient wc = new WebClient())
+                {
+
+                    BitmapImage logo = new BitmapImage();
+                    logo.BeginInit();
+                    logo.StreamSource = wc.OpenRead(Utils.GetClient().GetMyChannel().Logo);
+                    logo.CacheOption = BitmapCacheOption.OnLoad;
+                    logo.EndInit();
+                    imgLogo.Source = logo;
+                }
+            }
 
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
@@ -725,10 +740,10 @@ namespace OakBot
             MessageBox.Show(indexSong.ToString());
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            Utils.GetClient().Update(txtTitle.Text, txtGame.Text);
-        }
+        
+
+
+
 
         // This doesn't work as it doesnt contain an INotify
         // These should be properties later on in a MVVM.

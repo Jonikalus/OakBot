@@ -3,6 +3,8 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
+using System.Net;
 
 namespace OakBot
 {
@@ -53,6 +55,16 @@ namespace OakBot
             // TODO quick and dirty isFollowing / isSub test
             cbFollowing.IsChecked = viewer.isFollowing();
             cbSubscribed.IsChecked = viewer.isSubscribed();
+            using (WebClient wc = new WebClient())
+            {
+
+                BitmapImage logo = new BitmapImage();
+                logo.BeginInit();
+                logo.StreamSource = wc.OpenRead(Utils.GetClient().GetMyChannel().Logo);
+                logo.CacheOption = BitmapCacheOption.OnLoad;
+                logo.EndInit();
+                image.Source = logo;
+            }
         }
 
         #endregion

@@ -130,7 +130,11 @@ namespace OakBot.Clients
             return response.Data;
         }
 
-        // Length of commercial break in seconds. Default value is 30. Valid values are 30, 60, 90, 120, 150, and 180. You can only trigger a commercial once every 8 minutes.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="length">Length of commercial break in seconds. Default value is 30. Valid values are 30, 60, 90, 120, 150, and 180. You can only trigger a commercial once every 8 minutes.</param>
+        /// <returns></returns>
         public TwitchResponse TriggerCommercial(int length)
         {
             var request = GetRequest("channels/{channel}/commercial", Method.POST);

@@ -135,7 +135,6 @@
     <Compile Include="BotCommands.cs" />
     <Compile Include="BotData\UserCommand.cs" />
     <Compile Include="Clients\TwitchAuthenticatedClient.cs" />
-    <Compile Include="Clients\TwitchNamedClient.cs" />
     <Compile Include="Clients\TwitchReadOnlyClient.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="BotData\Giveaway.cs" />
