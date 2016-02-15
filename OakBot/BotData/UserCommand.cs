@@ -126,10 +126,10 @@ namespace OakBot
                             return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
 
                         case "game":
-                            return Utils.GetChannelData().GetValue("game").ToString();
+                            return Utils.GetClient().GetMyChannel().Game;
 
                         case "title":
-                            return Utils.GetChannelData().GetValue("status").ToString();
+                            return Utils.GetClient().GetMyChannel().Status;
 
                         case "var1":
                             if (split.Count() == 2)

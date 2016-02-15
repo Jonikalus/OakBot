@@ -31,7 +31,7 @@ namespace OakBot
 
                         // Create new quote with game that the streamer on channel is/was playing
                         Quote newQuote = new Quote(splitEntry[0].Trim(), splitEntry[1].Trim(),
-                            Utils.GetChannelData().GetValue("game").ToString());
+                            Utils.GetClient().GetMyChannel().Game);
 
                         // Add new quote to collection
                         App.Current.Dispatcher.BeginInvoke(new Action(delegate

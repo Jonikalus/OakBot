@@ -130,8 +130,8 @@ namespace OakBot
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 
-            txtGame.Text = Utils.GetChannelData().GetValue("game").ToString();
-            txtTitle.Text = Utils.GetChannelData().GetValue("status").ToString();
+            txtGame.Text = Utils.GetClient().GetMyChannel().Game;
+            txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
 
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
@@ -727,7 +727,7 @@ namespace OakBot
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            Utils.Update(txtTitle.Text, txtGame.Text);
+            Utils.GetClient().Update(txtTitle.Text, txtGame.Text);
         }
 
         // This doesn't work as it doesnt contain an INotify

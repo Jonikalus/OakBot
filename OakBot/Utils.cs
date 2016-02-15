@@ -15,6 +15,7 @@ using System.Net;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using RestSharp;
+using OakBot.Clients;
 
 namespace OakBot
 {
@@ -186,43 +187,9 @@ namespace OakBot
 
         #region TwitchRestApi
 
-        public static void Update(string status = null, string game = null, string delay = null)
+        public static TwitchAuthenticatedClient GetClient()
         {
-            RestClient rc = new RestClient("https://api.twitch.tv/kraken");
-            RestRequest gameRequest = new RestRequest("channels/{channel}", Method.PUT);
-            gameRequest.AddHeader("Client-ID", Config.TwitchClientID);
-            gameRequest.AddHeader("Authorization", "OAuth " + Config.StreamerOAuthKey);
-            gameRequest.AddUrlSegment("channel", Config.StreamerUsername);
-            gameRequest.RequestFormat = RestSharp.DataFormat.Json;
-            gameRequest.AddBody(new { channel = new { status, game, delay } });
-            rc.Execute(gameRequest);
-        }
-        
-        public static void SetTitle(string title)
-        {
-            Update(title);
-        }
-
-
-        public static void SetGame(string game)
-        {
-            Update(null, game);
-        }
-
-        public static void SetDelay(string delay)
-        {
-            Update(null, null, delay);
-        }
-
-        public static JObject GetChannelData()
-        {
-            RestClient rc = new RestClient("https://api.twitch.tv/kraken");
-            RestRequest gameRequest = new RestRequest("channels/{channel}", Method.GET);
-            gameRequest.AddHeader("Client-ID", Config.TwitchClientID);
-            gameRequest.AddUrlSegment("channel", Config.StreamerUsername);
-            RestResponse response = rc.Execute(gameRequest) as RestResponse;
-            JObject channel = JObject.Parse(response.Content);
-            return channel;
+            return new TwitchAuthenticatedClient(Config.StreamerOAuthKey, Config.TwitchClientID);
         }
 
         #endregion
