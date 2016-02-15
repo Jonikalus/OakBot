@@ -89,124 +89,116 @@ namespace OakBot
 
         public void ExecuteCommand(TwitchChatMessage message)
         {
-            // Check if not on global cooldown
-            // using Substract on DateTime creates TimeSpan which as TotalSeconds
-            if (gCooldownSec == 0 || DateTime.Now.Subtract(lastUsed).TotalSeconds > gCooldownSec)
+            // Get command user's Viewer object
+            Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == message.Author);
+            if (viewer == null)
             {
-                
-                // Add user key if not exists to prevent exceptions if key not exists
-                // and it saves us another check when setting new timestamp, as this
-                // will already make sure they key exists.
-                if (!dictLastUsed.ContainsKey(message.Author))
+                return;
+            }
+
+            if (CanExecute(viewer))
+            {
+                Match targetMatch = Regex.Match(message.Message, @"@(?<name>[a-zA-Z0-9_]{4,25})");
+                string target = targetMatch.Groups["name"].Value;
+
+                // Parse response line here
+                // @user@ -> Display name of the user of the command
+
+                // @followdate@ -> Command user's follow date
+                // @followdatetime@ -> Command user's follow date and time
+
+                // @game@ -> Channels current game
+                // @title@ -> Channels current title
+
+                string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
                 {
-                    dictLastUsed.Add(message.Author, DateTime.MinValue);
+                    string[] split = Regex.Split(message.Message, @"\s+");
+                    
+                    switch (m.Groups["item"].Value.ToLower())
+                    {
+                        case "user":
+                            return viewer.UserName;
+
+                        case "followdate":
+                            return viewer.GetFollowDateTime("yyyy-MM-dd");
+
+                        case "followdatetime":
+                            return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
+
+                        case "game":
+                            return Utils.GetChannelData().GetValue("game").ToString();
+
+                        case "title":
+                            return Utils.GetChannelData().GetValue("status").ToString();
+
+                        case "var1":
+                            if (split.Count() == 2)
+                            {
+                                var1 = split[1];
+                                return var1;
+                            }
+                            return "";
+
+                        default:
+                            return "";
+                    }
+                    
+                });
+
+                // Set timestamps
+                lastUsed = DateTime.UtcNow;
+                dictLastUsed[message.Author] = DateTime.UtcNow;
+
+                // Notify the UI of the new last used date
+                NotifyPropertyChanged("LastUsed");
+
+                // Send the response
+                if (sendAsStreamer)
+                {
+                    // Send message to IRC, no need to add to collection as this will be received by bot account
+                    MainWindow.instance.streamerChatConnection.SendChatMessage(parsedResponse.Trim());
+                }
+                else
+                {
+                    // Send message to IRC
+                    MainWindow.instance.botChatConnection.SendChatMessage(parsedResponse.Trim());
+
+                    // Add message to collection
+                    App.Current.Dispatcher.BeginInvoke(new Action(delegate
+                    {
+                        MainWindow.colChatMessages.Add(new TwitchChatMessage(
+                            MainWindow.instance.accountBot.UserName, parsedResponse.Trim()));
+                    }));
                 }
 
-                // Check if user is not on cooldown
-                if (uCooldownSec == 0 || DateTime.Now.Subtract(dictLastUsed[message.Author]).TotalSeconds > uCooldownSec)
-                {
-                    // Get viewer's Viewer object
-                    Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == message.Author);
-                    Match targetMatch = Regex.Match(message.Message, @"@(?<name>[a-zA-Z0-9_]{4,25})");
-                    string target = targetMatch.Groups["name"].Value;
-                    // Check rank
-                    if (true)
-                    {
-                        // Block error to prevent output when no arguments are given
-                        bool blockError = false;
-
-                        // Parse response line here
-                        // @user@ -> Display name of the user of the command
-                        // @target@
-                        // @realtarget@
-
-                        // @block@ will not output anything if no arguments are given with the command
-
-                        string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
-                        {
-                            string[] split = Regex.Split(message.Message, @"\s+");
-                            
-                            switch (m.Groups["item"].Value.ToLower())
-                            {
-                                case "user":
-                                    return viewer.UserName;
-
-                                case "block":
-                                    if(split.Count() == 1)
-                                    {
-                                        blockError = true;
-                                    }
-                                    return "";
-
-                                case "followdate":
-                                    return viewer.GetFollowDateTime("yyyy-MM-dd");
-
-                                case "followdatetime":
-                                    return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
-
-                                case "var1":
-                                    if (split.Count() == 2)
-                                    {
-                                        var1 = split[1];
-                                        return var1;
-                                    }
-                                    return "";
-                                case "songrequest":
-                                    if (split.Count() == 2)
-                                    {
-                                        string link = split[1];
-                                        Song request = new Song(link);
-                                        if(request.Type != SongType.INVALID)
-                                        {
-                                            MainWindow.colSongs.Add(request);
-                                            string name = Utils.getTitleFromYouTube(link);
-                                            return name;
-                                        }
-                                        
-                                    }
-                                    return "Sorry, invalid song!";
-                                case "song":
-                                    if (MainWindow.playState)
-                                    {
-                                        return MainWindow.colSongs[MainWindow.indexSong].SongName;
-                                    }else
-                                    {
-                                        return "None";
-                                    }
-
-                                case "target":
-                                    return target;
-                                default:
-                                    return "CMD-DOES-NOT-EXIST";
-                            }
-                            
-                        });
-
-                        // Continue if there is no @block@ error
-                        if (!blockError)
-                        {
-                            // Set timestamps
-                            lastUsed = DateTime.UtcNow;
-                            dictLastUsed[message.Author] = DateTime.UtcNow;
-
-                            // Notify the UI of the new last used date
-                            NotifyPropertyChanged("LastUsed");
-
-                            // Send the response
-                            if (sendAsStreamer)
-                            {
-                                MainWindow.instance.streamerChatConnection.SendChatMessage(parsedResponse.Trim());
-                            }
-                            else
-                            {
-                                MainWindow.instance.botChatConnection.SendChatMessage(parsedResponse.Trim());
-                                MainWindow.colChatMessages.Add(new TwitchChatMessage(
-                                    MainWindow.instance.accountBot.UserName, parsedResponse.Trim()));
-                            }
-                        }
-                    }
-                }  
             }
+        }
+
+        private bool CanExecute(Viewer viewer)
+        {
+            // Check if command user has PERMISSION to use the command
+            if (true)
+            {
+                // Check if command is on GLOBAL COOLDOWN
+                if (gCooldownSec == 0 || DateTime.Now.Subtract(lastUsed).TotalSeconds > gCooldownSec)
+                {
+                    // Add user key if not exists to prevent exceptions if key not exists
+                    // and it saves us another check when setting new timestamp, as this
+                    // will already make sure they key exists.
+                    if (!dictLastUsed.ContainsKey(viewer.UserName))
+                    {
+                        dictLastUsed.Add(viewer.UserName, DateTime.MinValue);
+                    }
+
+                    // Check if command user is not USER COOLDOWN
+                    if (uCooldownSec == 0 || DateTime.Now.Subtract(dictLastUsed[viewer.UserName]).TotalSeconds > uCooldownSec)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         #endregion

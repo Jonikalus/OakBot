@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Data.SQLite;
 using System.Globalization;
+using System.Windows;
 
 namespace OakBot
 {
@@ -63,8 +64,6 @@ namespace OakBot
                 dbConnection.Close();
             }
         }
-
-
 
         /// <summary>
         /// Add all viewers to DBfile in colDatabase.
@@ -150,8 +149,6 @@ namespace OakBot
             // Close DBfile
             dbConnection.Close();
         }
-
-
 
         /// <summary>
         /// Add new viewer to DBfile with specified Viewer.
@@ -254,13 +251,12 @@ namespace OakBot
                 dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3; Read Only=True;", fileQuotes));
                 dbConnection.Open();
 
-                SQLiteCommand read = new SQLiteCommand("SELECT * FROM `Quotes`", dbConnection);
+                SQLiteCommand read = new SQLiteCommand("SELECT * FROM `Quotes` ORDER BY `Id` ASC", dbConnection);
                 SQLiteDataReader reader = read.ExecuteReader();
 
                 while (reader.Read())
                 {
                     Quote loadedQuote = new Quote(   
-                        (long)reader["Id"],
                         (string)reader["Quote"],
                         (string)reader["Quoter"],
                         DateTime.Parse((string)reader["Date"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
@@ -275,6 +271,36 @@ namespace OakBot
 
                 dbConnection.Close();
             }
+        }
+
+        /// <summary>
+        /// Save all quotes after deleting current entries in case of id change
+        /// </summary>
+        public static void SaveAllQuotes()
+        {
+            SQLiteConnection dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", fileQuotes));
+            dbConnection.Open();
+
+            SQLiteCommand sqlCmd = new SQLiteCommand("DELETE FROM `Quotes`", dbConnection);
+            sqlCmd.ExecuteNonQuery();
+
+            foreach (Quote quote in MainWindow.colQuotes)
+            {
+                sqlCmd = new SQLiteCommand(
+                    string.Format("INSERT INTO `Quotes` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')",
+                        quote.Id,
+                        quote.QuoteString,
+                        quote.Quoter,
+                        quote.Date.ToString("o"),
+                        quote.DisplayDate,
+                        quote.Game,
+                        quote.DisplayGame,
+                        quote.LastDisplayed.ToString("o")),
+                dbConnection);
+                sqlCmd.ExecuteNonQuery();
+            }
+
+            dbConnection.Close();
         }
 
         /// <summary>

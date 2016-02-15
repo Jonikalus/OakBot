@@ -10,13 +10,10 @@ namespace OakBot
     public class Quote : INotifyPropertyChanged
     {
 
-        // comment to retrigger sync
-
         #region Fields
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private long id;
         private string quote;
         private string quoter;
         private DateTime date;
@@ -42,7 +39,7 @@ namespace OakBot
             this.quoter = quoter;
             this.game = game;
 
-            this.id = MainWindow.colQuotes.Count()-1;
+            // Default values, can be changed in the edit menu
             this.displayDate = true;
             this.displayGame = true;
             this.date = DateTime.UtcNow;
@@ -61,10 +58,9 @@ namespace OakBot
         /// <param name="displayGame">Displaying of the game</param>
         /// <param name="addedBy">Name of the viewer that added the quote</param>
         /// <param name="lastDisplayed">DateTime of when the quote was last displayed (in chat)</param>
-        public Quote (long id, string quote, string quoter, DateTime date, bool displayDate, string game,
+        public Quote (string quote, string quoter, DateTime date, bool displayDate, string game,
             bool displayGame, DateTime lastDisplayed)
         {
-            this.id = id;
             this.quote = quote;
             this.quoter = quoter;
             this.date = date;
@@ -78,14 +74,21 @@ namespace OakBot
 
         #region Methods
 
-        private void NotifyPropertyChanged(string info)
+        /// <summary>
+        /// Private method to notify INotify on change
+        /// </summary>
+        /// <param name="property"></param>
+        private void NotifyPropertyChanged(string property)
         {
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
 
+        /// <summary>
+        /// Set Last displayed to current UTC timestamp
+        /// </summary>
         public void SetLastDisplayed()
         {
             lastDisplayed = DateTime.UtcNow;
@@ -95,16 +98,20 @@ namespace OakBot
 
         #region Properties
 
-        // Id cannot be changed by the user
+        /// <summary>
+        /// Return the Index of the quote in the colQuotes
+        /// </summary>
         public long Id
         {
             get
             {
-                return id;
+                return MainWindow.colQuotes.IndexOf(this);
             }
         }
 
-        // Quote is editable, INotify required
+        /// <summary>
+        /// Quote itself, has INotify
+        /// </summary>
         public string QuoteString
         {
             get
@@ -121,7 +128,9 @@ namespace OakBot
             }
         }
 
-        // Quoter is editable, INotify required
+        /// <summary>
+        /// Quoter of the quote, has INotify
+        /// </summary>
         public string Quoter
         {
             get
@@ -138,7 +147,9 @@ namespace OakBot
             }
         }
 
-        // Date is editable, INotify required
+        /// <summary>
+        /// The date the quote was made, has INotify
+        /// </summary>
         public DateTime Date
         {
             get
@@ -155,7 +166,9 @@ namespace OakBot
             }
         }
 
-        // DateString is depended on Date
+        /// <summary>
+        /// YYYY-MM-DD output of the Date the quote was made.
+        /// </summary>
         public string DateString
         {
             get
@@ -164,7 +177,9 @@ namespace OakBot
             }
         }
 
-        // DisplayDate is editable, INotify required
+        /// <summary>
+        /// Display the Date, has INotify
+        /// </summary>
         public bool DisplayDate
         {
             get
@@ -181,6 +196,9 @@ namespace OakBot
             }
         }
 
+        /// <summary>
+        /// Returns "Yes" or "No" for display date
+        /// </summary>
         public string DisplayDateString
         {
             get
@@ -196,7 +214,9 @@ namespace OakBot
             }
         }
 
-        // Game is editable, INotify required
+        /// <summary>
+        /// The game the streamer was playing during the quote, has INotify
+        /// </summary>
         public string Game
         {
             get
@@ -213,7 +233,9 @@ namespace OakBot
             }
         }
 
-        // DisplayGame is editable, INotify required
+        /// <summary>
+        /// Display Game, has INotify
+        /// </summary>
         public bool DisplayGame
         {
             get
@@ -230,6 +252,9 @@ namespace OakBot
             }
         }
 
+        /// <summary>
+        /// Returns "Yes" or "No" for display game 
+        /// </summary>
         public string DisplayGameString
         {
             get
@@ -245,18 +270,28 @@ namespace OakBot
             }
         }
 
-
-        // LastDisplayed cannot bt changed by the user
+        /// <summary>
+        /// Date of the last display of the quote, has INotify
+        /// </summary>
         public DateTime LastDisplayed
         {
             get
             {
                 return lastDisplayed;
             }
+            set
+            {
+                if (value != lastDisplayed)
+                {
+                    lastDisplayed = value;
+                    NotifyPropertyChanged("LastDisplayed");
+                }
+            }
         }
-        
-        // LastDisplayedString is depended on LastDisplayed
-        // Returns Never when lastDisplayed is not set
+
+        /// <summary>
+        /// YYYY-MM-DD output of the Date the quote was last displayed
+        /// </summary>
         public string LastDisplayedString
         {
             get
