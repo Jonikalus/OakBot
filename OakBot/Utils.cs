@@ -14,6 +14,7 @@ using System.Windows;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using RestSharp;
 
 namespace OakBot
 {
@@ -181,6 +182,49 @@ namespace OakBot
         {
             botHttp = new SimpleHTTPServer(Config.AppDataPath + "\\Webserver", 8080);
         }
+
+
+        #region TwitchRestApi
+
+        public static void Update(string status = null, string game = null, string delay = null)
+        {
+            RestClient rc = new RestClient("https://api.twitch.tv/kraken");
+            RestRequest gameRequest = new RestRequest("channels/{channel}", Method.PUT);
+            gameRequest.AddHeader("Client-ID", Config.TwitchClientID);
+            gameRequest.AddHeader("Authorization", "OAuth " + Config.StreamerOAuthKey);
+            gameRequest.AddUrlSegment("channel", Config.StreamerUsername);
+            gameRequest.RequestFormat = RestSharp.DataFormat.Json;
+            gameRequest.AddBody(new { channel = new { status, game, delay } });
+            rc.Execute(gameRequest);
+        }
         
+        public static void SetTitle(string title)
+        {
+            Update(title);
+        }
+
+
+        public static void SetGame(string game)
+        {
+            Update(null, game);
+        }
+
+        public static void SetDelay(string delay)
+        {
+            Update(null, null, delay);
+        }
+
+        public static JObject GetChannelData()
+        {
+            RestClient rc = new RestClient("https://api.twitch.tv/kraken");
+            RestRequest gameRequest = new RestRequest("channels/{channel}", Method.GET);
+            gameRequest.AddHeader("Client-ID", Config.TwitchClientID);
+            gameRequest.AddUrlSegment("channel", Config.StreamerUsername);
+            RestResponse response = rc.Execute(gameRequest) as RestResponse;
+            JObject channel = JObject.Parse(response.Content);
+            return channel;
+        }
+
+        #endregion
     }
 }

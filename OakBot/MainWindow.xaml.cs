@@ -130,7 +130,8 @@ namespace OakBot
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 
-           
+            txtGame.Text = Utils.GetChannelData().GetValue("game").ToString();
+            txtTitle.Text = Utils.GetChannelData().GetValue("status").ToString();
 
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
@@ -722,6 +723,11 @@ namespace OakBot
             Song play = colSongs[indexSong];
             cefSong.Load(play.Link);
             MessageBox.Show(indexSong.ToString());
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.Update(txtTitle.Text, txtGame.Text);
         }
 
         // This doesn't work as it doesnt contain an INotify
