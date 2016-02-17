@@ -58,9 +58,24 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Twitch Dashboard">
-                <Grid Background="#FF363636" Margin="0">
-                    <Image x:Name="imgLogo" HorizontalAlignment="Left" Height="150" Margin="10,10,0,0" VerticalAlignment="Top" Width="150"/>
-                </Grid>
+                <ScrollViewer Height="Auto">
+                    <Grid Background="#FF363636" Margin="0" Height="381">
+                        <Image x:Name="imgLogo" HorizontalAlignment="Left" Height="150" Margin="10,10,0,0" VerticalAlignment="Top" Width="150"/>
+                        <Label x:Name="lblTitle" Content="Title:" HorizontalAlignment="Left" Margin="165,0,0,0" VerticalAlignment="Top"/>
+                        <TextBox x:Name="txtTitle" HorizontalAlignment="Left" Height="23" Margin="209,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="590"/>
+                        <Label x:Name="lblGame" Content="Game:" HorizontalAlignment="Left" Margin="165,26,0,0" VerticalAlignment="Top"/>
+                        <ComboBox x:Name="cbGame" HorizontalAlignment="Left" Margin="209,30,0,0" VerticalAlignment="Top" Width="590" IsEditable="True"/>
+                        <Label x:Name="lblDelay" Content="Delay:" HorizontalAlignment="Left" Margin="165,52,0,0" VerticalAlignment="Top"/>
+                        <ComboBox x:Name="cbDelay" HorizontalAlignment="Left" Margin="209,56,0,0" VerticalAlignment="Top" Width="120">
+                            <ComboBoxItem Content="30"/>
+                            <ComboBoxItem Content="60"/>
+                            <ComboBoxItem Content="90"/>
+                            <ComboBoxItem Content="120"/>
+                            <ComboBoxItem Content="150"/>
+                            <ComboBoxItem Content="180"/>
+                        </ComboBox>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
             <TabItem x:Name="TabConsole" Header="Twitch Chat" BorderThickness="2">
                 <Grid Background="#FF363636" Margin="0">

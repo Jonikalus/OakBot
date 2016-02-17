@@ -135,16 +135,49 @@ namespace OakBot
 
             if(Config.StreamerOAuthKey != "notSet")
             {
-                MessageBox.Show(Utils.GetClient().GetChannel("INVALID$$$CHANNEL").Game);
-                using (WebClient wc = new WebClient())
+                
+                try
                 {
+                    txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
+                    cbGame.Text = Utils.GetClient().GetMyChannel().Game;
+                    switch (Utils.GetClient().GetMyChannel().Delay)
+                    {
+                        case 30:
+                            cbDelay.SelectedIndex = 0;
+                            break;
+                        case 60:
+                            cbDelay.SelectedIndex = 1;
+                            break;
+                        case 90:
+                            cbDelay.SelectedIndex = 2;
+                            break;
+                        case 120:
+                            cbDelay.SelectedIndex = 3;
+                            break;
+                        case 150:
+                            cbDelay.SelectedIndex = 4;
+                            break;
+                        case 180:
+                            cbDelay.SelectedIndex = 5;
+                            break;
+                        default:
+                            cbDelay.SelectedIndex = 0;
+                            break;
+                    }
+                    using (WebClient wc = new WebClient())
+                    {
 
-                    BitmapImage logo = new BitmapImage();
-                    logo.BeginInit();
-                    logo.StreamSource = wc.OpenRead(Utils.GetClient().GetMyChannel().Logo);
-                    logo.CacheOption = BitmapCacheOption.OnLoad;
-                    logo.EndInit();
-                    imgLogo.Source = logo;
+                        BitmapImage logo = new BitmapImage();
+                        logo.BeginInit();
+                        logo.StreamSource = wc.OpenRead(Utils.GetClient().GetMyChannel().Logo);
+                        logo.CacheOption = BitmapCacheOption.OnLoad;
+                        logo.EndInit();
+                        imgLogo.Source = logo;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
                 }
             }
 
