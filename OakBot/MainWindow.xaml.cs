@@ -24,6 +24,7 @@ using Microsoft.Win32;
 using RestSharp;
 using OakBot.Models;
 using OakBot.Clients;
+using System.Threading.Tasks;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 
@@ -794,77 +795,80 @@ namespace OakBot
             MessageBox.Show(indexSong.ToString());
         }
 
+        #region Manual Commercial
+
         private void btn30Sec_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Utils.GetClient().TriggerCommercial(30);
-            }
-            catch (Exception)
-            {
-                
-            }
+            RunManualCommercial(30);
         }
 
         private void btn60Sec_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Utils.GetClient().TriggerCommercial(60);
-            }
-            catch (Exception)
-            {
-
-            }
+            RunManualCommercial(60);
         }
 
         private void btn90Secs_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Utils.GetClient().TriggerCommercial(90);
-            }
-            catch (Exception)
-            {
-
-            }
+            RunManualCommercial(90);
         }
 
         private void btn120Secs_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Utils.GetClient().TriggerCommercial(120);
-            }
-            catch (Exception)
-            {
-
-            }
+            RunManualCommercial(120);
         }
 
         private void btn150Secs_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Utils.GetClient().TriggerCommercial(150);
-            }
-            catch (Exception)
-            {
-
-            }
+            RunManualCommercial(150);
         }
 
         private void btn180Secs_Click(object sender, RoutedEventArgs e)
         {
+            RunManualCommercial(180);
+        }
+
+        private async void RunManualCommercial(int length)
+        {
+            int activationDelay;
+
+            // Get given delay (0 up to and including 60) from textbox.
+            // On error, default to 20 and show warning of the actual start.
             try
             {
-                Utils.GetClient().TriggerCommercial(180);
+                activationDelay = Convert.ToInt32(tbManComDelay.Text);
+                if (activationDelay < 0 || activationDelay > 60)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+            }
+            catch (Exception)
+            {
+                activationDelay = 20;
+                MessageBox.Show("Invalid delay given of 0 up to and including 60..\nThe commercial will start after 20 seconds.", 
+                    "OakBot Manual Commercial Delay",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            // Create a new task with a sleep of the given delay
+            // Await the task to retrieve exceptions
+            try
+            {
+                Task activateCommercial = new Task(() =>
+                {
+                    Thread.Sleep(activationDelay * 1000);
+                    Utils.GetClient().TriggerCommercial(length);
+                });
+
+                activateCommercial.Start();
+                await activateCommercial;
             }
             catch (Exception)
             {
 
             }
         }
+
+        #endregion
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -877,30 +881,6 @@ namespace OakBot
             }
             MessageBox.Show("Dashboard updated!");
         }
-
-
-
-
-
-
-        // This doesn't work as it doesnt contain an INotify
-        // These should be properties later on in a MVVM.
-        // Now the filter count is updated after refresh of the view.
-        //public int TotalDatabaseCount
-        //{
-        //    get
-        //    {
-        //        return colDatabase.Count();
-        //    }
-        //}
-        //
-        //public int FilterDatabaseCount
-        //{
-        //    get
-        //    {
-        //        return databaseView.Cast<Viewer>().Count();
-        //    }
-        //}
 
     }
 }

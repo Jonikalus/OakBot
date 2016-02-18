@@ -74,14 +74,16 @@
                             <ComboBoxItem Content="150"/>
                             <ComboBoxItem Content="180"/>
                         </ComboBox>
-                        <GroupBox x:Name="gbCommercial" Header="Commercials" HorizontalAlignment="Left" Margin="165,83,0,0" VerticalAlignment="Top" Height="77" Width="634">
-                            <Grid HorizontalAlignment="Left" Height="58" Margin="0,0,-12,-3" VerticalAlignment="Top" Width="634">
+                        <GroupBox x:Name="gbManualCommercials" Header="Manual Commercials" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top" Height="77" Width="789">
+                            <Grid Margin="0">
                                 <Button x:Name="btn30Sec" Content="30 Secs" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="btn30Sec_Click"/>
                                 <Button x:Name="btn60Sec" Content="60 Secs" HorizontalAlignment="Left" Margin="90,20,0,0" VerticalAlignment="Top" Width="75" Click="btn60Sec_Click"/>
                                 <Button x:Name="btn90Secs" Content="90 Secs" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="75" Click="btn90Secs_Click"/>
                                 <Button x:Name="btn120Secs" Content="120 Secs" HorizontalAlignment="Left" Margin="250,20,0,0" VerticalAlignment="Top" Width="75" Click="btn120Secs_Click"/>
                                 <Button x:Name="btn150Secs" Content="150 Secs" HorizontalAlignment="Left" Margin="330,20,0,0" VerticalAlignment="Top" Width="75" Click="btn150Secs_Click"/>
                                 <Button x:Name="btn180Secs" Content="180 Secs" HorizontalAlignment="Left" Margin="410,20,0,0" VerticalAlignment="Top" Width="75" Click="btn180Secs_Click"/>
+                                <Label x:Name="lblManComDelay" Content="Activation Delay" HorizontalAlignment="Left" Margin="556,17,0,0" VerticalAlignment="Top" ToolTip="The delay before this bot sends the commercial request to Twitch in seconds.&#x0a;Can be used to let viewers catch up with the stream due to natural delays.&#x0a;Acceptable values are numerals 0 up to and including 60, defaults to 20 on input error."/>
+                                <TextBox x:Name="tbManComDelay" HorizontalAlignment="Left" Height="23" Margin="657,20,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="36"/>
                             </Grid>
                         </GroupBox>
                         <Button x:Name="btnUpdate" Content="Update" HorizontalAlignment="Left" Margin="724,58,0,0" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click"/>
