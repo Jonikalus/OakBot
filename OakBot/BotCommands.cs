@@ -22,7 +22,7 @@ namespace OakBot
             {
                 string[] splitMessage = message.Message.Split(new char[] { ' ' }, 3);
 
-                if (splitMessage.Count() >= 2 && splitMessage[1] == "add")
+                if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "add")
                 {
                     try
                     {
@@ -51,7 +51,7 @@ namespace OakBot
                         SendAndShowMessage("To add a quote use: !quote add <quote> - <quoter> No need to use \" as it will be added on display.");
                     }
                 }
-                else if (splitMessage.Count() >= 2 && splitMessage[1] == "remove")
+                else if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "remove")
                 {
                     try
                     {

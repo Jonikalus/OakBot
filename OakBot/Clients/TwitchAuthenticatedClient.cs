@@ -28,9 +28,17 @@ namespace OakBot.Clients
 
         public Channel GetMyChannel()
         {
-            var request = GetRequest("channel", Method.GET);
-            var response = restClient.Execute<Channel>(request);
-            return response.Data;
+            try
+            {
+                var request = GetRequest("channel", Method.GET);
+                var response = restClient.Execute<Channel>(request);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+
+                throw new TwitchException("Error fetching channel data", ex);
+            }
         }
 
         // more details than GetUser(myname)

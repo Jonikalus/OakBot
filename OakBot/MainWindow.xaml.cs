@@ -22,6 +22,8 @@ using System.Globalization;
 using System.Net;
 using Microsoft.Win32;
 using RestSharp;
+using OakBot.Models;
+using OakBot.Clients;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 
@@ -44,6 +46,9 @@ namespace OakBot
         // Chat connections
         public TwitchChatConnection botChatConnection;
         public TwitchChatConnection streamerChatConnection;
+
+        // API Client
+        TwitchAuthenticatedClient client;
 
         // Collections
         public static ObservableCollection<TwitchChatMessage> colChatMessages = new ObservableCollection<TwitchChatMessage>();
@@ -77,6 +82,8 @@ namespace OakBot
         {
             InitializeComponent();
 
+            
+
             // Initialize instance
             instance = this;
 
@@ -90,6 +97,8 @@ namespace OakBot
             LoadConfigToUI();
             DatabaseUtils.LoadAllViewers();
             DatabaseUtils.LoadAllQuotes();
+
+            
 
             // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
@@ -138,6 +147,7 @@ namespace OakBot
                 
                 try
                 {
+                    client = new TwitchAuthenticatedClient(Config.StreamerOAuthKey, Config.TwitchClientID);
                     txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
                     cbGame.Text = Utils.GetClient().GetMyChannel().Game;
                     switch (Utils.GetClient().GetMyChannel().Delay)
@@ -169,10 +179,21 @@ namespace OakBot
 
                         BitmapImage logo = new BitmapImage();
                         logo.BeginInit();
-                        logo.StreamSource = wc.OpenRead(Utils.GetClient().GetMyChannel().Logo);
+                        logo.StreamSource = wc.OpenRead(client.GetMyChannel().Logo);
                         logo.CacheOption = BitmapCacheOption.OnLoad;
                         logo.EndInit();
                         imgLogo.Source = logo;
+                    }
+
+                    if (!client.GetMyUser().Partnered)
+                    {
+                        btn30Sec.IsEnabled = false;
+                        btn60Sec.IsEnabled = false;
+                        btn90Secs.IsEnabled = false;
+                        btn120Secs.IsEnabled = false;
+                        btn150Secs.IsEnabled = false;
+                        btn180Secs.IsEnabled = false;
+                        cbDelay.IsEnabled = false;
                     }
                 }
                 catch (Exception ex)
@@ -773,7 +794,91 @@ namespace OakBot
             MessageBox.Show(indexSong.ToString());
         }
 
-        
+        private void btn30Sec_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.GetClient().TriggerCommercial(30);
+            }
+            catch (Exception)
+            {
+                
+            }
+        }
+
+        private void btn60Sec_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.GetClient().TriggerCommercial(60);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void btn90Secs_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.GetClient().TriggerCommercial(90);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void btn120Secs_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.GetClient().TriggerCommercial(120);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void btn150Secs_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.GetClient().TriggerCommercial(150);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void btn180Secs_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Utils.GetClient().TriggerCommercial(180);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (client.GetMyUser().Partnered)
+            {
+                client.Update(txtTitle.Text, cbGame.Text, ((ComboBoxItem)cbDelay.SelectedItem).Content.ToString());
+            }else
+            {
+                client.Update(txtTitle.Text, cbGame.Text);
+            }
+            MessageBox.Show("Dashboard updated!");
+        }
+
+
 
 
 
