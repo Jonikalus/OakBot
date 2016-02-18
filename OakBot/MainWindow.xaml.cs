@@ -844,9 +844,16 @@ namespace OakBot
             catch (Exception)
             {
                 activationDelay = 20;
-                MessageBox.Show("Invalid delay given of 0 up to and including 60..\nThe commercial will start after 20 seconds.", 
-                    "OakBot Manual Commercial Delay",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                #pragma warning disable 4014
+                App.Current.Dispatcher.BeginInvoke(new Action(delegate()
+                {
+                    MessageBox.Show("Invalid delay given of 0 up to and including 60..\nThe commercial will start after 20 seconds.",
+                        "OakBot Manual Commercial Delay",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }));
+                #pragma warning restore 4014
+
             }
 
             // Create a new task with a sleep of the given delay
