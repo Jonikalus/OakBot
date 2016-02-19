@@ -104,7 +104,7 @@ namespace OakBot.Clients
             return response.Data;
         }
 
-        public Channel Update(string status = null, string game = null, string delay = null)
+        public Channel Update(string status = null, string game = null, long? delay = null)
         {
             var request = GetRequest("channels/{channel}", Method.PUT);
             request.AddUrlSegment("channel", username);
@@ -125,7 +125,7 @@ namespace OakBot.Clients
         }
 
         // only for partnered channels
-        public Channel SetDelay(string delay)
+        public Channel SetDelay(long delay)
         {
             return Update(null, null, delay);
         }

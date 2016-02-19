@@ -44,6 +44,11 @@ namespace OakBot.Models
             return state;
         }
 
+        public override string ToString()
+        {
+            return Status + ": " + Message;
+        }
+
         [Obsolete("Method obsolete, please use GetState() instead")]
         public bool WasSuccesfull()
         {

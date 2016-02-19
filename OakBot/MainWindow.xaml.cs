@@ -143,70 +143,9 @@ namespace OakBot
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 
-            if(Config.StreamerOAuthKey != "notSet")
-            {
-                
-                try
-                {
-                    client = new TwitchAuthenticatedClient(Config.StreamerOAuthKey, Config.TwitchClientID);
-                    txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
-                    cbGame.Text = Utils.GetClient().GetMyChannel().Game;
-                    switch (Utils.GetClient().GetMyChannel().Delay)
-                    {
-                        case 30:
-                            cbDelay.SelectedIndex = 0;
-                            break;
-                        case 60:
-                            cbDelay.SelectedIndex = 1;
-                            break;
-                        case 90:
-                            cbDelay.SelectedIndex = 2;
-                            break;
-                        case 120:
-                            cbDelay.SelectedIndex = 3;
-                            break;
-                        case 150:
-                            cbDelay.SelectedIndex = 4;
-                            break;
-                        case 180:
-                            cbDelay.SelectedIndex = 5;
-                            break;
-                        default:
-                            cbDelay.SelectedIndex = 0;
-                            break;
-                    }
-                    using (WebClient wc = new WebClient())
-                    {
-
-                        BitmapImage logo = new BitmapImage();
-                        logo.BeginInit();
-                        logo.StreamSource = wc.OpenRead(client.GetMyChannel().Logo);
-                        logo.CacheOption = BitmapCacheOption.OnLoad;
-                        logo.EndInit();
-                        imgLogo.Source = logo;
-                    }
-
-                    if (!client.GetMyUser().Partnered)
-                    {
-                        btn30Sec.IsEnabled = false;
-                        btn60Sec.IsEnabled = false;
-                        btn90Secs.IsEnabled = false;
-                        btn120Secs.IsEnabled = false;
-                        btn150Secs.IsEnabled = false;
-                        btn180Secs.IsEnabled = false;
-                        cbDelay.IsEnabled = false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Trace.TraceError(ex.ToString());
-                }
-            }
-
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
             new Thread(new ThreadStart(bg.Run)) { IsBackground = true }.Start();
-
 
             // Auto connect
             if (Config.AutoConnectBot)
@@ -305,12 +244,6 @@ namespace OakBot
 
             }
 
-            // Disable UI elements
-            textBoxStreamerName.IsEnabled = false;
-            buttonStreamerConnect.IsEnabled = false;
-            cbAutoConnectStreamer.IsEnabled = false;
-            btnStreamerConnect.Content = "Disconnect";
-
             // Twitch Credentials
             accountStreamer = new TwitchCredentials(Config.StreamerUsername, Config.StreamerOAuthKey);
 
@@ -323,6 +256,53 @@ namespace OakBot
 
             // Start the chat connection threads
             streamerChat.Start();
+
+            // TODO check on success login/connection
+            if (true)
+            {
+                // Disable Settings UI elements
+                textBoxStreamerName.IsEnabled = false;
+                buttonStreamerConnect.IsEnabled = false;
+                cbAutoConnectStreamer.IsEnabled = false;
+                btnStreamerConnect.Content = "Disconnect";
+
+                // Enable Twitch Dashboard tab
+                tabMainDashboard.IsEnabled = true;
+
+                try
+                {
+                    client = new TwitchAuthenticatedClient(Config.StreamerOAuthKey, Config.TwitchClientID);
+                    txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
+                    cbGame.Text = Utils.GetClient().GetMyChannel().Game;
+                    tbStreamDelay.Text = Utils.GetClient().GetMyChannel().Delay.ToString();
+                    
+                    // Get Streamers Avatar
+                    using (WebClient wc = new WebClient())
+                    {
+                        BitmapImage logo = new BitmapImage();
+                        logo.BeginInit();
+                        logo.StreamSource = wc.OpenRead(client.GetMyChannel().Logo);
+                        logo.CacheOption = BitmapCacheOption.OnLoad;
+                        logo.EndInit();
+                        imgLogo.Source = logo;
+                    }
+
+                    // Enable partnered elements when partnered
+                    if (client.GetMyUser().Partnered)
+                    {
+                        // Stream delay
+                        tbStreamDelay.IsEnabled = true;
+                        
+                        // Manual Commercials
+                        gbManualCommercials.IsEnabled = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.TraceError(ex.ToString());
+                }
+
+            }
         }
 
         public void DisconnectStreamer()
@@ -844,16 +824,8 @@ namespace OakBot
             catch (Exception)
             {
                 activationDelay = 20;
-
-                #pragma warning disable 4014
-                App.Current.Dispatcher.BeginInvoke(new Action(delegate()
-                {
-                    MessageBox.Show("Invalid delay given of 0 up to and including 60..\nThe commercial will start after 20 seconds.",
-                        "OakBot Manual Commercial Delay",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                }));
-                #pragma warning restore 4014
-
+                MessageBox.Show("Invalid delay given of 0 up to and including 60.\nA commercial will be requested in 20 seconds after pressing OK.",
+                    "OakBot Manual Commercial", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             // Create a new task with a sleep of the given delay
@@ -863,15 +835,26 @@ namespace OakBot
                 Task activateCommercial = new Task(() =>
                 {
                     Thread.Sleep(activationDelay * 1000);
-                    Utils.GetClient().TriggerCommercial(length);
+                    TwitchResponse r = Utils.GetClient().TriggerCommercial(length);
+                    if (r.Status == 422)
+                    {
+                        MessageBox.Show("Failed to start the commercial:\n" + r.Message,
+                            "OakBot Manual Commercial", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(string.Format("The {0} second commercial has started.", length),
+                            "OakBot Manual Commercial", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    }
                 });
 
                 activateCommercial.Start();
                 await activateCommercial;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                MessageBox.Show("Something went wrong starting the commercial:\n" + ex.ToString(),
+                    "OakBot Manual Commercial", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -881,12 +864,33 @@ namespace OakBot
         {
             if (client.GetMyUser().Partnered)
             {
-                client.Update(txtTitle.Text, cbGame.Text, ((ComboBoxItem)cbDelay.SelectedItem).Content.ToString());
-            }else
+                int streamDelay;
+
+                try
+                {
+                    streamDelay = Convert.ToInt32(tbStreamDelay.Text);
+                    if (streamDelay < 0 || streamDelay > 900)
+                    {
+                        throw new ArgumentOutOfRangeException();
+                    }
+                }
+                catch (Exception)
+                {
+                    streamDelay = 0;
+                    MessageBox.Show("Invalid delay given of 0 up to and including 900.\nDelay is will be reverted to 0 seconds.",
+                        "OakBot Channel Update", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                //client.Update(txtTitle.Text, cbGame.Text, Convert.ToString(streamDelay));
+                client.Update(txtTitle.Text, cbGame.Text, streamDelay);
+            }
+            else
             {
                 client.Update(txtTitle.Text, cbGame.Text);
             }
-            MessageBox.Show("Dashboard updated!");
+
+            MessageBox.Show("Channel information updated!",
+                "Oakbot Channel Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
     }
