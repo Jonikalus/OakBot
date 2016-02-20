@@ -51,5 +51,7 @@ namespace OakBot.Models
         public string Email { get; set; }
         [JsonProperty("stream_key")]
         public string StreamKey { get; set; }
+        [JsonProperty("delay")]
+        public long Delay { get; set; }
     }
 }

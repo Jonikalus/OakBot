@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Web;
 using System;
+using mshtml;
 
 namespace OakBot
 {
@@ -74,6 +75,34 @@ namespace OakBot
         private void wbTwitchAuth_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
             Utils.HideScriptErrors(wbTwitchAuth, true);
+        }
+
+        private void wbTwitchAuth_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            HTMLDocument doc = (HTMLDocument)wbTwitchAuth.Document;
+            object tb = doc.getElementById("username");
+            if (tb != null)
+            {
+                if (tb is IHTMLInputElement)
+                {
+                    if (_isStreamer)
+                    {
+                        ((IHTMLInputElement)tb).value = Config.StreamerUsername;
+                    }
+                    else
+                    {
+                        ((IHTMLInputElement)tb).value = Config.BotUsername;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Not a box!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No field!");
+            }
         }
     }
 }
