@@ -52,7 +52,7 @@ namespace OakBot
             {
                 type = SongType.SOUNDCLOUD;
                 songName = "Song from Soundcloud";
-            }else if(Regex.IsMatch(link, "youtube", RegexOptions.IgnoreCase))
+            }else if(Regex.IsMatch(link, @"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$", RegexOptions.IgnoreCase))
             {
                 type = SongType.YOUTUBE_LINK;
                 Thread sn = new Thread(new ThreadStart(delegate ()

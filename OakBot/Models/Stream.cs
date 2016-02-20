@@ -22,5 +22,7 @@ namespace OakBot.Models
         public double AverageFps { get; set; }
         [JsonProperty("video_height")]
         public double VideoHeight { get; set; }
+        [JsonProperty("delay")]
+        public long Delay { get; set; }
     }
 }

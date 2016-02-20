@@ -19,8 +19,6 @@ namespace OakBot.Models
         public string DisplayName { get; set; }
         [JsonProperty("game")]
         public string Game { get; set; }
-        [JsonProperty("delay")]
-        public long Delay { get; set; }
         [JsonProperty("language")]
         public string Language { get; set; }
         [JsonProperty("name")]
