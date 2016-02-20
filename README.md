@@ -1,13 +1,12 @@
 # OakBot
 Twitch Bot focused on integration with HTML overlays written in C#
-
 Free, open, solid and feature rich Twitch Bot for everyone to use and to improve.
 
 # Features
 The basic stuff like any other Twitch bot out there but with additions;
 - Output data (as much as viable/usefull) to json/text files (possibly websocket) for use in dynamic html5 overlays.
 - Multiple giveaway system with each their own settings and entry list for when one is not enough.
-- Discord integration -> set 'playing game' to for example 'LIVE: <game set on Twitch>'.
+- Discord integration -> set the playing game to for example 'LIVE: {game set on Twitch}'.
 - Gamewisp integration for non-partners or when the subbutton is not good enough.
 - Ranks (best of two worlds, Deepbot and Ankhbot);
   - Viewer
