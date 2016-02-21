@@ -171,6 +171,16 @@ namespace OakBot.Clients
             return response.Data;
         }
 
+        public TwitchList<Follower> GetFollowers(PagingInfo pagingInfo = null, SortDirection sortDirection = SortDirection.asc)
+        {
+            var request = GetRequest("channels/{channel}/follows", Method.GET);
+            request.AddUrlSegment("channel", username);
+            TwitchHelper.AddPaging(request, pagingInfo);
+            request.AddParameter("direction", sortDirection);
+            var response = restClient.Execute<TwitchList<Follower>>(request);
+            return response.Data;
+        }
+
         public TwitchList<Subscription> GetSubscribers(PagingInfo pagingInfo = null, SortDirection sortDirection = SortDirection.asc)
         {
             var request = GetRequest("channels/{channel}/subscriptions", Method.GET);
