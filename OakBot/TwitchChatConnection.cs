@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Threading;
 
 namespace OakBot
 {
@@ -60,7 +57,10 @@ namespace OakBot
         {
             while (true)
             {
-                IrcMessage ircMessage = new IrcMessage(ircClient.ReadLine(), connectedUser);
+                //IrcMessage ircMessage = new IrcMessage(ircClient.ReadLine(), connectedUser);
+                string rm = ircClient.ReadLine();
+                IrcMessage ircMessage = new IrcMessage(rm, connectedUser);
+                Trace.WriteLine(rm);
 
                 // Bot account is the main chat account
                 if (isBot)
