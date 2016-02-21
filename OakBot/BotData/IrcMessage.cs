@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Media;
 using System.Text.RegularExpressions;
 
 namespace OakBot
@@ -58,7 +57,7 @@ namespace OakBot
             // First get all arguments if starts with @
             if (receivedLine.StartsWith("@"))
             {
-                MatchCollection ircTags = Regex.Matches(receivedLine, @"(?<arg>[\w-]+)=(?<value>[\w:#,-]*);?");
+                MatchCollection ircTags = Regex.Matches(receivedLine, @"(?<arg>[\w-]+)=(?<value>[\w:#,-\/]*);?");
                 foreach (Match m in ircTags)
                 {
                     switch (m.Groups["arg"].Value)
