@@ -41,7 +41,7 @@ namespace OakBot
         {
             while (true)
             {
-                TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), _connectedUser);
+                IrcMessage ircMessage = new IrcMessage(ircClient.ReadLine(), _connectedUser);
 
                 switch (ircMessage.Command)
                 {
@@ -56,7 +56,7 @@ namespace OakBot
             }
         }
 
-        //internal void dispatchMessage(TwitchChatMessage message)
+        //internal void dispatchMessage(IrcMessage message)
         //{
         //    _mW.Dispatcher.BeginInvoke(delegateMessage, message);
         //}

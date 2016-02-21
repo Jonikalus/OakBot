@@ -101,11 +101,19 @@
                     </ComboBox>
                     <TextBox x:Name="ChatSend" Height="22" Margin="88,4,4,4" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="3" FontWeight="Normal" KeyDown="ChatSend_KeyDown" SpellCheck.IsEnabled="True" MaxLength="255" MaxLines="1"/>
                     <GridSplitter x:Name="gridSplitter" Grid.Column="1" Margin="0,4" Width="5" Grid.Row="1" HorizontalAlignment="Left"/>
-                    <ListView x:Name="listViewChat" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="listViewChat_MouseDoubleClick">
+                    <ListView x:Name="listViewChat" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding ChatMessages}" MouseDoubleClick="listViewChat_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Width="50" Header="Time" DisplayMemberBinding="{Binding ShortTime}"/>
-                                <GridViewColumn Width="100" Header="Author" DisplayMemberBinding="{Binding Author}"/>
+                                <GridViewColumn Width="100" Header="Author">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NameColor}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Width="350" Header="Message" DisplayMemberBinding="{Binding Message}"/>
                             </GridView>
                         </ListView.View>

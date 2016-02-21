@@ -210,7 +210,7 @@
       <DependentUpon>WindowAuthBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="TwitchChatConnection.cs" />
-    <Compile Include="BotData\TwitchChatMessage.cs" />
+    <Compile Include="BotData\IrcMessage.cs" />
     <Compile Include="TwitchCredentials.cs" />
     <Compile Include="BotData\Viewer.cs" />
     <Compile Include="TwitchWhisperConnection.cs" />

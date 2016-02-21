@@ -18,7 +18,7 @@ namespace OakBot
         private MainWindow window;
         private Viewer viewer;
 
-        private ObservableCollection<TwitchChatMessage> colViewerMessages;
+        private ObservableCollection<IrcMessage> colViewerMessages;
         private object colLock = new object();
 
         #endregion
@@ -36,15 +36,15 @@ namespace OakBot
             InitializeComponent();
             DataContext = this;
 
-            // Init TwitchChatMessage collection and enable sync between threads
-            colViewerMessages = new ObservableCollection<TwitchChatMessage>();
+            // Init IrcMessage collection and enable sync between threads
+            colViewerMessages = new ObservableCollection<IrcMessage>();
             BindingOperations.EnableCollectionSynchronization(colViewerMessages, colLock);
 
             // Rather than copying all messages just collect the selected viewers
             // messages to save system resources in case of huge global chat history.
             var viewerMessages = MainWindow.colChatMessages.Where(
                 TwitchChatMessage => TwitchChatMessage.Author == viewer.UserName);
-            foreach(TwitchChatMessage message in viewerMessages)
+            foreach(IrcMessage message in viewerMessages)
             {
                 colViewerMessages.Add(message);
             }
@@ -71,7 +71,7 @@ namespace OakBot
 
         #region Methods
 
-        public void AddViewerMessage(TwitchChatMessage message)
+        public void AddViewerMessage(IrcMessage message)
         {
             colViewerMessages.Add(message);
         }

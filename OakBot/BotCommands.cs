@@ -10,7 +10,7 @@ namespace OakBot
     public class BotCommands
     {
 
-        public static void RunBotCommand(string command, TwitchChatMessage message)
+        public static void RunBotCommand(string command, IrcMessage message)
         {
             // !quote > display random quote
             // !quote # > display quote of given id
@@ -150,7 +150,7 @@ namespace OakBot
             // Add message to collection
             App.Current.Dispatcher.BeginInvoke(new Action(delegate
             {
-                MainWindow.colChatMessages.Add(new TwitchChatMessage(
+                MainWindow.colChatMessages.Add(new IrcMessage(
                     MainWindow.instance.accountBot.UserName, message));
             }));
         }

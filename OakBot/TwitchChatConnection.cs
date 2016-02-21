@@ -27,12 +27,15 @@ namespace OakBot
             this.isBot = isBot;
 
             // Connect to IRC Twitch and login with given TwitchCredentials
+            // http://tmi.twitch.tv/servers?channel=riotgames
             ircClient = new BotIrcClient("irc.twitch.tv", 6667, connectingUser);
 
             // Request JOIN/PART notifications for bot account
             if (isBot)
             {
                 ircClient.WriteLineThrottle("CAP REQ :twitch.tv/membership");
+                ircClient.WriteLineThrottle("CAP REQ :twitch.tv/tags");
+                ircClient.WriteLineThrottle("CAP REQ :twitch.tv/commands");
             }   
         }
 
@@ -57,12 +60,11 @@ namespace OakBot
         {
             while (true)
             {
-                TwitchChatMessage ircMessage = new TwitchChatMessage(ircClient.ReadLine(), connectedUser);
+                IrcMessage ircMessage = new IrcMessage(ircClient.ReadLine(), connectedUser);
 
                 // Bot account is the main chat account
                 if (isBot)
                 {
-                    Trace.WriteLine(connectedUser.UserName + ":  " + ircMessage.ReceivedLine);
                     switch (ircMessage.Command)
                     {
                         case "PING": // Received PING
@@ -148,7 +150,6 @@ namespace OakBot
                 }
                 else
                 {
-                    Trace.WriteLine(connectedUser.UserName + ":  " + ircMessage.ReceivedLine);
                     switch (ircMessage.Command)
                     {
                         case "PING": // Received PING

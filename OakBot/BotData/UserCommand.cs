@@ -87,7 +87,7 @@ namespace OakBot
             }
         }
 
-        public void ExecuteCommand(TwitchChatMessage message)
+        public void ExecuteCommand(IrcMessage message)
         {
             // Get command user's Viewer object
             Viewer viewer = MainWindow.colDatabase.FirstOrDefault(x => x.UserName == message.Author);
@@ -166,7 +166,7 @@ namespace OakBot
                     // Add message to collection
                     App.Current.Dispatcher.BeginInvoke(new Action(delegate
                     {
-                        MainWindow.colChatMessages.Add(new TwitchChatMessage(
+                        MainWindow.colChatMessages.Add(new IrcMessage(
                             MainWindow.instance.accountBot.UserName, parsedResponse.Trim()));
                     }));
                 }

@@ -27,6 +27,8 @@ using OakBot.Clients;
 using System.Threading.Tasks;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
+// http://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
+// >> http://stackoverflow.com/questions/12255055/how-to-get-itemscontrol-scrollbar-position-programmatically
 
 namespace OakBot
 {
@@ -52,7 +54,7 @@ namespace OakBot
         TwitchAuthenticatedClient client;
 
         // Collections
-        public static ObservableCollection<TwitchChatMessage> colChatMessages = new ObservableCollection<TwitchChatMessage>();
+        public static ObservableCollection<IrcMessage> colChatMessages = new ObservableCollection<IrcMessage>();
         public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
         public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
         public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
@@ -110,9 +112,8 @@ namespace OakBot
             // Create Event for collection changed
             colChatMessages.CollectionChanged += colChatMessages_Changed;
 
-
             // Link listViews with collections
-            listViewChat.ItemsSource = colChatMessages;
+            //listViewChat.ItemsSource = colChatMessages;
             listViewViewers.ItemsSource = colViewers;
 
             // Database listView with filter
@@ -515,11 +516,11 @@ namespace OakBot
             {
                 if (SpeakAs.SelectedIndex == 0) // streamer
                 {
-                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.UserName)));
+                    colChatMessages.Add(new IrcMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.UserName)));
                 }
                 else if (SpeakAs.SelectedIndex == 1) // bot
                 {
-                    colChatMessages.Add(new TwitchChatMessage("OakBot", string.Format("Speaking as {0}.", accountBot.UserName)));
+                    colChatMessages.Add(new IrcMessage("OakBot", string.Format("Speaking as {0}.", accountBot.UserName)));
                 }
             }
         }
@@ -555,7 +556,7 @@ namespace OakBot
                         {
                             // Append this message to colChat in order
                             // to let the streamer see their own messages send.
-                            colChatMessages.Add(new TwitchChatMessage(accountBot.UserName, ChatSend.Text));
+                            colChatMessages.Add(new IrcMessage(accountBot.UserName, ChatSend.Text));
                             botChatConnection.SendChatMessage(ChatSend.Text);
                         }
                     }
@@ -570,8 +571,8 @@ namespace OakBot
         {
             if (listViewChat.SelectedIndex != -1)
             {
-                // Get the selected TwitchChatMessage object
-                TwitchChatMessage selectedMessage = (TwitchChatMessage)listViewChat.SelectedItem;
+                // Get the selected IrcMessage object
+                IrcMessage selectedMessage = (IrcMessage)listViewChat.SelectedItem;
 
                 // Get viewer's Viewer object to attach to the new chat window
                 // This also prevents chat opening of "OakBot" system messages
@@ -630,25 +631,13 @@ namespace OakBot
         {
             if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
             {
-                foreach (TwitchChatMessage addedMessage in e.NewItems)
+                foreach (IrcMessage addedMessage in e.NewItems)
                 {
-                    // Method 1
                     var chatWindow = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == addedMessage.Author);
                     if (chatWindow != null)
                     {
                         chatWindow.AddViewerMessage(addedMessage);
                     }
-
-                    // Method 2
-                    //var openWindow = colChatWindows.Where(x => x.viewer.username == addedMessage.author);
-                    //foreach (WindowViewerChat window in openWindow)
-                    //{
-                    //    window.AddViewerMessage(addedMessage);
-                    //}
-
-                    // Method 3
-                    //colChatWindows.Where(x => x.viewer.username == addedMessage.author).ToList().ForEach(
-                    //    y => y.AddViewerMessage(addedMessage));
                 }
             }
         }
@@ -657,7 +646,6 @@ namespace OakBot
         {
 
         }
-
 
         #endregion
 
@@ -891,6 +879,24 @@ namespace OakBot
 
             MessageBox.Show("Channel information updated!",
                 "Oakbot Channel Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+        }
+
+        // For binding
+        public ObservableCollection<IrcMessage> ChatMessages
+        {
+            get
+            {
+                return colChatMessages;
+            }
+        }
+
+        // For binding
+        public ObservableCollection<Viewer> Chatters
+        {
+            get
+            {
+                return colViewers;
+            }
         }
 
     }
