@@ -193,7 +193,7 @@ namespace OakBot
         {
             get
             {
-                return string.IsNullOrEmpty(nameColor) ? "#FF0000" : nameColor;
+                return string.IsNullOrEmpty(nameColor) ? "#2E8B57" : nameColor;
             }
         }
 

@@ -101,27 +101,34 @@
                     </ComboBox>
                     <TextBox x:Name="ChatSend" Height="22" Margin="88,4,4,4" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="3" FontWeight="Normal" KeyDown="ChatSend_KeyDown" SpellCheck.IsEnabled="True" MaxLength="255" MaxLines="1"/>
                     <GridSplitter x:Name="gridSplitter" Grid.Column="1" Margin="0,4" Width="5" Grid.Row="1" HorizontalAlignment="Left"/>
-                    <ListView x:Name="listViewChat" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding ChatMessages}" MouseDoubleClick="listViewChat_MouseDoubleClick">
+                    <ListView x:Name="listViewChat" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding ChatMessages}" MouseDoubleClick="listViewChat_MouseDoubleClick" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="50" Header="Time" DisplayMemberBinding="{Binding ShortTime}"/>
-                                <GridViewColumn Width="100" Header="Author">
+                                <GridView.ColumnHeaderContainerStyle>
+                                    <Style TargetType="GridViewColumnHeader">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    </Style>
+                                </GridView.ColumnHeaderContainerStyle>
+                                <GridViewColumn Header="Message" Width="640">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Grid>
-                                                <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NameColor}"/>
-                                            </Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding ShortTime, StringFormat=[{0}]}" Margin="0" FontSize="13.333"/>
+                                                <TextBlock Text="{Binding DisplayName, StringFormat={}{0}:}" Margin="5,0,0,0" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NameColor}"/>
+                                                <TextBlock Text="{Binding Message}" Margin="5,0,0,0" FontSize="13.333" TextWrapping="Wrap"/>
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Width="350" Header="Message" DisplayMemberBinding="{Binding Message}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
                     <ListView x:Name="listViewViewers" Grid.Column="2" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single">
                         <ListView.View>
-                            <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="100" Header="Viewer" DisplayMemberBinding="{Binding UserName}"/>
+                            <GridView>
+                                <GridViewColumn Header="Viewer" DisplayMemberBinding="{Binding UserName}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
