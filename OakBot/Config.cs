@@ -16,6 +16,9 @@ namespace OakBot
         public static readonly string TwitchAlertsClientID = "kriqzeVxRHIbIHMPZzilYEDjFgfGkR7088gSx3KM";
         public static readonly string TwitchAlertsClientSecret = "7gGEWwG0i5E1LQDkEe9C9xwI3dgR6Y93v9kjrsYZ";
 
+        public static readonly string GameWispClientID = "a9f873bd2bf4d17da94e7a1c4cd8a614645ebff";
+        public static readonly string GameWispClientSecret = "89ed9ed593e47c2a329f9e51d3e607e2f91c7f7";
+
         public static readonly string AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OakBot";
 
         private static string channelName;
