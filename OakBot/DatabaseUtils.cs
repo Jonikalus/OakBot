@@ -15,6 +15,8 @@ namespace OakBot
         public static readonly string fileViewers = Config.AppDataPath + "\\OakBotViewers.sqlite";
         public static readonly string fileQuotes = Config.AppDataPath + "\\OakBotQuotes.sqlite";
         public static readonly string fileCommands = Config.AppDataPath + "\\OakBotCommands.sqlite";
+        public static readonly string fileCurrency = Config.AppDataPath + "\\OakBotCurrency.sqlite";
+
 
         #region Database Viewers
 
@@ -330,6 +332,12 @@ namespace OakBot
         }
 
         #endregion
+
+        #region Currency
+
+
+
+        #endregion Currency
 
     }
 }
