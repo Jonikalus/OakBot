@@ -3,7 +3,8 @@ using System.ComponentModel;
 using System.Net;
 using System.Globalization;
 using Newtonsoft.Json.Linq;
-
+using System.Collections.Generic;
+using OakBot.BotData;
 
 namespace OakBot
 {
@@ -247,6 +248,21 @@ namespace OakBot
                 }
             }
         }
+
+
+        //private List<Group> groups;
+        //public List<Group> Groups
+        //{
+        //    get
+        //    {
+        //        return groups;
+        //    }
+        //    set
+        //    {
+        //        groups = value;
+        //        NotifyPropertyChanged("Groups");
+        //    }
+        //}
 
         // Regular indicator once point/hours goal has been met
         // Won't be revoked by the bot but can be by the user

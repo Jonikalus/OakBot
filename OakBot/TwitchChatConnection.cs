@@ -96,13 +96,15 @@ namespace OakBot
                             foreach (string username in viewers)
                             {
                                 Utils.AddToViewersCol(username);
+                                MainWindow.colGroups.First(x => x.GroupName == "Guest").Add(new Viewer(username));
                             }
                         break;
 
                         // JOIN Event
                         case "JOIN":
                             Utils.AddToViewersCol(ircMessage.Author);
-                        break;
+                            MainWindow.colGroups.First(x => x.GroupName == "Guest").Add(new Viewer(ircMessage.Author));
+                            break;
 
                         // PART Event
                         case "PART":
@@ -113,6 +115,7 @@ namespace OakBot
                         case "PRIVMSG":
                             // Seeing that JOIN Message is not that fast ...
                             Utils.AddToViewersCol(ircMessage.Author);
+                            MainWindow.colGroups.First(x => x.GroupName == "Guest").Add(new Viewer(ircMessage.Author));
 
                             // Add the message to the collection
                             MainWindow.colChatMessages.Add(ircMessage);

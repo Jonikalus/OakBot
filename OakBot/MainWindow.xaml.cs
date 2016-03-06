@@ -25,6 +25,7 @@ using RestSharp;
 using OakBot.Models;
 using OakBot.Clients;
 using System.Threading.Tasks;
+using OakBot.BotData;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 // http://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
@@ -61,6 +62,7 @@ namespace OakBot
         public static ObservableCollection<UserCommand> colBotCommands = new ObservableCollection<UserCommand>();
         public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
         public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
+        public static ObservableCollection<Group> colGroups = new ObservableCollection<Group>();
 
         private object _lockChat = new object();
         private object _lockViewers = new object(); 
@@ -101,7 +103,7 @@ namespace OakBot
             DatabaseUtils.LoadAllViewers();
             DatabaseUtils.LoadAllQuotes();
 
-            
+            colGroups.Add(new Group("Guest"));
 
             // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
@@ -135,8 +137,6 @@ namespace OakBot
             colBotCommands.Add(new UserCommand("!followdate", "@user@, you are following since @followdate@.", 0, 0, true));
             colBotCommands.Add(new UserCommand("!followdatetime", "@user@, you are following since @followdatetime@", 0, 0, true));
             colBotCommands.Add(new UserCommand("!vartest", "@var1@ m8", 0, 0, true));
-            colBotCommands.Add(new UserCommand("!songrequest", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
-            colBotCommands.Add(new UserCommand("!requestsong", "The song @songrequest@ by @user@ has been requested!", 0, 0, true));
             colBotCommands.Add(new UserCommand("!song", "Currently playing: @song@!", 0, 0, true));
             colBotCommands.Add(new UserCommand("Giveaway", "Just stop...", 0, 0, true, true));
             colBotCommands.Add(new UserCommand("!slap", "@user@ slaps @target@ so hard, he bursts into pieces!", 0, 0, true));
