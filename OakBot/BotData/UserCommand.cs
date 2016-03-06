@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using Discord;
 
 namespace OakBot
 {
@@ -84,6 +85,67 @@ namespace OakBot
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
+        public void ExecuteCommandDiscord(Message message)
+        {
+            Viewer viewer = new Viewer(message.User.Name);
+            if (viewer == null)
+            {
+                return;
+            }
+
+            if (CanExecute(viewer))
+            {
+                Match targetMatch = Regex.Match(message.Text, @"@(?<name>[a-zA-Z0-9_]{4,25})");
+                string target = targetMatch.Groups["name"].Value;
+
+                // Parse response line here
+                // @user@ -> Display name of the user of the command
+
+                // @followdate@ -> Command user's follow date
+                // @followdatetime@ -> Command user's follow date and time
+
+                // @game@ -> Channels current game
+                // @title@ -> Channels current title
+
+                string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
+                {
+                    string[] split = Regex.Split(message.Text, @"\s+");
+
+                    switch (m.Groups["item"].Value.ToLower())
+                    {
+                        case "user":
+                            return viewer.UserName;
+
+                        case "followdate":
+                            return viewer.GetFollowDateTime("yyyy-MM-dd");
+
+                        case "followdatetime":
+                            return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
+
+                        case "game":
+                            return Utils.GetClient().GetMyChannel().Game;
+
+                        case "title":
+                            return Utils.GetClient().GetMyChannel().Status;
+
+                        case "var1":
+                            if (split.Count() == 2)
+                            {
+                                var1 = split[1];
+                                return var1;
+                            }
+                            return "";
+
+                        default:
+                            return "";
+                    }
+
+                });
+
+                MainWindow.discord.GetServer(message.Server.Id).GetChannel(message.Channel.Id).SendMessage(parsedResponse.Trim());
             }
         }
 

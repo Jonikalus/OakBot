@@ -4,11 +4,142 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
 
 namespace OakBot
 {
     public class BotCommands
     {
+        public static void RunBotCommandDiscord(string command, Message message)
+        {
+            Viewer sender = new Viewer(message.User.Name);
+            List<BotData.Group> requiredGroups = new List<BotData.Group>();
+
+            if (command == "!quote")
+            {
+                string[] splitMessage = message.Text.Split(new char[] { ' ' }, 3);
+
+                if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "add")
+                {
+                    try
+                    {
+                        // Split quote and quoter on -
+                        string[] splitEntry = splitMessage[2].Split('-');
+
+                        // Create new quote with game that the streamer on channel is/was playing
+                        Quote newQuote = new Quote(splitEntry[0].Trim(), splitEntry[1].Trim(),
+                            Utils.GetClient().GetMyChannel().Game);
+
+                        // Add new quote to collection
+                        App.Current.Dispatcher.BeginInvoke(new Action(delegate
+                        {
+                            MainWindow.colQuotes.Add(newQuote);
+                        }));
+
+                        // Save to database
+                        DatabaseUtils.AddQuote(newQuote);
+
+                        // Send response
+                        SendMessageDiscord(string.Format("Quote has been added with ID of: {0}", newQuote.Id), message.Server.Id, message.Channel.Id);
+
+                    }
+                    catch (Exception)
+                    {
+                        SendMessageDiscord("To add a quote use: !quote add <quote> - <quoter> No need to use \" as it will be added on display.", message.Server.Id, message.Channel.Id);
+                    }
+                }
+                else if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "remove")
+                {
+                    try
+                    {
+                        int idToRemove = int.Parse(splitMessage[2]);
+
+                        if (idToRemove < MainWindow.colQuotes.Count())
+                        {
+                            // Remove quote from collection
+                            App.Current.Dispatcher.BeginInvoke(new Action(delegate
+                            {
+                                MainWindow.colQuotes.RemoveAt(idToRemove);
+                            }));
+
+                            // Update whole database file (dynamic id)
+                            DatabaseUtils.SaveAllQuotes();
+
+                            // Send response
+                            SendMessageDiscord("Quote removed with id: " + splitMessage[2], message.Server.Id, message.Channel.Id);
+                        }
+                        else
+                        {
+                            // Send response
+                            SendMessageDiscord("The quote with the given id does not exist.", message.Server.Id, message.Channel.Id);
+                        }
+                    }
+                    catch
+                    {
+                        SendMessageDiscord("Given id is not a valid id number", message.Server.Id, message.Channel.Id);
+                    }
+                }
+                else
+                {
+
+                    Quote q;
+
+                    try
+                    {
+                        // Try to get quote from given id
+                        q = MainWindow.colQuotes[int.Parse(splitMessage[1])];
+                    }
+                    catch
+                    {
+                        // Get a random quote if arg is not parsable or out of range
+                        Random rnd = new Random((int)DateTime.Now.Ticks);
+                        q = MainWindow.colQuotes[rnd.Next(0, MainWindow.colQuotes.Count)];
+                    }
+
+                    // Send response
+                    SendMessageDiscord(string.Format("Quote #{0}: \"{1}\" - {2} {3} {4}",
+                        q.Id,
+                        q.QuoteString, q.Quoter,
+                        q.DisplayDate ? "[" + q.DateString + "]" : "",
+                        q.DisplayGame ? "while playing " + q.Game : "")
+                    , message.Server.Id, message.Channel.Id);
+                }
+
+            }
+            else if (command == "!songrequest")
+            {
+                string[] splitMessage = message.Text.Split(new char[] { ' ' }, 2);
+
+                if (splitMessage.Count() > 1)
+                {
+                    Song requestedSong = new Song(splitMessage[1]);
+                    if (requestedSong.Type != SongType.INVALID)
+                    {
+                        // Add to colSongs
+                        App.Current.Dispatcher.BeginInvoke(new Action(delegate
+                        {
+                            MainWindow.colSongs.Add(requestedSong);
+                        }));
+
+                        // Display response
+                        SendMessageDiscord("The following song has been added: " + Utils.getTitleFromYouTube(splitMessage[1]), message.Server.Id, message.Channel.Id);
+                    }
+                    else
+                    {
+                        // Display response
+                        SendMessageDiscord("Invalid song link or id.", message.Server.Id, message.Channel.Id);
+                    }
+                }
+
+            }
+            else if (command == "!currentsong")
+            {
+                if (MainWindow.playState)
+                {
+                    SendMessageDiscord("Current song playing: " + MainWindow.colSongs[MainWindow.indexSong].SongName, message.Server.Id, message.Channel.Id);
+                }
+            }
+        }
 
         public static void RunBotCommand(string command, IrcMessage message)
         {
@@ -180,6 +311,11 @@ namespace OakBot
                 MainWindow.colChatMessages.Add(new IrcMessage(
                     MainWindow.instance.accountBot.UserName, message));
             }));
+        }
+
+        private static void SendMessageDiscord(string message, ulong serverId, ulong channelId)
+        {
+            MainWindow.discord.GetServer(serverId).GetChannel(channelId).SendMessage(message);
         }
     }
 }

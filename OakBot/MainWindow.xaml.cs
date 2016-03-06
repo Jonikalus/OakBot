@@ -26,6 +26,8 @@ using OakBot.Models;
 using OakBot.Clients;
 using System.Threading.Tasks;
 using OakBot.BotData;
+using Discord;
+using System.Text.RegularExpressions;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 // http://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
@@ -62,7 +64,7 @@ namespace OakBot
         public static ObservableCollection<UserCommand> colBotCommands = new ObservableCollection<UserCommand>();
         public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
         public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
-        public static ObservableCollection<Group> colGroups = new ObservableCollection<Group>();
+        public static ObservableCollection<BotData.Group> colGroups = new ObservableCollection<BotData.Group>();
 
         private object _lockChat = new object();
         private object _lockViewers = new object(); 
@@ -79,6 +81,8 @@ namespace OakBot
         public static bool playState = false;
         public static int indexSong = -1;
 
+        public static DiscordClient discord;
+
         #endregion
 
         #region Constructor
@@ -87,7 +91,13 @@ namespace OakBot
         {
             InitializeComponent();
 
-            
+            discord = new DiscordClient(x =>
+            {
+                x.AppName = "OakBot";
+                x.AppUrl = "http://github.com/ocgineer/OakBot";
+                x.AppVersion = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
+                x.UsePermissionsCache = false;
+            });
 
             // Initialize instance
             instance = this;
@@ -103,7 +113,7 @@ namespace OakBot
             DatabaseUtils.LoadAllViewers();
             DatabaseUtils.LoadAllQuotes();
 
-            colGroups.Add(new Group("Guest"));
+            colGroups.Add(new BotData.Group("Guest"));
 
             // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);
@@ -161,6 +171,24 @@ namespace OakBot
             }
 
             
+        }
+
+        private void Discord_MessageReceived(object sender, MessageEventArgs e)
+        {
+            string firstWord = Regex.Match(e.Message.Text, @"^\S+\b").Value.ToLower();
+            UserCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x =>
+                x.Command == firstWord);
+
+            if (foundCommand != null)
+            {
+                //foundCommand.ExecuteCommand(new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
+                foundCommand.ExecuteCommandDiscord(e.Message);
+            }
+            else
+            {
+                //BotCommands.RunBotCommand(firstWord, new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
+                BotCommands.RunBotCommandDiscord(firstWord, e.Message);
+            }
         }
 
         #endregion
@@ -899,5 +927,82 @@ namespace OakBot
             }
         }
 
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            discord.Connect(txtEmail.Text, pwdPassword.Password);
+            while(discord.State != ConnectionState.Connected)
+            {
+                Task.Delay(25);
+            }
+            discord.MessageReceived += Discord_MessageReceived;
+            txtUsername.Text = discord.CurrentUser.Name;
+            int serverCounter = 0, channelCounter = 0, userCounter = 0;
+            foreach(Server s in discord.Servers)
+            {
+                serverCounter++;
+                TreeViewItem server = new TreeViewItem();
+                server.Header = s.Name;
+                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
+                voice.Header = "Voice Channels";
+                text.Header = "Text Channels";
+                foreach(Discord.Channel c in s.VoiceChannels)
+                {
+                    channelCounter++;
+                    TreeViewItem channel = new TreeViewItem();
+                    channel.Header = c.Name;
+                    foreach(Discord.User u in c.Users)
+                    {
+                        userCounter++;
+                        channel.Items.Add(u.Name);
+                    }
+                    voice.Items.Add(channel);
+                }
+                foreach(Discord.Channel c in s.TextChannels)
+                {
+                    channelCounter++;
+                    text.Items.Add(c);
+                }
+                server.Items.Add(voice);
+                server.Items.Add(text);
+                tvServerBrowser.Items.Add(server);
+            }
+            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            tvServerBrowser.Items.Clear();
+            int serverCounter = 0, channelCounter = 0, userCounter = 0;
+            foreach (Server s in discord.Servers)
+            {
+                serverCounter++;
+                TreeViewItem server = new TreeViewItem();
+                server.Header = s.Name;
+                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
+                voice.Header = "Voice Channels";
+                text.Header = "Text Channels";
+                foreach (Discord.Channel c in s.VoiceChannels)
+                {
+                    channelCounter++;
+                    TreeViewItem channel = new TreeViewItem();
+                    channel.Header = c.Name;
+                    foreach (Discord.User u in c.Users)
+                    {
+                        userCounter++;
+                        channel.Items.Add(u.Name);
+                    }
+                    voice.Items.Add(channel);
+                }
+                foreach (Discord.Channel c in s.TextChannels)
+                {
+                    channelCounter++;
+                    text.Items.Add(c);
+                }
+                server.Items.Add(voice);
+                server.Items.Add(text);
+                tvServerBrowser.Items.Add(server);
+            }
+            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
+        }
     }
 }

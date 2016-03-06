@@ -212,6 +212,21 @@
                     <Button x:Name="btnNext" Content="Next Song" HorizontalAlignment="Left" Margin="261,245,0,0" VerticalAlignment="Top" Width="75" Click="btnNext_Click"/>
                 </Grid>
             </TabItem>
+            <TabItem x:Name="tabDiscord" Header="Discord">
+                <Grid Background="#FF363636" Margin="0">
+                    <TextBox x:Name="txtEmail" HorizontalAlignment="Left" Height="23" Margin="77,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="216"/>
+                    <Label x:Name="lblEmail" Content="E-Mail:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <PasswordBox x:Name="pwdPassword" HorizontalAlignment="Left" Margin="77,39,0,0" VerticalAlignment="Top" Width="216" Height="23"/>
+                    <Label x:Name="label" Content="Password:" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="298,39,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click"/>
+                    <TextBox x:Name="txtUsername" HorizontalAlignment="Left" Height="23" Margin="81,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <Label x:Name="lblDUsername" Content="Username:" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblServerBrowser" Content="Server Browser:" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top"/>
+                    <TreeView x:Name="tvServerBrowser" HorizontalAlignment="Left" Height="193" Margin="10,158,0,0" VerticalAlignment="Top" Width="176"/>
+                    <Button x:Name="btnRefresh" Content="Refresh" HorizontalAlignment="Left" Margin="191,331,0,0" VerticalAlignment="Top" Width="75" Click="btnRefresh_Click"/>
+
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
