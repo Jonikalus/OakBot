@@ -25,7 +25,6 @@ using RestSharp;
 using OakBot.Models;
 using OakBot.Clients;
 using System.Threading.Tasks;
-using OakBot.BotData;
 using Discord;
 using System.Text.RegularExpressions;
 
@@ -64,7 +63,6 @@ namespace OakBot
         public static ObservableCollection<UserCommand> colBotCommands = new ObservableCollection<UserCommand>();
         public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
         public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
-        public static ObservableCollection<BotData.Group> colGroups = new ObservableCollection<BotData.Group>();
 
         private object _lockChat = new object();
         private object _lockViewers = new object(); 
@@ -112,8 +110,6 @@ namespace OakBot
             LoadConfigToUI();
             DatabaseUtils.LoadAllViewers();
             DatabaseUtils.LoadAllQuotes();
-
-            colGroups.Add(new BotData.Group("Guest"));
 
             // Enable sync between threads
             BindingOperations.EnableCollectionSynchronization(colChatMessages, _lockChat);

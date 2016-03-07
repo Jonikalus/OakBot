@@ -13,7 +13,6 @@ namespace OakBot
         public static void RunBotCommandDiscord(string command, Message message)
         {
             Viewer sender = new Viewer(message.User.Name);
-            List<BotData.Group> requiredGroups = new List<BotData.Group>();
 
             if (command == "!quote")
             {
@@ -151,145 +150,123 @@ namespace OakBot
             // If given Id is not int, dont display
 
             Viewer sender = MainWindow.colViewers.First(x => x.UserName.ToLower() == message.Author.ToLower());
-            List<BotData.Group> requiredGroups = new List<BotData.Group>();
 
             if (command == "!quote")
             {
-                requiredGroups.Add(new BotData.Group("Guest"));
-                foreach(BotData.Group g in requiredGroups)
+                string[] splitMessage = message.Message.Split(new char[] { ' ' }, 3);
+
+                if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "add")
                 {
-                    if (MainWindow.colGroups.ToList().Exists(x => x.GroupName == g.GroupName) && MainWindow.colGroups.First(x => x.GroupName == g.GroupName).Exists(x => x.UserName == sender.UserName))
+                    try
                     {
-                        string[] splitMessage = message.Message.Split(new char[] { ' ' }, 3);
+                        // Split quote and quoter on -
+                        string[] splitEntry = splitMessage[2].Split('-');
 
-                        if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "add")
+                        // Create new quote with game that the streamer on channel is/was playing
+                        Quote newQuote = new Quote(splitEntry[0].Trim(), splitEntry[1].Trim(),
+                            Utils.GetClient().GetMyChannel().Game);
+
+                        // Add new quote to collection
+                        App.Current.Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            try
-                            {
-                                // Split quote and quoter on -
-                                string[] splitEntry = splitMessage[2].Split('-');
+                            MainWindow.colQuotes.Add(newQuote);
+                        }));
 
-                                // Create new quote with game that the streamer on channel is/was playing
-                                Quote newQuote = new Quote(splitEntry[0].Trim(), splitEntry[1].Trim(),
-                                    Utils.GetClient().GetMyChannel().Game);
+                        // Save to database
+                        DatabaseUtils.AddQuote(newQuote);
 
-                                // Add new quote to collection
-                                App.Current.Dispatcher.BeginInvoke(new Action(delegate
-                                {
-                                    MainWindow.colQuotes.Add(newQuote);
-                                }));
+                        // Send response
+                        SendAndShowMessage(string.Format("Quote has been added with ID of: {0}", newQuote.Id));
 
-                                // Save to database
-                                DatabaseUtils.AddQuote(newQuote);
+                    }
+                    catch (Exception)
+                    {
+                        SendAndShowMessage("To add a quote use: !quote add <quote> - <quoter> No need to use \" as it will be added on display.");
+                    }
+                }
+                else if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "remove")
+                {
+                    try
+                    {
+                        int idToRemove = int.Parse(splitMessage[2]);
 
-                                // Send response
-                                SendAndShowMessage(string.Format("Quote has been added with ID of: {0}", newQuote.Id));
-
-                            }
-                            catch (Exception)
-                            {
-                                SendAndShowMessage("To add a quote use: !quote add <quote> - <quoter> No need to use \" as it will be added on display.");
-                            }
-                        }
-                        else if (splitMessage.Count() >= 2 && splitMessage[1].ToLower() == "remove")
+                        if (idToRemove < MainWindow.colQuotes.Count())
                         {
-                            try
+                            // Remove quote from collection
+                            App.Current.Dispatcher.BeginInvoke(new Action(delegate
                             {
-                                int idToRemove = int.Parse(splitMessage[2]);
+                                MainWindow.colQuotes.RemoveAt(idToRemove);
+                            }));
 
-                                if (idToRemove < MainWindow.colQuotes.Count())
-                                {
-                                    // Remove quote from collection
-                                    App.Current.Dispatcher.BeginInvoke(new Action(delegate
-                                    {
-                                        MainWindow.colQuotes.RemoveAt(idToRemove);
-                                    }));
+                            // Update whole database file (dynamic id)
+                            DatabaseUtils.SaveAllQuotes();
 
-                                    // Update whole database file (dynamic id)
-                                    DatabaseUtils.SaveAllQuotes();
-
-                                    // Send response
-                                    SendAndShowMessage("Quote removed with id: " + splitMessage[2]);
-                                }
-                                else
-                                {
-                                    // Send response
-                                    SendAndShowMessage("The quote with the given id does not exist.");
-                                }
-                            }
-                            catch
-                            {
-                                SendAndShowMessage("Given id is not a valid id number");
-                            }
+                            // Send response
+                            SendAndShowMessage("Quote removed with id: " + splitMessage[2]);
                         }
                         else
                         {
-
-                            Quote q;
-
-                            try
-                            {
-                                // Try to get quote from given id
-                                q = MainWindow.colQuotes[int.Parse(splitMessage[1])];
-                            }
-                            catch
-                            {
-                                // Get a random quote if arg is not parsable or out of range
-                                Random rnd = new Random((int)DateTime.Now.Ticks);
-                                q = MainWindow.colQuotes[rnd.Next(0, MainWindow.colQuotes.Count)];
-                            }
-
                             // Send response
-                            SendAndShowMessage(string.Format("Quote #{0}: \"{1}\" - {2} {3} {4}",
-                                q.Id,
-                                q.QuoteString, q.Quoter,
-                                q.DisplayDate ? "[" + q.DateString + "]" : "",
-                                q.DisplayGame ? "while playing " + q.Game : "")
-                            );
+                            SendAndShowMessage("The quote with the given id does not exist.");
                         }
-                    }else
+                    }
+                    catch
                     {
-                        SendAndShowMessage("Sorry! You're not allowed to use this command!");
+                        SendAndShowMessage("Given id is not a valid id number");
                     }
                 }
-                
+                else
+                {
+
+                    Quote q;
+
+                    try
+                    {
+                        // Try to get quote from given id
+                        q = MainWindow.colQuotes[int.Parse(splitMessage[1])];
+                    }
+                    catch
+                    {
+                        // Get a random quote if arg is not parsable or out of range
+                        Random rnd = new Random((int)DateTime.Now.Ticks);
+                        q = MainWindow.colQuotes[rnd.Next(0, MainWindow.colQuotes.Count)];
+                    }
+
+                    // Send response
+                    SendAndShowMessage(string.Format("Quote #{0}: \"{1}\" - {2} {3} {4}",
+                        q.Id,
+                        q.QuoteString, q.Quoter,
+                        q.DisplayDate ? "[" + q.DateString + "]" : "",
+                        q.DisplayGame ? "while playing " + q.Game : "")
+                    );
+                }
+
             }
             else if (command == "!songrequest")
             {
-                requiredGroups.Add(new BotData.Group("Guest"));
-                foreach(BotData.Group g in requiredGroups)
+                string[] splitMessage = message.Message.Split(new char[] { ' ' }, 2);
+
+                if (splitMessage.Count() > 1)
                 {
-                    if (MainWindow.colGroups.ToList().Exists(x => x.GroupName == g.GroupName) && MainWindow.colGroups.First(x => x.GroupName == g.GroupName).Exists(x => x.UserName == sender.UserName))
+                    Song requestedSong = new Song(splitMessage[1]);
+                    if (requestedSong.Type != SongType.INVALID)
                     {
-                        string[] splitMessage = message.Message.Split(new char[] { ' ' }, 2);
-
-                        if (splitMessage.Count() > 1)
+                        // Add to colSongs
+                        App.Current.Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            Song requestedSong = new Song(splitMessage[1]);
-                            if (requestedSong.Type != SongType.INVALID)
-                            {
-                                // Add to colSongs
-                                App.Current.Dispatcher.BeginInvoke(new Action(delegate
-                                {
-                                    MainWindow.colSongs.Add(requestedSong);
-                                }));
+                            MainWindow.colSongs.Add(requestedSong);
+                        }));
 
-                                // Display response
-                                SendAndShowMessage("The following song has been added: " + Utils.getTitleFromYouTube(splitMessage[1]));
-                            }
-                            else
-                            {
-                                // Display response
-                                SendAndShowMessage("Invalid song link or id.");
-                            }
-                        }
+                        // Display response
+                        SendAndShowMessage("The following song has been added: " + Utils.getTitleFromYouTube(splitMessage[1]));
                     }
                     else
                     {
-                        SendAndShowMessage("Sorry! You're not allowed to use this command!");
+                        // Display response
+                        SendAndShowMessage("Invalid song link or id.");
                     }
                 }
-                
+
             }
             else if (command == "!currentsong")
             {

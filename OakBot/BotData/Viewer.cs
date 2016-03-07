@@ -4,7 +4,6 @@ using System.Net;
 using System.Globalization;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using OakBot.BotData;
 
 namespace OakBot
 {
@@ -268,6 +267,8 @@ namespace OakBot
         // Won't be revoked by the bot but can be by the user
         public bool regular { get; set; }
         public bool forcedRegRemove { get; set; }
+
+        public Rank rank { get; set; }
 
         // VIP Bronze
         public bool VIP1 { get; set; }
