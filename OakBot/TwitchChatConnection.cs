@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Diagnostics;
+using OakBot.Args;
 
 namespace OakBot
 {
@@ -13,6 +14,13 @@ namespace OakBot
         private TwitchCredentials connectedUser;
         private string joinedChannel;
         private bool isBot;
+
+        #endregion
+
+        #region Handlers
+
+        public delegate void ChatMessageReceivedHandler(object o, ChatMessageReceivedEventArgs e);
+        public event ChatMessageReceivedHandler ChatMessageReceived;
 
         #endregion
 
@@ -33,7 +41,11 @@ namespace OakBot
                 ircClient.WriteLineThrottle("CAP REQ :twitch.tv/membership");
                 ircClient.WriteLineThrottle("CAP REQ :twitch.tv/tags");
                 ircClient.WriteLineThrottle("CAP REQ :twitch.tv/commands");
-            }   
+            }
+            ChatMessageReceived += (s, e) =>
+            {
+
+            };
         }
 
         #endregion
@@ -111,6 +123,7 @@ namespace OakBot
                         
                         // PRIVMSG (Chat Message Received) Event
                         case "PRIVMSG":
+                            ChatMessageReceived(this, new ChatMessageReceivedEventArgs(ircMessage));
                             // Seeing that JOIN Message is not that fast ...
                             Utils.AddToViewersCol(ircMessage.Author);
 

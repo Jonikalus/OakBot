@@ -11,7 +11,7 @@
         <TaskbarItemInfo Description="OakBot Running"/>
     </Window.TaskbarItemInfo>
     <Grid Background="Black">
-        <TabControl x:Name="tabControl" BorderThickness="2" Padding="2" SelectedIndex="0" Margin="4" Grid.RowSpan="2">
+        <TabControl x:Name="tabControl" BorderThickness="2" Padding="2" SelectedIndex="0" Margin="0,0,8,8">
             <TabItem x:Name="tabMainSettings" Header="Settings">
                 <Grid Background="#FF363636" Margin="0">
                     <GroupBox x:Name="GroupTwitchStreamerLogin" Header="STREAMER LOGIN" HorizontalAlignment="Left" Margin="10,124,0,0" VerticalAlignment="Top" Height="74" Width="806" BorderBrush="Black">
@@ -156,6 +156,16 @@
                     <Label x:Name="lblFilterOnName" Content="Search Viewer:" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top"/>
                     <Button x:Name="btnDatabaseCleanup" Content="Cleanup" HorizontalAlignment="Left" Margin="741,37,0,0" VerticalAlignment="Top" Width="75" Click="btnDatabaseCleanup_Click"/>
                     <Label x:Name="lblFilterCnt" Content="results..." ContentStringFormat="Matches: {0}." HorizontalAlignment="Left" Margin="257,31,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Giveaways">
+                <Grid Background="#FF363636" Margin="0">
+                    <Button x:Name="button1" Content="Start 30 seconds giveaway, keyword = !giveaway" HorizontalAlignment="Left" Margin="164,46,0,0" VerticalAlignment="Top" Width="476" Click="button1_Click"/>
+                    <Button x:Name="button2" Content="Draw Winner Keyword" HorizontalAlignment="Left" Margin="363,129,0,0" VerticalAlignment="Top" Width="143" Click="button2_Click"/>
+                    <ListBox x:Name="lbEntered" HorizontalAlignment="Left" Height="198" Margin="10,129,0,0" VerticalAlignment="Top" Width="148"/>
+                    <Button x:Name="button3" Content="Start 30 seconds giveaway, no keyword" HorizontalAlignment="Left" Margin="164,71,0,0" VerticalAlignment="Top" Width="476" Click="button3_Click"/>
+                    <Button x:Name="button4" Content="Draw Winner Active" HorizontalAlignment="Left" Margin="363,154,0,0" VerticalAlignment="Top" Width="143" Click="button4_Click"/>
+
                 </Grid>
             </TabItem>
             <TabItem Header="Commands">

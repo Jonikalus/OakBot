@@ -137,6 +137,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Args\ChatMessageReceivedEventArgs.cs" />
+    <Compile Include="Args\ViewerEnteredEventArgs.cs" />
     <Compile Include="Args\WinnerChosenEventArgs.cs" />
     <Compile Include="BackgroundTasks.cs" />
     <Compile Include="BotCommands.cs" />

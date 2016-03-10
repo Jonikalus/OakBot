@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OakBot.Args
 {
-    class WinnerChosenEventArgs : EventArgs
+    public class WinnerChosenEventArgs : EventArgs
     {
         private Viewer winner;
 

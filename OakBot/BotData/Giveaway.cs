@@ -6,11 +6,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using System.Threading;
 using System.Timers;
 
 namespace OakBot
 {
-    class Giveaway : INotifyPropertyChanged
+    public class Giveaway : INotifyPropertyChanged
     {
         #region Fields
         private Timer giveawayTimer;
@@ -29,6 +30,9 @@ namespace OakBot
         public delegate void WinnerChosenEventHandler(object o, WinnerChosenEventArgs e);
         public event WinnerChosenEventHandler WinnerChosen;
 
+        public delegate void ViewerEnteredEventHandler(object o, ViewerEnteredEventArgs e);
+        public event ViewerEnteredEventHandler ViewerEntered;
+
         #endregion Handlers
 
         #region Methods
@@ -42,19 +46,45 @@ namespace OakBot
 
         public void Start()
         {
-            giveawayTimer = new Timer();
-            giveawayTimer.Interval = GiveawayTime.Seconds + (GiveawayTime.Minutes * 60) + (GiveawayTime.Hours * 60 * 60);
-            giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
-            giveawayTimer.AutoReset = false;
-            giveawayTimer.Start();
+            //TimerCallback cb = delegate (object o)
+            //{
+            //    running = false;
+            //    MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
+            //};
+            //giveawayTimer = new Timer(cb, new ManualResetEvent(true), new TimeSpan(0), giveawayTime);
             running = true;
+            MainWindow.instance.botChatConnection.ChatMessageReceived += BotChatConnection_ChatMessageReceived;
+            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway has started! Type {1} in chat to enter! Following is {2} Duration: {3}h {4}m {5}s", giveawayName, keyword, (needsFollow ? "needed." : "not needed."), giveawayTime.Hours, giveawayTime.Minutes, giveawayTime.Seconds));
+        }
+
+        private void BotChatConnection_ChatMessageReceived(object o, ChatMessageReceivedEventArgs e)
+        {
+            if(keyword != "")
+            {
+                if(e.Message.Message == keyword)
+                {
+                    if (!entries.Contains(e.Message.Author))
+                    {
+                        entries.Add(e.Message.Author);
+                        ViewerEntered(this, new ViewerEnteredEventArgs(e.Message.Author));
+                        MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0}, you've entered the {1} giveaway!", e.Message.Author, giveawayName));
+                    }
+                }
+            }else
+            {
+                if (!entries.Contains(e.Message.Author))
+                {
+                    entries.Add(e.Message.Author);
+                    ViewerEntered(this, new ViewerEnteredEventArgs(e.Message.Author));
+                }
+            }
         }
 
         public void Stop()
         {
-            giveawayTimer.Stop();
             giveawayTimer.Dispose();
             running = false;
+            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!"));
         }
 
         public void DrawWinner()
@@ -68,44 +98,53 @@ namespace OakBot
 
             // Manupilate workList to add subscriber luck
 
-    /*
-            // Not really needed as the forloop will limit this but to increase performance
-            // it won't load subscriber list if subluck is set to 1 (off)
-            if (SubscriberLuck > 1)
-            {
-                List<string> subList = new List<string>();
-
-                // TODO: Fetch complete subscriber list from Twitch API and add to subList
-
-                // Create another list with Intersect restult as it is going to enumerate
-                // over this while editing workList to prevent modified execeptions.
-                List<string> crossCheck = new List<string>(workList.Intersect(subList));
-                foreach (string subEntry in crossCheck)
-                {
-                    for (int i = 1; i < subscriberLuck; i++)
+            /*
+                    // Not really needed as the forloop will limit this but to increase performance
+                    // it won't load subscriber list if subluck is set to 1 (off)
+                    if (SubscriberLuck > 1)
                     {
-                        workList.Insert(rnd.Next(0, workList.Count), subEntry);
+                        List<string> subList = new List<string>();
+
+                        // TODO: Fetch complete subscriber list from Twitch API and add to subList
+
+                        // Create another list with Intersect restult as it is going to enumerate
+                        // over this while editing workList to prevent modified execeptions.
+                        List<string> crossCheck = new List<string>(workList.Intersect(subList));
+                        foreach (string subEntry in crossCheck)
+                        {
+                            for (int i = 1; i < subscriberLuck; i++)
+                            {
+                                workList.Insert(rnd.Next(0, workList.Count), subEntry);
+                            }
+                        }
                     }
-                }
-            }
-    */
+            */
 
 
             // Roll initial winner and get the Viewer object
             // No need to verify if user exist as it SHOULD exist
+            int index = rnd.Next(0, workList.Count);
             Viewer rolledViewer = MainWindow.colDatabase.FirstOrDefault(x => 
-                x.UserName == workList[rnd.Next(0, workList.Count)]);
+                x.UserName == workList[index]);
 
             // Verify if the winner is eligable, if not remove from
             // the workList and reroll a winner without user interaction
-            while (!MeetsRequirements(rolledViewer))
+            while (!MeetsRequirements(rolledViewer) || rolledViewer == null)
             {
-                // Remove failed winner from workList
-                workList.RemoveAll(x => x == rolledViewer.UserName);
+                try
+                {
+                    // Remove failed winner from workList
+                    workList.RemoveAll(x => x == rolledViewer.UserName);
 
-                // Reroll winner
-                rolledViewer = MainWindow.colDatabase.FirstOrDefault(x =>
-                    x.UserName == workList[rnd.Next(0, workList.Count)]);
+                    // Reroll winner
+                    index = rnd.Next(0, workList.Count);
+                    rolledViewer = MainWindow.colDatabase.FirstOrDefault(x =>
+                        x.UserName == workList[index]);
+                }
+                catch (Exception)
+                {
+                    
+                }
             }
 
             // We finally have a winner!
@@ -286,15 +325,23 @@ namespace OakBot
 
         public Giveaway(string name, TimeSpan time, string word, int cost, bool followed, byte luck, TimeSpan response)
         {
-            GiveawayName = name;
-            GiveawayTime = time;
-            SubscriberLuck = luck;
-            Keyword = word;
-            Price = cost;
-            NeedsFollow = followed;
-            ResponseTime = response;
+            giveawayName = name;
+            giveawayTime = time;
+            subscriberLuck = luck;
+            keyword = word;
+            price = cost;
+            needsFollow = followed;
+            responseTime = response;
             entries = new ObservableCollection<string>();
             winners = new ObservableCollection<string>();
+
+            giveawayTimer = new Timer();
+            giveawayTimer.Interval = giveawayTime.TotalMilliseconds;
+            giveawayTimer.Enabled = true;
+            giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
+            giveawayTimer.AutoReset = false;
+
+
         }
 
         #endregion Constructors
@@ -302,8 +349,8 @@ namespace OakBot
         #region Events
         private void GiveawayTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            giveawayTimer.Dispose();
             running = false;
+            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
         }
         #endregion Events
 

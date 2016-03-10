@@ -27,6 +27,7 @@ using OakBot.Clients;
 using System.Threading.Tasks;
 using Discord;
 using System.Text.RegularExpressions;
+using OakBot.Args;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 // http://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
@@ -80,6 +81,8 @@ namespace OakBot
         public static int indexSong = -1;
 
         public static DiscordClient discord;
+
+        public Giveaway testGw, testGw2;
 
         #endregion
 
@@ -165,7 +168,7 @@ namespace OakBot
                     ConnectStreamer();
                 }
             }
-
+            
             
         }
 
@@ -999,6 +1002,55 @@ namespace OakBot
                 tvServerBrowser.Items.Add(server);
             }
             MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            testGw = new Giveaway("Test", new TimeSpan(0, 0, 30), "!giveaway", 0, false, 1, new TimeSpan(0, 1, 0));
+            testGw.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
+            {
+                Dispatcher.BeginInvoke(new Action(delegate ()
+                {
+                    AddEntered(ev.Viewer);
+                }));
+            };
+            testGw.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
+            {
+                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
+            };
+            testGw.Start();
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            testGw.DrawWinner();
+        }
+
+        private void AddEntered(string v)
+        {
+            lbEntered.Items.Add(v);
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            testGw2.DrawWinner();
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            testGw2 = new Giveaway("Active", new TimeSpan(0, 0, 30), "", 0, false, 1, new TimeSpan());
+            testGw2.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
+            {
+                Dispatcher.BeginInvoke(new Action(delegate ()
+                {
+                    AddEntered(ev.Viewer);
+                }));
+            };
+            testGw2.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
+            {
+                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
+            };
+            testGw2.Start();
         }
     }
 }
