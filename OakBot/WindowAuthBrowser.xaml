@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="TwitchAuthBrowser" Height="531" Width="383">
     <Grid>
-        <WebBrowser x:Name="wbTwitchAuth" Navigating="wbTwitchAuth_Navigating" Navigated="wbTwitchAuth_Navigated" LoadCompleted="wbTwitchAuth_LoadCompleted"/>
+        <WebBrowser x:Name="wbTwitchAuth" Navigating="wbTwitchAuth_Navigating" Navigated="wbTwitchAuth_Navigated" LoadCompleted="wbTwitchAuth_LoadCompleted" />
     </Grid>
 </Window>

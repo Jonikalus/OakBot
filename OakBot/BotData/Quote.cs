@@ -1,15 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OakBot
 {
     public class Quote : INotifyPropertyChanged
     {
-
         #region Fields
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -20,10 +15,10 @@ namespace OakBot
         private bool displayDate;
         private string game;
         private bool displayGame;
-        
+
         private DateTime lastDisplayed;
 
-        #endregion
+        #endregion Fields
 
         #region Constructor
 
@@ -33,7 +28,7 @@ namespace OakBot
         /// <param name="quote">The quote itself</param>
         /// <param name="quoter">The person saying the quote</param>
         /// <param name="game">The game that the streamer was playing when the quote was made</param>
-        public Quote (string quote, string quoter, string game)
+        public Quote(string quote, string quoter, string game)
         {
             this.quote = quote;
             this.quoter = quoter;
@@ -58,7 +53,7 @@ namespace OakBot
         /// <param name="displayGame">Displaying of the game</param>
         /// <param name="addedBy">Name of the viewer that added the quote</param>
         /// <param name="lastDisplayed">DateTime of when the quote was last displayed (in chat)</param>
-        public Quote (string quote, string quoter, DateTime date, bool displayDate, string game,
+        public Quote(string quote, string quoter, DateTime date, bool displayDate, string game,
             bool displayGame, DateTime lastDisplayed)
         {
             this.quote = quote;
@@ -70,7 +65,7 @@ namespace OakBot
             this.lastDisplayed = lastDisplayed;
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Methods
 
@@ -94,7 +89,7 @@ namespace OakBot
             lastDisplayed = DateTime.UtcNow;
         }
 
-        #endregion
+        #endregion Methods
 
         #region Properties
 
@@ -188,7 +183,7 @@ namespace OakBot
             }
             set
             {
-                if(value != displayDate)
+                if (value != displayDate)
                 {
                     displayDate = value;
                     NotifyPropertyChanged("DisplayDate");
@@ -253,7 +248,7 @@ namespace OakBot
         }
 
         /// <summary>
-        /// Returns "Yes" or "No" for display game 
+        /// Returns "Yes" or "No" for display game
         /// </summary>
         public string DisplayGameString
         {
@@ -307,7 +302,6 @@ namespace OakBot
             }
         }
 
-        #endregion
-
+        #endregion Properties
     }
 }

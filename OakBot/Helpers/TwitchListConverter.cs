@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OakBot.Models;
+using System;
+using System.Reflection;
 
 namespace OakBot.Helpers
 {
     // @author gibletto
-    class TwitchListConverter : JsonConverter
+    internal class TwitchListConverter : JsonConverter
     {
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
@@ -35,7 +33,6 @@ namespace OakBot.Helpers
             }
             return value;
         }
-
 
         public override bool CanConvert(Type objectType)
         {

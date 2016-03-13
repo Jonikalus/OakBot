@@ -7,6 +7,7 @@ namespace OakBot.Models
     {
         [JsonProperty("email")]
         public bool Email { get; set; }
+
         [JsonProperty("push")]
         public bool Push { get; set; }
     }

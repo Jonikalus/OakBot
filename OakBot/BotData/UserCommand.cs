@@ -1,14 +1,9 @@
-﻿using System;
-using System.ComponentModel;
+﻿using Discord;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Net;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using Discord;
 
 namespace OakBot
 {
@@ -34,7 +29,6 @@ namespace OakBot
         private bool enabled;
         private bool sendAsStreamer;
 
-
         private int gCooldownSec;
         private int uCooldownSec;
 
@@ -54,7 +48,7 @@ namespace OakBot
         private DateTime lastUsed;
         private Dictionary<string, DateTime> dictLastUsed = new Dictionary<string, DateTime>();
 
-        #endregion
+        #endregion Fields
 
         #region Constructor
 
@@ -76,7 +70,7 @@ namespace OakBot
             this.costMod = 0;
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Methods
 
@@ -142,7 +136,6 @@ namespace OakBot
                         default:
                             return "";
                     }
-
                 });
 
                 MainWindow.discord.GetServer(message.Server.Id).GetChannel(message.Channel.Id).SendMessage(parsedResponse.Trim());
@@ -175,7 +168,7 @@ namespace OakBot
                 string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
                 {
                     string[] split = Regex.Split(message.Message, @"\s+");
-                    
+
                     switch (m.Groups["item"].Value.ToLower())
                     {
                         case "user":
@@ -204,7 +197,6 @@ namespace OakBot
                         default:
                             return "";
                     }
-                    
                 });
 
                 // Set timestamps
@@ -232,7 +224,6 @@ namespace OakBot
                             MainWindow.instance.accountBot.UserName, parsedResponse.Trim()));
                     }));
                 }
-
             }
         }
 
@@ -263,7 +254,7 @@ namespace OakBot
             return false;
         }
 
-        #endregion
+        #endregion Methods
 
         #region Fields
 
@@ -309,11 +300,10 @@ namespace OakBot
                 else
                 {
                     return lastUsed.ToString("yyyy-MM-dd hh:mm");
-                } 
+                }
             }
         }
 
-        #endregion
-
+        #endregion Fields
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace OakBot.Enums
 {
     // @author gibletto
-    interface IPagedList<T>
+    internal interface IPagedList<T>
     {
         int Count { get; set; }
         int End { get; }

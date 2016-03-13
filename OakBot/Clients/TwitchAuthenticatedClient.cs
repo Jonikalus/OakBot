@@ -1,14 +1,13 @@
-﻿using System;
-using RestSharp;
-using OakBot.Enums;
+﻿using OakBot.Enums;
 using OakBot.Helpers;
 using OakBot.Models;
+using RestSharp;
+using System;
 
 namespace OakBot.Clients
 {
     public class TwitchAuthenticatedClient : TwitchReadOnlyClient, ITwitchClient
     {
-
         private readonly string oauth;
         private readonly string clientId;
         private readonly string username;
@@ -36,7 +35,6 @@ namespace OakBot.Clients
             }
             catch (Exception ex)
             {
-
                 throw new TwitchException("Error fetching channel data", ex);
             }
         }
@@ -139,7 +137,7 @@ namespace OakBot.Clients
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="length">Length of commercial break in seconds. Default value is 30. Valid values are 30, 60, 90, 120, 150, and 180. You can only trigger a commercial once every 8 minutes.</param>
         /// <returns></returns>

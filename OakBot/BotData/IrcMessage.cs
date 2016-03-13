@@ -19,10 +19,12 @@ namespace OakBot
 
         // Tracking
         private DateTime timestamp;
+
         private TwitchCredentials messageSource;
 
-        // Basic IRC Message 
+        // Basic IRC Message
         private string author;
+
         private string host;
         private string command;
         private string[] arguments;
@@ -30,17 +32,19 @@ namespace OakBot
 
         // IRC v3 TAGS
         private string nameColor;
+
         private string displayName;
         private string emotes;
         private bool moderator;
+
         //private string roomId;
         private bool subscriber;
+
         private bool turbo;
         private int userId;
         private uType userType;
 
-
-        #endregion
+        #endregion Fields
 
         #region Constructors
 
@@ -114,7 +118,6 @@ namespace OakBot
                                     break;
                             }
                             break;
-
                     }
                 }
             }
@@ -129,7 +132,6 @@ namespace OakBot
             command = ircMessage.Groups["command"].Value;
             arguments = ircMessage.Groups["args"].Value.Split(' ');
             message = ircMessage.Groups["message"].Value;
-            
         }
 
         /// <summary>
@@ -145,7 +147,7 @@ namespace OakBot
             this.userType = uType.BOT;
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Properties
 
@@ -213,6 +215,6 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Properties
     }
 }

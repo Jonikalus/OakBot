@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="OakBot" Height="450" Width="850" WindowStartupLocation="CenterOwner" Background="{x:Null}" SizeToContent="Height" MinWidth="850" MaxWidth="850" MinHeight="400" MaxHeight="800" Foreground="{x:Null}" Closing="OakBot_Closing">
     <Window.TaskbarItemInfo>
-        <TaskbarItemInfo Description="OakBot Running"/>
+        <TaskbarItemInfo Description="OakBot Running" />
     </Window.TaskbarItemInfo>
     <Grid Background="Black">
         <TabControl x:Name="tabControl" BorderThickness="2" Padding="2" SelectedIndex="0" Margin="0,0,8,8">
@@ -16,98 +16,97 @@
                 <Grid Background="#FF363636" Margin="0">
                     <GroupBox x:Name="GroupTwitchStreamerLogin" Header="STREAMER LOGIN" HorizontalAlignment="Left" Margin="10,124,0,0" VerticalAlignment="Top" Height="74" Width="806" BorderBrush="Black">
                         <Grid Margin="0">
-                            <Label x:Name="LabelStreamerAccount" Content="Streamer Name" HorizontalAlignment="Left" Margin="1,9,0,0" VerticalAlignment="Top" FontSize="18.667"/>
-                            <TextBox x:Name="textBoxStreamerName" HorizontalAlignment="Left" Margin="144,12,0,0" TextWrapping="Wrap" Width="170" ToolTip="Name of the streamer Twitch account." Height="30" VerticalAlignment="Top" Text="StreamerName" FontSize="18.667" LostFocus="textBoxStreamerName_LostFocus"/>
+                            <Label x:Name="LabelStreamerAccount" Content="Streamer Name" HorizontalAlignment="Left" Margin="1,9,0,0" VerticalAlignment="Top" FontSize="18.667" />
+                            <TextBox x:Name="textBoxStreamerName" HorizontalAlignment="Left" Margin="144,12,0,0" TextWrapping="Wrap" Width="170" ToolTip="Name of the streamer Twitch account." Height="30" VerticalAlignment="Top" Text="StreamerName" FontSize="18.667" LostFocus="textBoxStreamerName_LostFocus" />
                             <Button x:Name="buttonStreamerConnect" Content="" HorizontalAlignment="Left" Height="32" Margin="325,10,0,0" VerticalAlignment="Top" Width="170" BorderBrush="{x:Null}" BorderThickness="0" Foreground="{x:Null}" ToolTip="Connect the streamer account with Twitch." Click="buttonStreamerConnect_Click">
                                 <Button.Background>
-                                    <ImageBrush ImageSource="images/Twitch_connect_button.png"/>
+                                    <ImageBrush ImageSource="images/Twitch_connect_button.png" />
                                 </Button.Background>
                             </Button>
-                            <Button x:Name="btnStreamerConnect" Content="Connect" HorizontalAlignment="Left" Margin="709,10,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="btnStreamerConnect_Click"/>
-                            <CheckBox x:Name="cbAutoConnectStreamer" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,18,0,0" VerticalAlignment="Top" Checked="cbAutoConnectStreamer_Checked" Unchecked="cbAutoConnectStreamer_Unchecked"/>
+                            <Button x:Name="btnStreamerConnect" Content="Connect" HorizontalAlignment="Left" Margin="709,10,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="btnStreamerConnect_Click" />
+                            <CheckBox x:Name="cbAutoConnectStreamer" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,18,0,0" VerticalAlignment="Top" Checked="cbAutoConnectStreamer_Checked" Unchecked="cbAutoConnectStreamer_Unchecked" />
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="715,329,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click"/>
+                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="715,329,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click" />
                     <GroupBox x:Name="GroupTwitchBotLogin" Header="BOT LOGIN" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="109" Width="806" BorderBrush="Black">
                         <Grid Margin="0">
-                            <Label x:Name="lblBotAccount" Content="Bot Name" HorizontalAlignment="Left" Margin="10,0,0,48" VerticalAlignment="Bottom" FontSize="18.667"/>
-                            <TextBox x:Name="textBoxBotName" HorizontalAlignment="Left" Margin="146,0,0,50" TextWrapping="Wrap" Width="170" ToolTip="Name of the bot Twitch account." Height="30" VerticalAlignment="Bottom" Text="BotName" FontSize="18.667" LostFocus="textBoxBotName_LostFocus"/>
+                            <Label x:Name="lblBotAccount" Content="Bot Name" HorizontalAlignment="Left" Margin="10,0,0,48" VerticalAlignment="Bottom" FontSize="18.667" />
+                            <TextBox x:Name="textBoxBotName" HorizontalAlignment="Left" Margin="146,0,0,50" TextWrapping="Wrap" Width="170" ToolTip="Name of the bot Twitch account." Height="30" VerticalAlignment="Bottom" Text="BotName" FontSize="18.667" LostFocus="textBoxBotName_LostFocus" />
                             <Button x:Name="buttonBotConnect" Content="" HorizontalAlignment="Left" Height="32" Margin="321,0,0,50" VerticalAlignment="Bottom" Width="170" BorderThickness="0" BorderBrush="{x:Null}" Foreground="{x:Null}" ToolTip="Connect the bot account with Twitch." Click="buttonBotConnect_Click">
                                 <Button.Background>
-                                    <ImageBrush ImageSource="images/Twitch_connect_button.png"/>
+                                    <ImageBrush ImageSource="images/Twitch_connect_button.png" />
                                 </Button.Background>
                             </Button>
-                            <Button x:Name="btnBotConnect" Content="Connect" HorizontalAlignment="Left" Margin="709,7,0,0" VerticalAlignment="Top" Width="75" Click="btnBotConnect_Click" Height="30"/>
+                            <Button x:Name="btnBotConnect" Content="Connect" HorizontalAlignment="Left" Margin="709,7,0,0" VerticalAlignment="Top" Width="75" Click="btnBotConnect_Click" Height="30" />
                             <!--<TextBox x:Name="tbChannelName" HorizontalAlignment="Left" Height="30" Margin="146,42,0,0" TextWrapping="Wrap" Text="{Binding Path=(local:Config.ChannelName), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="170" FontSize="18.667" />-->
                             <TextBox x:Name="tbChannelName" HorizontalAlignment="Left" Height="30" Margin="146,42,0,0" TextWrapping="Wrap" Text="{Binding ChannelName, Source={StaticResource Config}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="170" FontSize="18.667" />
-                            <Label x:Name="lblChannelName" Content="Channel Name" HorizontalAlignment="Left" Margin="10,0,0,12" VerticalAlignment="Bottom" FontSize="18.667"/>
-                            <Label x:Name="lblServer" Content="Server" HorizontalAlignment="Left" Margin="321,0,0,11" VerticalAlignment="Bottom" FontSize="18.667"/>
-                            <Label x:Name="lblPort" Content="Port" HorizontalAlignment="Left" Margin="519,0,0,10" VerticalAlignment="Bottom" FontSize="18.667"/>
+                            <Label x:Name="lblChannelName" Content="Channel Name" HorizontalAlignment="Left" Margin="10,0,0,12" VerticalAlignment="Bottom" FontSize="18.667" />
+                            <Label x:Name="lblServer" Content="Server" HorizontalAlignment="Left" Margin="321,0,0,11" VerticalAlignment="Bottom" FontSize="18.667" />
+                            <Label x:Name="lblPort" Content="Port" HorizontalAlignment="Left" Margin="519,0,0,10" VerticalAlignment="Bottom" FontSize="18.667" />
                             <ComboBox x:Name="cbServerIP" HorizontalAlignment="Left" Margin="394,50,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" SelectionChanged="comboBox_SelectionChanged">
-                                <ComboBoxItem Content="tmi.twitch.tv"/>
+                                <ComboBoxItem Content="tmi.twitch.tv" />
                             </ComboBox>
                             <ComboBox x:Name="cbServerPort" HorizontalAlignment="Left" Margin="568,51,0,0" VerticalAlignment="Top" Width="60" SelectedIndex="0" SelectionChanged="comboBox_Copy_SelectionChanged">
-                                <ListBoxItem Content="6667"/>
-                                <ListBoxItem Content="443"/>
+                                <ListBoxItem Content="6667" />
+                                <ListBoxItem Content="443" />
                             </ComboBox>
-                            <CheckBox x:Name="cbAutoConnectBot" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,15,0,0" VerticalAlignment="Top" Checked="cbAutoConnectBot_Checked" Unchecked="cbAutoConnectBot_Unchecked"/>
+                            <CheckBox x:Name="cbAutoConnectBot" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,15,0,0" VerticalAlignment="Top" Checked="cbAutoConnectBot_Checked" Unchecked="cbAutoConnectBot_Unchecked" />
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="button" Content="Start Webserver" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Width="112" Click="button_Click"/>
-
+                    <Button x:Name="button" Content="Start Webserver" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Width="112" Click="button_Click" />
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabMainDashboard" Header="Twitch Dashboard" IsEnabled="False">
                 <ScrollViewer Height="Auto">
                     <Grid Background="#FF363636" Margin="0" Height="381">
-                        <Image x:Name="imgLogo" HorizontalAlignment="Left" Height="150" Margin="10,10,0,0" VerticalAlignment="Top" Width="150"/>
-                        <Label x:Name="lblTitle" Content="Title:" HorizontalAlignment="Left" Margin="165,3,0,0" VerticalAlignment="Top"/>
-                        <TextBox x:Name="txtTitle" HorizontalAlignment="Left" Height="23" Margin="209,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="590"/>
-                        <Label x:Name="lblGame" Content="Game:" HorizontalAlignment="Left" Margin="165,31,0,0" VerticalAlignment="Top"/>
-                        <ComboBox x:Name="cbGame" HorizontalAlignment="Left" Margin="209,31,0,0" VerticalAlignment="Top" Width="590" IsEditable="True"/>
-                        <Label x:Name="lblDelay" Content="Delay:" HorizontalAlignment="Left" Margin="165,57,0,0" VerticalAlignment="Top"/>
+                        <Image x:Name="imgLogo" HorizontalAlignment="Left" Height="150" Margin="10,10,0,0" VerticalAlignment="Top" Width="150" />
+                        <Label x:Name="lblTitle" Content="Title:" HorizontalAlignment="Left" Margin="165,3,0,0" VerticalAlignment="Top" />
+                        <TextBox x:Name="txtTitle" HorizontalAlignment="Left" Height="23" Margin="209,3,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="590" />
+                        <Label x:Name="lblGame" Content="Game:" HorizontalAlignment="Left" Margin="165,31,0,0" VerticalAlignment="Top" />
+                        <ComboBox x:Name="cbGame" HorizontalAlignment="Left" Margin="209,31,0,0" VerticalAlignment="Top" Width="590" IsEditable="True" />
+                        <Label x:Name="lblDelay" Content="Delay:" HorizontalAlignment="Left" Margin="165,57,0,0" VerticalAlignment="Top" />
                         <GroupBox x:Name="gbManualCommercials" Header="Manual Commercials" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top" Height="77" Width="789" IsEnabled="False">
                             <Grid Margin="0">
-                                <Button x:Name="btn30Sec" Content="30 Secs" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="btn30Sec_Click"/>
-                                <Button x:Name="btn60Sec" Content="60 Secs" HorizontalAlignment="Left" Margin="90,20,0,0" VerticalAlignment="Top" Width="75" Click="btn60Sec_Click"/>
-                                <Button x:Name="btn90Secs" Content="90 Secs" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="75" Click="btn90Secs_Click"/>
-                                <Button x:Name="btn120Secs" Content="120 Secs" HorizontalAlignment="Left" Margin="250,20,0,0" VerticalAlignment="Top" Width="75" Click="btn120Secs_Click"/>
-                                <Button x:Name="btn150Secs" Content="150 Secs" HorizontalAlignment="Left" Margin="330,20,0,0" VerticalAlignment="Top" Width="75" Click="btn150Secs_Click"/>
-                                <Button x:Name="btn180Secs" Content="180 Secs" HorizontalAlignment="Left" Margin="410,20,0,0" VerticalAlignment="Top" Width="75" Click="btn180Secs_Click"/>
-                                <Label x:Name="lblManComDelay" Content="Activation Delay" HorizontalAlignment="Left" Margin="556,17,0,0" VerticalAlignment="Top" ToolTip="The delay before this bot sends the commercial request to Twitch in seconds.&#x0a;Can be used to let viewers catch up with the stream due to natural delays.&#x0a;Acceptable values are numerals 0 up to and including 60, defaults to 20 on input error."/>
-                                <TextBox x:Name="tbManComDelay" HorizontalAlignment="Left" Height="23" Margin="657,20,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="36"/>
+                                <Button x:Name="btn30Sec" Content="30 Secs" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="btn30Sec_Click" />
+                                <Button x:Name="btn60Sec" Content="60 Secs" HorizontalAlignment="Left" Margin="90,20,0,0" VerticalAlignment="Top" Width="75" Click="btn60Sec_Click" />
+                                <Button x:Name="btn90Secs" Content="90 Secs" HorizontalAlignment="Left" Margin="170,20,0,0" VerticalAlignment="Top" Width="75" Click="btn90Secs_Click" />
+                                <Button x:Name="btn120Secs" Content="120 Secs" HorizontalAlignment="Left" Margin="250,20,0,0" VerticalAlignment="Top" Width="75" Click="btn120Secs_Click" />
+                                <Button x:Name="btn150Secs" Content="150 Secs" HorizontalAlignment="Left" Margin="330,20,0,0" VerticalAlignment="Top" Width="75" Click="btn150Secs_Click" />
+                                <Button x:Name="btn180Secs" Content="180 Secs" HorizontalAlignment="Left" Margin="410,20,0,0" VerticalAlignment="Top" Width="75" Click="btn180Secs_Click" />
+                                <Label x:Name="lblManComDelay" Content="Activation Delay" HorizontalAlignment="Left" Margin="556,17,0,0" VerticalAlignment="Top" ToolTip="The delay before this bot sends the commercial request to Twitch in seconds.&#x0a;Can be used to let viewers catch up with the stream due to natural delays.&#x0a;Acceptable values are numerals 0 up to and including 60, defaults to 20 on input error." />
+                                <TextBox x:Name="tbManComDelay" HorizontalAlignment="Left" Height="23" Margin="657,20,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="36" />
                             </Grid>
                         </GroupBox>
-                        <Button x:Name="btnUpdate" Content="Update" HorizontalAlignment="Left" Margin="724,58,0,0" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click"/>
-                        <TextBox x:Name="tbStreamDelay" HorizontalAlignment="Left" Height="23" Margin="209,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="62" Text="0" IsEnabled="False"/>
+                        <Button x:Name="btnUpdate" Content="Update" HorizontalAlignment="Left" Margin="724,58,0,0" VerticalAlignment="Top" Width="75" Click="btnUpdate_Click" />
+                        <TextBox x:Name="tbStreamDelay" HorizontalAlignment="Left" Height="23" Margin="209,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="62" Text="0" IsEnabled="False" />
                     </Grid>
                 </ScrollViewer>
             </TabItem>
             <TabItem x:Name="TabConsole" Header="Twitch Chat" BorderThickness="2">
                 <Grid Background="#FF363636" Margin="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="673*"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="148*"/>
+                        <ColumnDefinition Width="673*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="148*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition/>
-                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="50" />
+                        <RowDefinition />
+                        <RowDefinition Height="30" />
                     </Grid.RowDefinitions>
                     <ComboBox x:Name="SpeakAs" HorizontalAlignment="Left" Margin="4,4,0,4" Grid.Row="2" Width="80" VerticalContentAlignment="Center" FontWeight="Bold" IsReadOnly="True" SelectedIndex="0" ToolTip="Select through which account you speak." TabIndex="1" IsTextSearchEnabled="False" SelectionChanged="SpeakAs_SelectionChanged" IsSynchronizedWithCurrentItem="True" FontFamily="Titillium">
-                        <ComboBoxItem Content="Streamer"/>
-                        <ComboBoxItem Content="Bot"/>
+                        <ComboBoxItem Content="Streamer" />
+                        <ComboBoxItem Content="Bot" />
                     </ComboBox>
-                    <TextBox x:Name="ChatSend" Height="22" Margin="88,4,4,4" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="3" FontWeight="Normal" KeyDown="ChatSend_KeyDown" SpellCheck.IsEnabled="True" MaxLength="255" MaxLines="1"/>
-                    <GridSplitter x:Name="gridSplitter" Grid.Column="1" Margin="0,4" Width="5" Grid.Row="1" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="ChatSend" Height="22" Margin="88,4,4,4" Grid.Row="2" TextWrapping="Wrap" Grid.ColumnSpan="3" FontWeight="Normal" KeyDown="ChatSend_KeyDown" SpellCheck.IsEnabled="True" MaxLength="255" MaxLines="1" />
+                    <GridSplitter x:Name="gridSplitter" Grid.Column="1" Margin="0,4" Width="5" Grid.Row="1" HorizontalAlignment="Left" />
                     <ListView x:Name="listViewChat" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemsSource="{Binding ChatMessages}" MouseDoubleClick="listViewChat_MouseDoubleClick" SelectionMode="Single">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridView.ColumnHeaderContainerStyle>
                                     <Style TargetType="GridViewColumnHeader">
                                         <Setter Property="Visibility" Value="Collapsed" />
-                                        <Setter Property="IsEnabled" Value="False"/>
+                                        <Setter Property="IsEnabled" Value="False" />
                                         <Setter Property="HorizontalAlignment" Value="Stretch" />
                                     </Style>
                                 </GridView.ColumnHeaderContainerStyle>
@@ -115,9 +114,9 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding ShortTime, StringFormat=[{0}]}" Margin="0" FontSize="13.333"/>
-                                                <TextBlock Text="{Binding DisplayName, StringFormat={}{0}:}" Margin="5,0,0,0" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NameColor}"/>
-                                                <TextBlock Text="{Binding Message}" Margin="5,0,0,0" FontSize="13.333" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding ShortTime, StringFormat=[{0}]}" Margin="0" FontSize="13.333" />
+                                                <TextBlock Text="{Binding DisplayName, StringFormat={}{0}:}" Margin="5,0,0,0" FontWeight="Bold" FontSize="13.333" Foreground="{Binding NameColor}" />
+                                                <TextBlock Text="{Binding Message}" Margin="5,0,0,0" FontSize="13.333" TextWrapping="Wrap" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -128,44 +127,43 @@
                     <ListView x:Name="listViewViewers" Grid.Column="2" Margin="4" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Viewer" DisplayMemberBinding="{Binding UserName}"/>
+                                <GridViewColumn Header="Viewer" DisplayMemberBinding="{Binding UserName}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Button x:Name="btnViewerAddPoints" Content="Add Points to Viewers" HorizontalAlignment="Left" Margin="485,23,0,0" VerticalAlignment="Top" Width="139" Click="btnViewerAddPoints_Click"/>
+                    <Button x:Name="btnViewerAddPoints" Content="Add Points to Viewers" HorizontalAlignment="Left" Margin="485,23,0,0" VerticalAlignment="Top" Width="139" Click="btnViewerAddPoints_Click" />
                 </Grid>
             </TabItem>
             <TabItem x:Name="TabDatabase" Header="Database" BorderThickness="2">
                 <Grid Background="#FF363636" Margin="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="64*"/>
-                        <RowDefinition Height="317*"/>
+                        <RowDefinition Height="64*" />
+                        <RowDefinition Height="317*" />
                     </Grid.RowDefinitions>
                     <ListView x:Name="lvViewerDatabase" Margin="10" Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="lvViewerDatabase_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding UserName}"/>
-                                <GridViewColumn Width="150" Header="Points" DisplayMemberBinding="{Binding Points}"/>
-                                <GridViewColumn Width="150" Header="Hours" DisplayMemberBinding="{Binding Hours}"/>
-                                <GridViewColumn Width="150" Header="LastSeen" DisplayMemberBinding="{Binding LastSeen}"/>
-                                <GridViewColumn Width="150" Header="Title" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding UserName}" />
+                                <GridViewColumn Width="150" Header="Points" DisplayMemberBinding="{Binding Points}" />
+                                <GridViewColumn Width="150" Header="Hours" DisplayMemberBinding="{Binding Hours}" />
+                                <GridViewColumn Width="150" Header="LastSeen" DisplayMemberBinding="{Binding LastSeen}" />
+                                <GridViewColumn Width="150" Header="Title" DisplayMemberBinding="{Binding Title}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <TextBox x:Name="tbFilterOnName" HorizontalAlignment="Left" Height="23" Margin="102,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" TextChanged="tbFilterOnName_TextChanged"/>
-                    <Label x:Name="lblFilterOnName" Content="Search Viewer:" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnDatabaseCleanup" Content="Cleanup" HorizontalAlignment="Left" Margin="741,37,0,0" VerticalAlignment="Top" Width="75" Click="btnDatabaseCleanup_Click"/>
-                    <Label x:Name="lblFilterCnt" Content="results..." ContentStringFormat="Matches: {0}." HorizontalAlignment="Left" Margin="257,31,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbFilterOnName" HorizontalAlignment="Left" Height="23" Margin="102,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="150" TextChanged="tbFilterOnName_TextChanged" />
+                    <Label x:Name="lblFilterOnName" Content="Search Viewer:" HorizontalAlignment="Left" Margin="10,31,0,0" VerticalAlignment="Top" />
+                    <Button x:Name="btnDatabaseCleanup" Content="Cleanup" HorizontalAlignment="Left" Margin="741,37,0,0" VerticalAlignment="Top" Width="75" Click="btnDatabaseCleanup_Click" />
+                    <Label x:Name="lblFilterCnt" Content="results..." ContentStringFormat="Matches: {0}." HorizontalAlignment="Left" Margin="257,31,0,0" VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
             <TabItem Header="Giveaways">
                 <Grid Background="#FF363636" Margin="0">
-                    <Button x:Name="button1" Content="Start 30 seconds giveaway, keyword = !giveaway" HorizontalAlignment="Left" Margin="164,46,0,0" VerticalAlignment="Top" Width="476" Click="button1_Click"/>
-                    <Button x:Name="button2" Content="Draw Winner Keyword" HorizontalAlignment="Left" Margin="363,129,0,0" VerticalAlignment="Top" Width="143" Click="button2_Click"/>
-                    <ListBox x:Name="lbEntered" HorizontalAlignment="Left" Height="198" Margin="10,129,0,0" VerticalAlignment="Top" Width="148"/>
-                    <Button x:Name="button3" Content="Start 30 seconds giveaway, no keyword" HorizontalAlignment="Left" Margin="164,71,0,0" VerticalAlignment="Top" Width="476" Click="button3_Click"/>
-                    <Button x:Name="button4" Content="Draw Winner Active" HorizontalAlignment="Left" Margin="363,154,0,0" VerticalAlignment="Top" Width="143" Click="button4_Click"/>
-
+                    <Button x:Name="button1" Content="Start 30 seconds giveaway, keyword = !giveaway" HorizontalAlignment="Left" Margin="164,46,0,0" VerticalAlignment="Top" Width="476" Click="button1_Click" />
+                    <Button x:Name="button2" Content="Draw Winner Keyword" HorizontalAlignment="Left" Margin="363,129,0,0" VerticalAlignment="Top" Width="143" Click="button2_Click" />
+                    <ListBox x:Name="lbEntered" HorizontalAlignment="Left" Height="198" Margin="10,129,0,0" VerticalAlignment="Top" Width="148" />
+                    <Button x:Name="button3" Content="Start 30 seconds giveaway, no keyword" HorizontalAlignment="Left" Margin="164,71,0,0" VerticalAlignment="Top" Width="476" Click="button3_Click" />
+                    <Button x:Name="button4" Content="Draw Winner Active" HorizontalAlignment="Left" Margin="363,154,0,0" VerticalAlignment="Top" Width="143" Click="button4_Click" />
                 </Grid>
             </TabItem>
             <TabItem Header="Commands">
@@ -173,10 +171,10 @@
                     <ListView x:Name="lvCommands" Margin="10,74,10,10" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="lvViewerDatabase_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="100" Header="Command" DisplayMemberBinding="{Binding Command}"/>
-                                <GridViewColumn Width="70" Header="Status" DisplayMemberBinding="{Binding Status}"/>
-                                <GridViewColumn Width="300" Header="Response" DisplayMemberBinding="{Binding Response}"/>
-                                <GridViewColumn Width="150" Header="Last Used" DisplayMemberBinding="{Binding LastUsed}"/>
+                                <GridViewColumn Width="100" Header="Command" DisplayMemberBinding="{Binding Command}" />
+                                <GridViewColumn Width="70" Header="Status" DisplayMemberBinding="{Binding Status}" />
+                                <GridViewColumn Width="300" Header="Response" DisplayMemberBinding="{Binding Response}" />
+                                <GridViewColumn Width="150" Header="Last Used" DisplayMemberBinding="{Binding LastUsed}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -187,18 +185,17 @@
                     <ListView x:Name="lvQuotes" Margin="10,74,10,10" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="lvViewerDatabase_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="40" Header="ID" DisplayMemberBinding="{Binding Id}"/>
-                                <GridViewColumn Width="300" Header="Quote" DisplayMemberBinding="{Binding QuoteString}"/>
-                                <GridViewColumn Width="120" Header="Quoter" DisplayMemberBinding="{Binding Quoter}"/>
-                                <GridViewColumn Width="100" Header="Date" DisplayMemberBinding="{Binding DateString}"/>
-                                <GridViewColumn Width="100" Header="Game" DisplayMemberBinding="{Binding Game}"/>
-                                <GridViewColumn Width="100" Header="Display Date" DisplayMemberBinding="{Binding DisplayDateString}"/>
-                                <GridViewColumn Width="100" Header="Display Game" DisplayMemberBinding="{Binding DisplayGameString}"/>
-                                <GridViewColumn Width="100" Header="Last Displayed" DisplayMemberBinding="{Binding LastDisplayedString}"/>
+                                <GridViewColumn Width="40" Header="ID" DisplayMemberBinding="{Binding Id}" />
+                                <GridViewColumn Width="300" Header="Quote" DisplayMemberBinding="{Binding QuoteString}" />
+                                <GridViewColumn Width="120" Header="Quoter" DisplayMemberBinding="{Binding Quoter}" />
+                                <GridViewColumn Width="100" Header="Date" DisplayMemberBinding="{Binding DateString}" />
+                                <GridViewColumn Width="100" Header="Game" DisplayMemberBinding="{Binding Game}" />
+                                <GridViewColumn Width="100" Header="Display Date" DisplayMemberBinding="{Binding DisplayDateString}" />
+                                <GridViewColumn Width="100" Header="Display Game" DisplayMemberBinding="{Binding DisplayGameString}" />
+                                <GridViewColumn Width="100" Header="Last Displayed" DisplayMemberBinding="{Binding LastDisplayedString}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
-
                 </Grid>
             </TabItem>
             <TabItem Header="Song Requests">
@@ -207,34 +204,33 @@
                     <ListView x:Name="lvSongs" HorizontalAlignment="Left" Height="226" Margin="10,10,0,0" VerticalAlignment="Top" Width="451" MouseDoubleClick="lvSongs_MouseDoubleClick">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Width="180" Header="Song Name" DisplayMemberBinding="{Binding SongName}"/>
-                                <GridViewColumn Width="271" Header="Link" DisplayMemberBinding="{Binding Link}"/>
-                                <GridViewColumn Width="0" Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                                <GridViewColumn Width="180" Header="Song Name" DisplayMemberBinding="{Binding SongName}" />
+                                <GridViewColumn Width="271" Header="Link" DisplayMemberBinding="{Binding Link}" />
+                                <GridViewColumn Width="0" Header="Type" DisplayMemberBinding="{Binding Type}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Button x:Name="btnPlayerCtl" Content="Play" HorizontalAlignment="Left" Margin="90,245,0,0" VerticalAlignment="Top" Width="75" Click="btnPlayerCtl_Click"/>
-                    <Slider x:Name="sldVol" HorizontalAlignment="Left" Margin="10,296,0,0" VerticalAlignment="Top" Width="234" Maximum="100" ValueChanged="slider_ValueChanged" Value="50"/>
-                    <Label x:Name="lblVolume" Content="Volume:" HorizontalAlignment="Left" Margin="10,270,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lblVol" Content="{Binding Value, ElementName=sldVol}" HorizontalAlignment="Left" Margin="249,288,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnPlay" Content="Start Playing" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="75" Click="btnPlay_Click"/>
-                    <Button x:Name="btnPrev" Content="Previous Song" HorizontalAlignment="Left" Margin="170,245,0,0" VerticalAlignment="Top" Width="86" Click="btnPrev_Click"/>
-                    <Button x:Name="btnNext" Content="Next Song" HorizontalAlignment="Left" Margin="261,245,0,0" VerticalAlignment="Top" Width="75" Click="btnNext_Click"/>
+                    <Button x:Name="btnPlayerCtl" Content="Play" HorizontalAlignment="Left" Margin="90,245,0,0" VerticalAlignment="Top" Width="75" Click="btnPlayerCtl_Click" />
+                    <Slider x:Name="sldVol" HorizontalAlignment="Left" Margin="10,296,0,0" VerticalAlignment="Top" Width="234" Maximum="100" ValueChanged="slider_ValueChanged" Value="50" />
+                    <Label x:Name="lblVolume" Content="Volume:" HorizontalAlignment="Left" Margin="10,270,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="lblVol" Content="{Binding Value, ElementName=sldVol}" HorizontalAlignment="Left" Margin="249,288,0,0" VerticalAlignment="Top" />
+                    <Button x:Name="btnPlay" Content="Start Playing" HorizontalAlignment="Left" Margin="10,245,0,0" VerticalAlignment="Top" Width="75" Click="btnPlay_Click" />
+                    <Button x:Name="btnPrev" Content="Previous Song" HorizontalAlignment="Left" Margin="170,245,0,0" VerticalAlignment="Top" Width="86" Click="btnPrev_Click" />
+                    <Button x:Name="btnNext" Content="Next Song" HorizontalAlignment="Left" Margin="261,245,0,0" VerticalAlignment="Top" Width="75" Click="btnNext_Click" />
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabDiscord" Header="Discord">
                 <Grid Background="#FF363636" Margin="0">
-                    <TextBox x:Name="txtEmail" HorizontalAlignment="Left" Height="23" Margin="77,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="216"/>
-                    <Label x:Name="lblEmail" Content="E-Mail:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <PasswordBox x:Name="pwdPassword" HorizontalAlignment="Left" Margin="77,39,0,0" VerticalAlignment="Top" Width="216" Height="23"/>
-                    <Label x:Name="label" Content="Password:" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="298,39,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click"/>
-                    <TextBox x:Name="txtUsername" HorizontalAlignment="Left" Height="23" Margin="81,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
-                    <Label x:Name="lblDUsername" Content="Username:" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lblServerBrowser" Content="Server Browser:" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top"/>
-                    <TreeView x:Name="tvServerBrowser" HorizontalAlignment="Left" Height="193" Margin="10,158,0,0" VerticalAlignment="Top" Width="176"/>
-                    <Button x:Name="btnRefresh" Content="Refresh" HorizontalAlignment="Left" Margin="191,331,0,0" VerticalAlignment="Top" Width="75" Click="btnRefresh_Click"/>
-
+                    <TextBox x:Name="txtEmail" HorizontalAlignment="Left" Height="23" Margin="77,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="216" />
+                    <Label x:Name="lblEmail" Content="E-Mail:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+                    <PasswordBox x:Name="pwdPassword" HorizontalAlignment="Left" Margin="77,39,0,0" VerticalAlignment="Top" Width="216" Height="23" />
+                    <Label x:Name="label" Content="Password:" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
+                    <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="298,39,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click" />
+                    <TextBox x:Name="txtUsername" HorizontalAlignment="Left" Height="23" Margin="81,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" />
+                    <Label x:Name="lblDUsername" Content="Username:" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="lblServerBrowser" Content="Server Browser:" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" />
+                    <TreeView x:Name="tvServerBrowser" HorizontalAlignment="Left" Height="193" Margin="10,158,0,0" VerticalAlignment="Top" Width="176" />
+                    <Button x:Name="btnRefresh" Content="Refresh" HorizontalAlignment="Left" Margin="191,331,0,0" VerticalAlignment="Top" Width="75" Click="btnRefresh_Click" />
                 </Grid>
             </TabItem>
         </TabControl>

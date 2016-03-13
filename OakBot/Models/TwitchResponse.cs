@@ -1,6 +1,6 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OakBot.Enums;
+using System;
 
 namespace OakBot.Models
 {
@@ -18,7 +18,9 @@ namespace OakBot.Models
         [JsonProperty("_total")]
         public long Total { get; set; }
 
-        public TwitchResponse() {}
+        public TwitchResponse()
+        {
+        }
 
         public State GetState()
         {
@@ -28,15 +30,19 @@ namespace OakBot.Models
                 case 204:
                     state = State.success;
                     break;
+
                 case 404:
                     state = State.not_found;
                     break;
+
                 case 422:
                     state = State.failed;
                     break;
+
                 case 503:
                     state = State.failed;
                     break;
+
                 default:
                     state = State.failed;
                     break;

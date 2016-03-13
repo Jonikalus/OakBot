@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Net.WebSockets;
-using System.Net.Sockets;
+using System.Data.SQLite;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
-using System.Data.SQLite;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Globalization;
-using System.Diagnostics;
 
 namespace OakBot
 {
@@ -16,7 +11,6 @@ namespace OakBot
     /// </summary>
     public partial class WindowImportData : Window
     {
-
         public WindowImportData()
         {
             InitializeComponent();
@@ -29,7 +23,7 @@ namespace OakBot
             if (ImportFromAnkhbot())
             {
                 this.Close();
-            }            
+            }
         }
 
         /// <summary>
@@ -71,7 +65,6 @@ namespace OakBot
                     }
                     catch (Exception)
                     {
-
                     }
 
                     MainWindow.colViewers.Clear();
@@ -98,61 +91,60 @@ namespace OakBot
                         // Add new Viewer to colDatabase
                         MainWindow.colDatabase.Add(viewer);
 
-                        // Counter for parsed records                      
+                        // Counter for parsed records
                         cntRecords++;
                     }
 
                     dbConnection.Close();
                     dbConnection.Dispose();
 
-/*
+                    /*
 
-                    // Open DBfile
-                    dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", ViewerDB.filename));
-                    dbConnection.Open();
+                                        // Open DBfile
+                                        dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3", ViewerDB.filename));
+                                        dbConnection.Open();
 
-                    // Set status
-                    lblStatusText.Content = "Clearing existing database...";
+                                        // Set status
+                                        lblStatusText.Content = "Clearing existing database...";
 
-                    // Purge DBfile
-                    sqlCmd = new SQLiteCommand("DELETE FROM `Viewers`", dbConnection);
-                    sqlCmd.ExecuteNonQuery();
+                                        // Purge DBfile
+                                        sqlCmd = new SQLiteCommand("DELETE FROM `Viewers`", dbConnection);
+                                        sqlCmd.ExecuteNonQuery();
 
-                    int cntWriteViewer = 0;
+                                        int cntWriteViewer = 0;
 
-                    // Insert new Viewer in `Viewers`
-                    foreach (Viewer viewer in MainWindow.colDatabase)
-                    {
-                        // Set status
-                        //http://stackoverflow.com/questions/32680826/wpf-mvvm-thread-keep-running-and-show-progress-in-wpf-windows
-                        //http://stackoverflow.com/questions/1952201/display-progress-bar-while-doing-some-work-in-c
-                        lblStatusText.Content = string.Format("Writing viewer {0} of {1} to file...", cntWriteViewer, cntRecords);
-                        pbStatus.Value = cntWriteViewer / cntRecords * 100;
-                        cntWriteViewer++;
+                                        // Insert new Viewer in `Viewers`
+                                        foreach (Viewer viewer in MainWindow.colDatabase)
+                                        {
+                                            // Set status
+                                            //http://stackoverflow.com/questions/32680826/wpf-mvvm-thread-keep-running-and-show-progress-in-wpf-windows
+                                            //http://stackoverflow.com/questions/1952201/display-progress-bar-while-doing-some-work-in-c
+                                            lblStatusText.Content = string.Format("Writing viewer {0} of {1} to file...", cntWriteViewer, cntRecords);
+                                            pbStatus.Value = cntWriteViewer / cntRecords * 100;
+                                            cntWriteViewer++;
 
-                        sqlCmd = new SQLiteCommand(
-                            string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
-                                viewer.UserName,
-                                viewer.Points,
-                                viewer.Spent,
-                                viewer.Watched.ToString(),
-                                viewer.LastSeen.ToString("o"),
-                                viewer.Raids,
-                                viewer.Title,
-                                viewer.regular.ToString(),
-                                viewer.IGN),
-                            dbConnection);
-                        sqlCmd.ExecuteNonQuery();
-                    }
+                                            sqlCmd = new SQLiteCommand(
+                                                string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
+                                                    viewer.UserName,
+                                                    viewer.Points,
+                                                    viewer.Spent,
+                                                    viewer.Watched.ToString(),
+                                                    viewer.LastSeen.ToString("o"),
+                                                    viewer.Raids,
+                                                    viewer.Title,
+                                                    viewer.regular.ToString(),
+                                                    viewer.IGN),
+                                                dbConnection);
+                                            sqlCmd.ExecuteNonQuery();
+                                        }
 
-                    // Close DBfile
-                    dbConnection.Close();
+                                        // Close DBfile
+                                        dbConnection.Close();
 
-*/
+                    */
 
                     // Return success
                     return true;
-
                 }
                 catch (SQLiteException ex)
                 {
@@ -178,11 +170,11 @@ namespace OakBot
             return false;
         }
 
-        #endregion
+        #endregion AnkhbotImport
 
         private void btnImportDeep_Click(object sender, RoutedEventArgs e)
         {
-            if(tbDeepSecret.Text != "Deepbot API Secret")
+            if (tbDeepSecret.Text != "Deepbot API Secret")
             {
                 // TODO connect to deepbot websocket
             }

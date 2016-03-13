@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Data.SQLite;
 using System.Globalization;
-using System.Windows;
+using System.IO;
 
 namespace OakBot
 {
@@ -16,7 +11,6 @@ namespace OakBot
         public static readonly string fileQuotes = Config.AppDataPath + "\\OakBotQuotes.sqlite";
         public static readonly string fileCommands = Config.AppDataPath + "\\OakBotCommands.sqlite";
         public static readonly string fileCurrency = Config.AppDataPath + "\\OakBotCurrency.sqlite";
-
 
         #region Database Viewers
 
@@ -112,7 +106,7 @@ namespace OakBot
 
             SQLiteCommand sqlCmd;
 
-            foreach(Viewer viewer in MainWindow.colDatabase)
+            foreach (Viewer viewer in MainWindow.colDatabase)
             {
                 sqlCmd = new SQLiteCommand(
                     string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}' WHERE `Username` = '{0}'",
@@ -221,7 +215,7 @@ namespace OakBot
             dbConnection.Close();
         }
 
-        #endregion
+        #endregion Database Viewers
 
         #region Database Quotes
 
@@ -258,7 +252,7 @@ namespace OakBot
 
                 while (reader.Read())
                 {
-                    Quote loadedQuote = new Quote(   
+                    Quote loadedQuote = new Quote(
                         (string)reader["Quote"],
                         (string)reader["Quoter"],
                         DateTime.Parse((string)reader["Date"], CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
@@ -331,13 +325,6 @@ namespace OakBot
             dbConnection.Close();
         }
 
-        #endregion
-
-        #region Currency
-
-
-
-        #endregion Currency
-
+        #endregion Database Quotes
     }
 }

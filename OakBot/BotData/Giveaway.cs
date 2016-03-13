@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 //using System.Threading;
 using System.Timers;
 
@@ -14,8 +13,11 @@ namespace OakBot
     public class Giveaway : INotifyPropertyChanged
     {
         #region Fields
+
         private Timer giveawayTimer;
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         private string giveawayName, keyword;
         private int price;
         private bool needsFollow, running;
@@ -23,22 +25,26 @@ namespace OakBot
         private TimeSpan responseTime, giveawayTime;
         private Viewer winner;
         private ObservableCollection<string> entries, winners;
+
         #endregion Fields
 
         #region Handlers
 
         public delegate void WinnerChosenEventHandler(object o, WinnerChosenEventArgs e);
+
         public event WinnerChosenEventHandler WinnerChosen;
 
         public delegate void ViewerEnteredEventHandler(object o, ViewerEnteredEventArgs e);
+
         public event ViewerEnteredEventHandler ViewerEntered;
 
         #endregion Handlers
 
         #region Methods
+
         private void NotifyPropertyChanged(string info)
         {
-            if(PropertyChanged != null)
+            if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
@@ -59,9 +65,9 @@ namespace OakBot
 
         private void BotChatConnection_ChatMessageReceived(object o, ChatMessageReceivedEventArgs e)
         {
-            if(keyword != "")
+            if (keyword != "")
             {
-                if(e.Message.Message == keyword)
+                if (e.Message.Message == keyword)
                 {
                     if (!entries.Contains(e.Message.Author))
                     {
@@ -70,7 +76,8 @@ namespace OakBot
                         MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0}, you've entered the {1} giveaway!", e.Message.Author, giveawayName));
                     }
                 }
-            }else
+            }
+            else
             {
                 if (!entries.Contains(e.Message.Author))
                 {
@@ -120,11 +127,10 @@ namespace OakBot
                     }
             */
 
-
             // Roll initial winner and get the Viewer object
             // No need to verify if user exist as it SHOULD exist
             int index = rnd.Next(0, workList.Count);
-            Viewer rolledViewer = MainWindow.colDatabase.FirstOrDefault(x => 
+            Viewer rolledViewer = MainWindow.colDatabase.FirstOrDefault(x =>
                 x.UserName == workList[index]);
 
             // Verify if the winner is eligable, if not remove from
@@ -143,7 +149,6 @@ namespace OakBot
                 }
                 catch (Exception)
                 {
-                    
                 }
             }
 
@@ -155,17 +160,16 @@ namespace OakBot
             OnWinnerChosen(args);
         }
 
-
         private bool MeetsRequirements(Viewer user)
         {
-            if(needsFollow)
+            if (needsFollow)
             {
                 if (!user.isFollowing())
                 {
                     return false;
                 }
             }
-            if(subscriberLuck == 10)
+            if (subscriberLuck == 10)
             {
                 if (!user.isSubscribed())
                 {
@@ -179,13 +183,16 @@ namespace OakBot
         {
             WinnerChosen(this, e);
         }
+
         #endregion Methods
 
         #region Properties
+
         /// <summary>
         /// Name of the giveaway
         /// </summary>
-        public string GiveawayName {
+        public string GiveawayName
+        {
             get
             {
                 return giveawayName;
@@ -200,7 +207,8 @@ namespace OakBot
         /// <summary>
         /// Keyword to type
         /// </summary>
-        public string Keyword {
+        public string Keyword
+        {
             get
             {
                 return keyword;
@@ -215,7 +223,8 @@ namespace OakBot
         /// <summary>
         /// Price to enter the giveaway
         /// </summary>
-        public int Price {
+        public int Price
+        {
             get
             {
                 return price;
@@ -230,7 +239,8 @@ namespace OakBot
         /// <summary>
         /// Viewer needs to follow to participate
         /// </summary>
-        public bool NeedsFollow {
+        public bool NeedsFollow
+        {
             get
             {
                 return needsFollow;
@@ -245,30 +255,32 @@ namespace OakBot
         /// <summary>
         /// Luck for Subscribers (0 is no additional luck, 10 is only subscribers can win). Can only be from 0 to 10, if not in this range, it will be 0
         /// </summary>
-        public byte SubscriberLuck {
+        public byte SubscriberLuck
+        {
             get
             {
                 return subscriberLuck;
             }
             set
             {
-                if(subscriberLuck < 10 && subscriberLuck > 0)
+                if (subscriberLuck < 10 && subscriberLuck > 0)
                 {
                     subscriberLuck = value;
                     NotifyPropertyChanged("SubscriberLuck");
-                }else
+                }
+                else
                 {
                     subscriberLuck = 0;
                     NotifyPropertyChanged("SubscriberLuck");
                 }
-                
             }
         }
 
         /// <summary>
         /// Amount of time the viewer has to answer to win the giveaway
         /// </summary>
-        public TimeSpan ResponseTime {
+        public TimeSpan ResponseTime
+        {
             get
             {
                 return responseTime;
@@ -283,7 +295,8 @@ namespace OakBot
         /// <summary>
         /// Amount of time a user has to either enter the keyword or type in chat
         /// </summary>
-        public TimeSpan GiveawayTime {
+        public TimeSpan GiveawayTime
+        {
             get
             {
                 return giveawayTime;
@@ -318,10 +331,10 @@ namespace OakBot
                 return running;
             }
         }
+
         #endregion Properties
 
         #region Constructors
-        
 
         public Giveaway(string name, TimeSpan time, string word, int cost, bool followed, byte luck, TimeSpan response)
         {
@@ -340,20 +353,18 @@ namespace OakBot
             giveawayTimer.Enabled = true;
             giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
             giveawayTimer.AutoReset = false;
-
-
         }
 
         #endregion Constructors
 
         #region Events
+
         private void GiveawayTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             running = false;
             MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
         }
+
         #endregion Events
-
     }
-
 }

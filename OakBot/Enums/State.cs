@@ -2,8 +2,8 @@
 {
     public enum State
     {
-         success,
-         not_found,
-         failed
+        success,
+        not_found,
+        failed
     }
 }

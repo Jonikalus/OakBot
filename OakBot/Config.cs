@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows;
 using System.Data.SQLite;
 using System.IO;
+using System.Windows;
 
 namespace OakBot
 {
@@ -35,18 +35,19 @@ namespace OakBot
 
         // private static char commandPrefix;
 
-        #endregion
+        #endregion Fields
 
         #region Static Property Changed Event and Handler
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+
         public static void RaiseStaticPropertyChanged(string propName)
         {
             if (StaticPropertyChanged != null)
                 StaticPropertyChanged(null, new PropertyChangedEventArgs(propName));
         }
 
-        #endregion
+        #endregion Static Property Changed Event and Handler
 
         #region Methods
 
@@ -179,7 +180,6 @@ namespace OakBot
 
                 // Close database file
                 dbConnection.Close();
-
             }
             catch (Exception ex)
             {
@@ -187,7 +187,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Properties
 
@@ -240,7 +240,6 @@ namespace OakBot
             }
         }
 
-
         public static string BotUsername
         {
             get
@@ -257,7 +256,8 @@ namespace OakBot
             }
         }
 
-        public static string BotOAuthKey {
+        public static string BotOAuthKey
+        {
             get
             {
                 return botOAuthKey;
@@ -288,8 +288,8 @@ namespace OakBot
             }
         }
 
-
-        public static string StreamerUsername {
+        public static string StreamerUsername
+        {
             get
             {
                 return streamerUsername;
@@ -352,6 +352,6 @@ namespace OakBot
         //    }
         //}
 
-        #endregion
+        #endregion Properties
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Net.Sockets;
 using System.IO;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace OakBot
@@ -18,7 +18,7 @@ namespace OakBot
 
         private TwitchCredentials _loggedinAs;
 
-        #endregion
+        #endregion Fields
 
         #region Constructors
 
@@ -47,7 +47,7 @@ namespace OakBot
             //WriteLine("USER " + user.username + " 8 * :" + user.username);
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Methods
 
@@ -84,7 +84,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Properties
 
@@ -119,7 +119,6 @@ namespace OakBot
             }
         }
 
-        #endregion
-
+        #endregion Properties
     }
 }

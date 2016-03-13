@@ -1,17 +1,17 @@
-﻿using System;
-
-namespace OakBot
+﻿namespace OakBot
 {
     public class TwitchWhisperConnection
     {
         #region Fields
 
         private MainWindow _mW;
+
         //MainWindow.delegateMessage delegateMessage;
         private BotIrcClient ircClient;
+
         private TwitchCredentials _connectedUser;
 
-        #endregion
+        #endregion Fields
 
         #region Constructors
 
@@ -28,7 +28,7 @@ namespace OakBot
             ircClient.WriteLineThrottle("CAP REQ :twitch.tv/commands");
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Methods
 
@@ -61,7 +61,7 @@ namespace OakBot
         //    _mW.Dispatcher.BeginInvoke(delegateMessage, message);
         //}
 
-        #endregion
+        #endregion Methods
 
         #region Properties
 
@@ -81,6 +81,6 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Properties
     }
 }

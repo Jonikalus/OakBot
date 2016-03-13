@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Net;
-using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
-using System.Threading;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace OakBot
 {
-    public class Song :INotifyPropertyChanged
+    public class Song : INotifyPropertyChanged
     {
         private string songName;
         private string link;
@@ -21,13 +13,16 @@ namespace OakBot
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string SongName {
+        public string SongName
+        {
             get
             {
                 return songName;
             }
         }
-        public string Link {
+
+        public string Link
+        {
             get
             {
                 return link;
@@ -38,7 +33,9 @@ namespace OakBot
                 OnPropertyChanged(Link);
             }
         }
-        public SongType Type {
+
+        public SongType Type
+        {
             get
             {
                 return type;
@@ -52,7 +49,8 @@ namespace OakBot
             {
                 type = SongType.SOUNDCLOUD;
                 songName = "Song from Soundcloud";
-            }else if(Regex.IsMatch(link, @"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$", RegexOptions.IgnoreCase))
+            }
+            else if (Regex.IsMatch(link, @"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$", RegexOptions.IgnoreCase))
             {
                 type = SongType.YOUTUBE_LINK;
                 Thread sn = new Thread(new ThreadStart(delegate ()
@@ -73,8 +71,6 @@ namespace OakBot
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        
     }
 
     public enum SongType

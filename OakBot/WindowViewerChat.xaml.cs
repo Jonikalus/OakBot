@@ -1,10 +1,10 @@
-﻿using System.Windows;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using System.Net;
 
 namespace OakBot
 {
@@ -21,7 +21,7 @@ namespace OakBot
         private ObservableCollection<IrcMessage> colViewerMessages;
         private object colLock = new object();
 
-        #endregion
+        #endregion Fields
 
         #region Constructors
 
@@ -44,7 +44,7 @@ namespace OakBot
             // messages to save system resources in case of huge global chat history.
             var viewerMessages = MainWindow.colChatMessages.Where(
                 TwitchChatMessage => TwitchChatMessage.Author == viewer.UserName);
-            foreach(IrcMessage message in viewerMessages)
+            foreach (IrcMessage message in viewerMessages)
             {
                 colViewerMessages.Add(message);
             }
@@ -57,7 +57,6 @@ namespace OakBot
             cbSubscribed.IsChecked = viewer.isSubscribed();
             using (WebClient wc = new WebClient())
             {
-
                 BitmapImage logo = new BitmapImage();
                 logo.BeginInit();
                 logo.StreamSource = wc.OpenRead(Utils.GetClient().GetMyChannel().Logo);
@@ -67,7 +66,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Methods
 
@@ -76,7 +75,7 @@ namespace OakBot
             colViewerMessages.Add(message);
         }
 
-        #endregion
+        #endregion Methods
 
         #region EventHandlers
 
@@ -102,7 +101,7 @@ namespace OakBot
 
         private void btnUnban_Click(object sender, RoutedEventArgs e)
         {
-            window.streamerChatConnection.SendChatMessage(string.Format("/unban {0}", viewer.UserName)); 
+            window.streamerChatConnection.SendChatMessage(string.Format("/unban {0}", viewer.UserName));
         }
 
         private void btnTwitchProfile_Click(object sender, RoutedEventArgs e)
@@ -120,7 +119,7 @@ namespace OakBot
             MainWindow.colChatWindows.Remove(this);
         }
 
-        #endregion
+        #endregion EventHandlers
 
         #region Properties
 
@@ -132,7 +131,6 @@ namespace OakBot
             }
         }
 
-        #endregion
-
+        #endregion Properties
     }
 }

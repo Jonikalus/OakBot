@@ -1,5 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace OakBot.Models
 {
@@ -8,9 +8,11 @@ namespace OakBot.Models
     {
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; }
+
         [JsonProperty("notifications")]
         public bool Notifications { get; set; }
+
         [JsonProperty("channel")]
-        public Channel Channel { get; set; } 
+        public Channel Channel { get; set; }
     }
 }

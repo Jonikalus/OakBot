@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace OakBot.Models
 {
@@ -9,9 +9,11 @@ namespace OakBot.Models
     {
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; }
+
         [JsonProperty("updated_at")]
         public DateTime UpdatedAt { get; set; }
+
         [JsonProperty("scopes")]
-        public List<string> Scopes { get; set; } 
+        public List<string> Scopes { get; set; }
     }
 }

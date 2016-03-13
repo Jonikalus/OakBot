@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         Title="GameWispAuth" Height="544" Width="382">
     <Grid>
-        <WebBrowser x:Name="wbTwitchAuth" Navigating="wbTwitchAuth_Navigating" Navigated="wbTwitchAuth_Navigated"/>
-
+        <WebBrowser x:Name="wbTwitchAuth" Navigating="wbTwitchAuth_Navigating" Navigated="wbTwitchAuth_Navigated" />
     </Grid>
 </Window>

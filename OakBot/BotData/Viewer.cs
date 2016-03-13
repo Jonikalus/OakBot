@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.ComponentModel;
-using System.Net;
 using System.Globalization;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+using System.Net;
 
 namespace OakBot
 {
@@ -13,7 +12,7 @@ namespace OakBot
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        #endregion
+        #endregion Fields
 
         #region Constructors
 
@@ -31,7 +30,7 @@ namespace OakBot
             this.ign = "";
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Methods
 
@@ -100,12 +99,13 @@ namespace OakBot
             return userName;
         }
 
-        #endregion
+        #endregion Methods
 
         #region Fields and Properties
 
         // Username of the viewer
         private string userName;
+
         public string UserName
         {
             get
@@ -116,6 +116,7 @@ namespace OakBot
 
         // Points the user has
         private long points;
+
         public long Points
         {
             get
@@ -134,6 +135,7 @@ namespace OakBot
 
         // Points the user have spent
         private long spent;
+
         public long Spent
         {
             get
@@ -153,6 +155,7 @@ namespace OakBot
         // Amount of raids this user did on
         // the users channel (mostly other streamers)
         private long raids;
+
         public long Raids
         {
             get
@@ -168,9 +171,10 @@ namespace OakBot
                 }
             }
         }
-        
+
         // Title earned by points/hours or bought
         private string title;
+
         public string Title
         {
             get
@@ -189,6 +193,7 @@ namespace OakBot
 
         // Watched timespan of the viewer
         private TimeSpan watched;
+
         public TimeSpan Watched
         {
             get
@@ -200,6 +205,7 @@ namespace OakBot
                 watched = value;
             }
         }
+
         public double Hours
         {
             get
@@ -207,6 +213,7 @@ namespace OakBot
                 return Math.Round(watched.TotalHours, 1, MidpointRounding.AwayFromZero);
             }
         }
+
         public long Minutes
         {
             get
@@ -218,6 +225,7 @@ namespace OakBot
         // Timestamp of last seen
         // This will be updated each background check
         private DateTime lastSeen;
+
         public DateTime LastSeen
         {
             get
@@ -232,6 +240,7 @@ namespace OakBot
 
         // In-Game-Name field that viewers can set
         private string ign;
+
         public string IGN
         {
             get
@@ -240,14 +249,13 @@ namespace OakBot
             }
             set
             {
-                if(value != ign)
+                if (value != ign)
                 {
                     title = value;
                     NotifyPropertyChanged("IGN");
                 }
             }
         }
-
 
         //private List<Group> groups;
         //public List<Group> Groups
@@ -266,27 +274,32 @@ namespace OakBot
         // Regular indicator once point/hours goal has been met
         // Won't be revoked by the bot but can be by the user
         public bool regular { get; set; }
+
         public bool forcedRegRemove { get; set; }
 
         public Rank rank { get; set; }
 
         // VIP Bronze
         public bool VIP1 { get; set; }
+
         public DateTime gotVIP1 { get; set; }
         public DateTime expVIP1 { get; set; }
 
         // VIP Silver
         public bool VIP2 { get; set; }
+
         public DateTime gotVIP2 { get; set; }
         public DateTime expVIP2 { get; set; }
 
         // VIP Gold
         public bool VIP3 { get; set; }
+
         public DateTime gotVIP3 { get; set; }
         public DateTime expVIP3 { get; set; }
 
         // JOIN and PART messages and comment field
         public string msgJoin { get; set; }
+
         public string msgPart { get; set; }
         public string comment { get; set; }
 
@@ -294,6 +307,6 @@ namespace OakBot
         // Requested by KiroKnightbow
         //public bool musicDJ { get; set; }
 
-        #endregion
+        #endregion Fields and Properties
     }
 }

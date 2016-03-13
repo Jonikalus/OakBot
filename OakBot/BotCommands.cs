@@ -1,10 +1,6 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
+﻿using Discord;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
 
 namespace OakBot
 {
@@ -40,7 +36,6 @@ namespace OakBot
 
                         // Send response
                         SendMessageDiscord(string.Format("Quote has been added with ID of: {0}", newQuote.Id), message.Server.Id, message.Channel.Id);
-
                     }
                     catch (Exception)
                     {
@@ -80,7 +75,6 @@ namespace OakBot
                 }
                 else
                 {
-
                     Quote q;
 
                     try
@@ -103,7 +97,6 @@ namespace OakBot
                         q.DisplayGame ? "while playing " + q.Game : "")
                     , message.Server.Id, message.Channel.Id);
                 }
-
             }
             else if (command == "!songrequest")
             {
@@ -129,7 +122,6 @@ namespace OakBot
                         SendMessageDiscord("Invalid song link or id.", message.Server.Id, message.Channel.Id);
                     }
                 }
-
             }
             else if (command == "!currentsong")
             {
@@ -177,7 +169,6 @@ namespace OakBot
 
                         // Send response
                         SendAndShowMessage(string.Format("Quote has been added with ID of: {0}", newQuote.Id));
-
                     }
                     catch (Exception)
                     {
@@ -217,7 +208,6 @@ namespace OakBot
                 }
                 else
                 {
-
                     Quote q;
 
                     try
@@ -240,7 +230,6 @@ namespace OakBot
                         q.DisplayGame ? "while playing " + q.Game : "")
                     );
                 }
-
             }
             else if (command == "!songrequest")
             {
@@ -266,7 +255,6 @@ namespace OakBot
                         SendAndShowMessage("Invalid song link or id.");
                     }
                 }
-
             }
             else if (command == "!currentsong")
             {

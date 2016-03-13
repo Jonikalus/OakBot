@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
-using System.Diagnostics;
 
 namespace OakBot
 {
     public class SimpleHTTPServer
     {
-        private readonly string[] _indexFiles = {
-            "index.html",
-            "index.htm",
-            "default.html",
-            "default.htm"
-        };
-
         private static IDictionary<string, string> _mimeTypeMappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
+
         #region extension to MIME type list
+
             {".asf", "video/x-ms-asf"},
             {".asx", "video/x-ms-asf"},
             {".avi", "video/x-msvideo"},
@@ -85,19 +77,19 @@ namespace OakBot
             {".xml", "text/xml"},
             {".xpi", "application/x-xpinstall"},
             {".zip", "application/zip"},
-        #endregion
+        #endregion extension to MIME type list
         };
-        private Thread _serverThread;
-        private string _rootDirectory;
+
+        private readonly string[] _indexFiles = {
+            "index.html",
+            "index.htm",
+            "default.html",
+            "default.htm"
+        };
         private HttpListener _listener;
         private int _port;
-
-        public int Port
-        {
-            get { return _port; }
-            private set { }
-        }
-
+        private string _rootDirectory;
+        private Thread _serverThread;
         /// <summary>
         /// Construct server with given port.
         /// </summary>
@@ -122,6 +114,11 @@ namespace OakBot
             this.Initialize(path, port);
         }
 
+        public int Port
+        {
+            get { return _port; }
+            private set { }
+        }
         /// <summary>
         /// Stop server and dispose all functions.
         /// </summary>
@@ -129,6 +126,14 @@ namespace OakBot
         {
             _serverThread.Abort();
             _listener.Stop();
+        }
+
+        private void Initialize(string path, int port)
+        {
+            this._rootDirectory = path;
+            this._port = port;
+            _serverThread = new Thread(this.Listen);
+            _serverThread.Start();
         }
 
         private void Listen()
@@ -145,7 +150,6 @@ namespace OakBot
                 }
                 catch (Exception ex)
                 {
-
                 }
             }
         }
@@ -196,7 +200,6 @@ namespace OakBot
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 }
-
             }
             else
             {
@@ -205,15 +208,5 @@ namespace OakBot
 
             context.Response.OutputStream.Close();
         }
-
-        private void Initialize(string path, int port)
-        {
-            this._rootDirectory = path;
-            this._port = port;
-            _serverThread = new Thread(this.Listen);
-            _serverThread.Start();
-        }
-
-
     }
 }

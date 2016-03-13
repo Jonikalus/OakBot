@@ -7,7 +7,7 @@
         private string userName;
         private string oauth;
 
-        #endregion
+        #endregion Fields
 
         #region Constructors
 
@@ -17,7 +17,7 @@
             this.oauth = oauth;
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Methods
 
@@ -26,7 +26,7 @@
             return userName;
         }
 
-        #endregion
+        #endregion Methods
 
         #region Properties
 
@@ -46,6 +46,6 @@
             }
         }
 
-        #endregion
+        #endregion Properties
     }
 }

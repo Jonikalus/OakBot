@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Data.SQLite;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Windows.Controls;
-using System.Reflection;
-using System.Windows;
-using System.Net;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using RestSharp;
+﻿using Newtonsoft.Json.Linq;
 using OakBot.Clients;
-using System.Collections.Specialized;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace OakBot
 {
@@ -46,7 +39,6 @@ namespace OakBot
 
         public static string getTitleFromYouTube(string link)
         {
-
             try
             {
                 string id = getIdFromYouTube(link);
@@ -60,7 +52,6 @@ namespace OakBot
                     title = snippet.GetValue("title").ToString();
                     return title;
                 }
-
             }
             catch (Exception ex)
             {
@@ -99,15 +90,14 @@ namespace OakBot
         [DllImport("wininet.dll", SetLastError = true)]
         public static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int lpdwBufferLength);
 
-
         public static unsafe void SuppressWininetBehavior()
         {
             /* SOURCE: http://msdn.microsoft.com/en-us/library/windows/desktop/aa385328%28v=vs.85%29.aspx
                 * INTERNET_OPTION_SUPPRESS_BEHAVIOR (81):
-                *      A general purpose option that is used to suppress behaviors on a process-wide basis. 
-                *      The lpBuffer parameter of the function must be a pointer to a DWORD containing the specific behavior to suppress. 
-                *      This option cannot be queried with InternetQueryOption. 
-                *      
+                *      A general purpose option that is used to suppress behaviors on a process-wide basis.
+                *      The lpBuffer parameter of the function must be a pointer to a DWORD containing the specific behavior to suppress.
+                *      This option cannot be queried with InternetQueryOption.
+                *
                 * INTERNET_SUPPRESS_COOKIE_PERSIST (3):
                 *      Suppresses the persistence of cookies, even if the server has specified them as persistent.
                 *      Version:  Requires Internet Explorer 8.0 or later.
@@ -185,7 +175,6 @@ namespace OakBot
             botHttp = new SimpleHTTPServer(Config.AppDataPath + "\\Webserver", 8080);
         }
 
-
         #region TwitchRestApi
 
         public static TwitchAuthenticatedClient GetClient()
@@ -193,8 +182,6 @@ namespace OakBot
             return new TwitchAuthenticatedClient(Config.StreamerOAuthKey, Config.TwitchClientID);
         }
 
-        #endregion
-
-        
+        #endregion TwitchRestApi
     }
 }

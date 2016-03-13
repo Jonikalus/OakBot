@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace OakBot
 {
@@ -53,7 +43,6 @@ namespace OakBot
                 {
                     MessageBox.Show("Use numberic values only.", "Oakbot Database Cleanup", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
             }
             else if (rbPurge.IsChecked == true)
             {

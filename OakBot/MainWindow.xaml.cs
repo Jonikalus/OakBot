@@ -1,33 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
+﻿using Discord;
+using OakBot.Args;
+using OakBot.Clients;
+using OakBot.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Drawing;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
-using System.Globalization;
+using System.Linq;
 using System.Net;
-using Microsoft.Win32;
-using RestSharp;
-using OakBot.Models;
-using OakBot.Clients;
-using System.Threading.Tasks;
-using Discord;
 using System.Text.RegularExpressions;
-using OakBot.Args;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 // http://stackoverflow.com/questions/2505492/wpf-update-binding-in-a-background-thread
 // http://stackoverflow.com/questions/2006729/how-can-i-have-a-listbox-auto-scroll-when-a-new-item-is-added
@@ -47,17 +37,20 @@ namespace OakBot
 
         // Streamer and Bot account info
         public TwitchCredentials accountStreamer;
+
         public TwitchCredentials accountBot;
 
         // Chat connections
         public TwitchChatConnection botChatConnection;
+
         public TwitchChatConnection streamerChatConnection;
 
         // API Client
-        TwitchAuthenticatedClient client;
+        private TwitchAuthenticatedClient client;
 
         // Collections
         public static ObservableCollection<IrcMessage> colChatMessages = new ObservableCollection<IrcMessage>();
+
         public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
         public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
         public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
@@ -66,7 +59,7 @@ namespace OakBot
         public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
 
         private object _lockChat = new object();
-        private object _lockViewers = new object(); 
+        private object _lockViewers = new object();
         private object _lockDatabase = new object();
         private object _lockSongs = new object();
 
@@ -74,17 +67,19 @@ namespace OakBot
 
         // Threads
         private Thread streamerChat;
+
         private Thread botChat;
 
         // Song Info
         public static bool playState = false;
+
         public static int indexSong = -1;
 
         public static DiscordClient discord;
 
         public Giveaway testGw, testGw2;
 
-        #endregion
+        #endregion Fields
 
         #region Constructor
 
@@ -138,7 +133,7 @@ namespace OakBot
 
             lvSongs.ItemsSource = colSongs;
 
-            // Testing Commands 
+            // Testing Commands
             colBotCommands.Add(new UserCommand("!test", "Test received!", 30, 0, true));
             colBotCommands.Add(new UserCommand(":yatb", "Yet Another Twitch Bot.", 30, 60, true));
             colBotCommands.Add(new UserCommand("!who", "You are @user@", 0, 0, true));
@@ -149,7 +144,7 @@ namespace OakBot
             colBotCommands.Add(new UserCommand("!song", "Currently playing: @song@!", 0, 0, true));
             colBotCommands.Add(new UserCommand("Giveaway", "Just stop...", 0, 0, true, true));
             colBotCommands.Add(new UserCommand("!slap", "@user@ slaps @target@ so hard, he bursts into pieces!", 0, 0, true));
-                        
+
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
 
@@ -168,8 +163,6 @@ namespace OakBot
                     ConnectStreamer();
                 }
             }
-            
-            
         }
 
         private void Discord_MessageReceived(object sender, MessageEventArgs e)
@@ -190,7 +183,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Methods
 
@@ -202,11 +195,9 @@ namespace OakBot
             }
             catch (ThreadAbortException)
             {
-
             }
             catch (Exception)
             {
-
             }
 
             // Disable UI elements
@@ -240,11 +231,9 @@ namespace OakBot
             }
             catch (ThreadAbortException)
             {
-
             }
             catch (Exception)
             {
-
             }
 
             // Enable UI elements
@@ -265,11 +254,9 @@ namespace OakBot
             }
             catch (ThreadAbortException)
             {
-
             }
             catch (Exception)
             {
-
             }
 
             // Twitch Credentials
@@ -303,7 +290,7 @@ namespace OakBot
                     txtTitle.Text = Utils.GetClient().GetMyChannel().Status;
                     cbGame.Text = Utils.GetClient().GetMyChannel().Game;
                     tbStreamDelay.Text = Utils.GetClient().GetMyChannel().Delay.ToString();
-                    
+
                     // Get Streamers Avatar
                     using (WebClient wc = new WebClient())
                     {
@@ -320,7 +307,7 @@ namespace OakBot
                     {
                         // Stream delay
                         tbStreamDelay.IsEnabled = true;
-                        
+
                         // Manual Commercials
                         gbManualCommercials.IsEnabled = true;
                     }
@@ -329,7 +316,6 @@ namespace OakBot
                 {
                     Trace.TraceError(ex.ToString());
                 }
-
             }
         }
 
@@ -341,11 +327,9 @@ namespace OakBot
             }
             catch (ThreadAbortException)
             {
-
             }
             catch (Exception)
             {
-
             }
 
             // Enable UI elements
@@ -365,7 +349,7 @@ namespace OakBot
             cbAutoConnectStreamer.IsChecked = Config.AutoConnectStreamer;
         }
 
-        #endregion
+        #endregion Methods
 
         #region Settings EventHandlers
 
@@ -386,7 +370,7 @@ namespace OakBot
 
         private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
         {
-            if(textBoxBotName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            if (textBoxBotName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxBotName.Text))
             {
                 MessageBox.Show("Please enter the bot Twitch username first before trying to connect with Twitch.",
                     "Bot Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -434,7 +418,7 @@ namespace OakBot
 
         private void btnBotConnect_Click(object sender, RoutedEventArgs e)
         {
-            if(btnBotConnect.Content.ToString() == "Connect")
+            if (btnBotConnect.Content.ToString() == "Connect")
             {
                 ConnectBot();
             }
@@ -444,7 +428,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion BotConnect
 
         #region Streamer Connect
 
@@ -520,7 +504,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Streamer Connect
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
@@ -528,12 +512,9 @@ namespace OakBot
             windowImport.ShowDialog();
         }
 
-        #endregion
-
-        #region Dashboard EventHandlers
+        #endregion Settings EventHandlers
 
 
-        #endregion
 
         #region Twitch Chat
 
@@ -556,7 +537,7 @@ namespace OakBot
         {
             if (e.Key == Key.Return)
             {
-                // Get the line and 
+                // Get the line and
                 if (!string.IsNullOrWhiteSpace(ChatSend.Text))
                 {
                     // Speak as Streamer or Bot
@@ -631,13 +612,13 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Twitch Chat
 
         #region Database
 
         private void tbFilterOnName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(databaseView != null)
+            if (databaseView != null)
             {
                 databaseView.Refresh();
                 lblFilterCnt.Content = databaseView.Cast<Viewer>().Count();
@@ -650,7 +631,7 @@ namespace OakBot
             return viewer.UserName.Contains(tbFilterOnName.Text);
         }
 
-        #endregion
+        #endregion Database
 
         #region Global EventHandlers
 
@@ -671,10 +652,9 @@ namespace OakBot
 
         private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
         }
 
-        #endregion
+        #endregion Global EventHandlers
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
@@ -712,7 +692,7 @@ namespace OakBot
 
         private void lvSongs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(lvSongs.SelectedIndex != -1)
+            if (lvSongs.SelectedIndex != -1)
             {
                 Song selectedSong = (Song)lvSongs.SelectedItem;
                 cefSong.Load(selectedSong.Link);
@@ -749,7 +729,6 @@ namespace OakBot
                 // Pause
                 cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.pauseVideo();");
                 btnPlayerCtl.Content = "Play";
-                
             }
             else
             {
@@ -763,10 +742,11 @@ namespace OakBot
         private void btnPrev_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(indexSong.ToString());
-            if(indexSong == 0)
+            if (indexSong == 0)
             {
                 indexSong = colSongs.Count - 1;
-            }else
+            }
+            else
             {
                 indexSong--;
             }
@@ -781,7 +761,8 @@ namespace OakBot
             if (indexSong == colSongs.Count - 1)
             {
                 indexSong = 0;
-            }else
+            }
+            else
             {
                 indexSong++;
             }
@@ -873,7 +854,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Manual Commercial
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -929,14 +910,14 @@ namespace OakBot
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             discord.Connect(txtEmail.Text, pwdPassword.Password);
-            while(discord.State != ConnectionState.Connected)
+            while (discord.State != ConnectionState.Connected)
             {
                 Task.Delay(25);
             }
             discord.MessageReceived += Discord_MessageReceived;
             txtUsername.Text = discord.CurrentUser.Name;
             int serverCounter = 0, channelCounter = 0, userCounter = 0;
-            foreach(Server s in discord.Servers)
+            foreach (Server s in discord.Servers)
             {
                 serverCounter++;
                 TreeViewItem server = new TreeViewItem();
@@ -944,19 +925,19 @@ namespace OakBot
                 TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
                 voice.Header = "Voice Channels";
                 text.Header = "Text Channels";
-                foreach(Discord.Channel c in s.VoiceChannels)
+                foreach (Discord.Channel c in s.VoiceChannels)
                 {
                     channelCounter++;
                     TreeViewItem channel = new TreeViewItem();
                     channel.Header = c.Name;
-                    foreach(Discord.User u in c.Users)
+                    foreach (Discord.User u in c.Users)
                     {
                         userCounter++;
                         channel.Items.Add(u.Name);
                     }
                     voice.Items.Add(channel);
                 }
-                foreach(Discord.Channel c in s.TextChannels)
+                foreach (Discord.Channel c in s.TextChannels)
                 {
                     channelCounter++;
                     text.Items.Add(c);

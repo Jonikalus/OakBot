@@ -1,6 +1,6 @@
-﻿using System;
+﻿using OakBot.Enums;
+using System;
 using System.Collections.Generic;
-using OakBot.Enums;
 
 namespace OakBot.Helpers
 {
@@ -9,13 +9,14 @@ namespace OakBot.Helpers
     {
         private int _pageSize = 25;
         private const int MaxPageSize = 100;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PagedList{T}"/> class.
         /// </summary>
         protected PagedList()
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PagedList{T}"/> class.
         /// </summary>

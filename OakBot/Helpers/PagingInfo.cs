@@ -5,6 +5,7 @@
     {
         private int _pageSize;
         private const int MaxPageSize = 100;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PagingInfo"/> class.
         /// </summary>
@@ -29,6 +30,7 @@
         /// The page.
         /// </value>
         public int Page { get; set; }
+
         /// <summary>
         /// Gets or sets a value indicating whether [view all].
         /// </summary>

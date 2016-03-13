@@ -8,24 +8,23 @@
         WindowStartupLocation="CenterOwner"
         Title="OakBot: Clean Database" Height="415" Width="340" ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="btnCancel" IsDefault="True" IsCancel="True" Content="Cancel" Margin="0,0,10,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
-        <Button x:Name="btnClean" Content="Start Clean" HorizontalAlignment="Left" Margin="10,0,0,10" Width="75" Height="20" VerticalAlignment="Bottom" Click="btnClean_Click"/>
-        <CheckBox x:Name="cbPoints" Content="Remove when points are less than" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="rbTrim" Content="Trim database" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="db"/>
-        <RadioButton x:Name="rbPurge" Content="Purge database" HorizontalAlignment="Left" Margin="10,250,0,0" VerticalAlignment="Top" GroupName="db"/>
-        <TextBox x:Name="tbPoints" HorizontalAlignment="Left" Height="23" Margin="79,56,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="77" UndoLimit="1" IsEnabled="{Binding ElementName=cbPoints, Path=IsChecked}"/>
-        <CheckBox x:Name="cbHours" Content="Remove when watched minutes are less than" HorizontalAlignment="Left" Margin="30,84,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbWatched" HorizontalAlignment="Left" Height="23" Margin="79,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" Text="0" UndoLimit="1" IsEnabled="{Binding ElementName=cbHours, Path=IsChecked}"/>
-        <CheckBox x:Name="cbLastSeen" Content="Remove when last seen is more than" HorizontalAlignment="Left" Margin="30,132,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbDays" HorizontalAlignment="Left" Height="23" Margin="79,152,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" Text="0" UndoLimit="1" IsEnabled="{Binding ElementName=cbLastSeen, Path=IsChecked}"/>
-        <Label x:Name="lblPoints" Content="Points" HorizontalAlignment="Left" Margin="161,53,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblMinutes" Content="Minutes" HorizontalAlignment="Left" Margin="161,101,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblDays" Content="Days" HorizontalAlignment="Left" Margin="161,149,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="cbExists" Content="Remove when viewer does not exists" HorizontalAlignment="Left" Margin="30,180,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-        <TextBlock x:Name="tbExists" HorizontalAlignment="Left" Margin="79,200,0,0" TextWrapping="Wrap" Text="Warning: This can take a long time in large databases as it will verify every viewer with Twitch if it still exists." VerticalAlignment="Top" Width="243" Height="50" Foreground="Red"/>
-        <TextBlock x:Name="tbExists_Copy" HorizontalAlignment="Left" Margin="30,270,0,0" TextWrapping="Wrap" Text="This will remove all data from the database." VerticalAlignment="Top" Width="243" Height="20" Foreground="Red"/>
-        <ProgressBar Height="15" Margin="10,321,10,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblDays_Copy" Content="This window will close automatically when finished:" HorizontalAlignment="Left" Margin="10,295,0,0" VerticalAlignment="Top"/>
-
+        <Button x:Name="btnCancel" IsDefault="True" IsCancel="True" Content="Cancel" Margin="0,0,10,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" />
+        <Button x:Name="btnClean" Content="Start Clean" HorizontalAlignment="Left" Margin="10,0,0,10" Width="75" Height="20" VerticalAlignment="Bottom" Click="btnClean_Click" />
+        <CheckBox x:Name="cbPoints" Content="Remove when points are less than" HorizontalAlignment="Left" Margin="30,36,0,0" VerticalAlignment="Top" />
+        <RadioButton x:Name="rbTrim" Content="Trim database" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="db" />
+        <RadioButton x:Name="rbPurge" Content="Purge database" HorizontalAlignment="Left" Margin="10,250,0,0" VerticalAlignment="Top" GroupName="db" />
+        <TextBox x:Name="tbPoints" HorizontalAlignment="Left" Height="23" Margin="79,56,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="77" UndoLimit="1" IsEnabled="{Binding ElementName=cbPoints, Path=IsChecked}" />
+        <CheckBox x:Name="cbHours" Content="Remove when watched minutes are less than" HorizontalAlignment="Left" Margin="30,84,0,0" VerticalAlignment="Top" />
+        <TextBox x:Name="tbWatched" HorizontalAlignment="Left" Height="23" Margin="79,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" Text="0" UndoLimit="1" IsEnabled="{Binding ElementName=cbHours, Path=IsChecked}" />
+        <CheckBox x:Name="cbLastSeen" Content="Remove when last seen is more than" HorizontalAlignment="Left" Margin="30,132,0,0" VerticalAlignment="Top" />
+        <TextBox x:Name="tbDays" HorizontalAlignment="Left" Height="23" Margin="79,152,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="77" Text="0" UndoLimit="1" IsEnabled="{Binding ElementName=cbLastSeen, Path=IsChecked}" />
+        <Label x:Name="lblPoints" Content="Points" HorizontalAlignment="Left" Margin="161,53,0,0" VerticalAlignment="Top" />
+        <Label x:Name="lblMinutes" Content="Minutes" HorizontalAlignment="Left" Margin="161,101,0,0" VerticalAlignment="Top" />
+        <Label x:Name="lblDays" Content="Days" HorizontalAlignment="Left" Margin="161,149,0,0" VerticalAlignment="Top" />
+        <CheckBox x:Name="cbExists" Content="Remove when viewer does not exists" HorizontalAlignment="Left" Margin="30,180,0,0" VerticalAlignment="Top" IsEnabled="False" />
+        <TextBlock x:Name="tbExists" HorizontalAlignment="Left" Margin="79,200,0,0" TextWrapping="Wrap" Text="Warning: This can take a long time in large databases as it will verify every viewer with Twitch if it still exists." VerticalAlignment="Top" Width="243" Height="50" Foreground="Red" />
+        <TextBlock x:Name="tbExists_Copy" HorizontalAlignment="Left" Margin="30,270,0,0" TextWrapping="Wrap" Text="This will remove all data from the database." VerticalAlignment="Top" Width="243" Height="20" Foreground="Red" />
+        <ProgressBar Height="15" Margin="10,321,10,0" VerticalAlignment="Top" />
+        <Label x:Name="lblDays_Copy" Content="This window will close automatically when finished:" HorizontalAlignment="Left" Margin="10,295,0,0" VerticalAlignment="Top" />
     </Grid>
 </Window>

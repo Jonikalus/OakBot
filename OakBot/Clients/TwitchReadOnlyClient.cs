@@ -1,13 +1,12 @@
-﻿using RestSharp;
-using OakBot.Enums;
+﻿using OakBot.Enums;
 using OakBot.Helpers;
 using OakBot.Models;
+using RestSharp;
 
 namespace OakBot.Clients
 {
     public class TwitchReadOnlyClient : ITwitchClient
     {
-
         public readonly RestClient restClient;
 
         public TwitchReadOnlyClient() : this(TwitchHelper.twitchApiUrl)
@@ -240,7 +239,6 @@ namespace OakBot.Clients
             var response = restClient.Execute<TwitchList<Video>>(request);
             return response.Data;
         }
-
 
         public RestRequest GetRequest(string url, Method method)
         {

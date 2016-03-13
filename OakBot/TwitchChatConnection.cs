@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Linq;
+﻿using OakBot.Args;
 using System.Diagnostics;
-using OakBot.Args;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace OakBot
 {
@@ -15,14 +15,15 @@ namespace OakBot
         private string joinedChannel;
         private bool isBot;
 
-        #endregion
+        #endregion Fields
 
         #region Handlers
 
         public delegate void ChatMessageReceivedHandler(object o, ChatMessageReceivedEventArgs e);
+
         public event ChatMessageReceivedHandler ChatMessageReceived;
 
-        #endregion
+        #endregion Handlers
 
         #region Constructors
 
@@ -44,11 +45,10 @@ namespace OakBot
             }
             ChatMessageReceived += (s, e) =>
             {
-
             };
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Methods
 
@@ -109,7 +109,7 @@ namespace OakBot
                             {
                                 Utils.AddToViewersCol(username);
                             }
-                        break;
+                            break;
 
                         // JOIN Event
                         case "JOIN":
@@ -119,8 +119,8 @@ namespace OakBot
                         // PART Event
                         case "PART":
                             Utils.RemoveFromViewersCol(ircMessage.Author);
-                        break;
-                        
+                            break;
+
                         // PRIVMSG (Chat Message Received) Event
                         case "PRIVMSG":
                             ChatMessageReceived(this, new ChatMessageReceivedEventArgs(ircMessage));
@@ -140,12 +140,11 @@ namespace OakBot
                             //    MainWindow.colChatMessages.Add(ircMessage);
                             //}));
 
-
                             // Execute command checking and executing in a task to offload receiving
-                            new Task(() => {
-
+                            new Task(() =>
+                            {
                                 string firstWord = Regex.Match(ircMessage.Message, @"^\S+\b").Value.ToLower();
-                                UserCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x => 
+                                UserCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x =>
                                     x.Command == firstWord);
 
                                 if (foundCommand != null)
@@ -156,9 +155,8 @@ namespace OakBot
                                 {
                                     BotCommands.RunBotCommand(firstWord, ircMessage);
                                 }
-
                             }).Start();
-                        break;
+                            break;
                     }
                 }
                 else
@@ -192,7 +190,7 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Properies
 
@@ -212,6 +210,6 @@ namespace OakBot
             }
         }
 
-        #endregion
+        #endregion Properies
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using RestSharp;
-using RestSharp.Deserializers;
-
-namespace OakBot
+﻿namespace OakBot
 {
     public class TwitchConnection
     {
