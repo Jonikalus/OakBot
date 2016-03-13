@@ -11,18 +11,30 @@ namespace OakBot
     /// </summary>
     public partial class WindowImportData : Window
     {
+        #region Public Constructors
+
         public WindowImportData()
         {
             InitializeComponent();
         }
 
-        #region AnkhbotImport
+        #endregion Public Constructors
+
+        #region Private Methods
 
         private void btnImportAnkh_Click(object sender, RoutedEventArgs e)
         {
             if (ImportFromAnkhbot())
             {
                 this.Close();
+            }
+        }
+
+        private void btnImportDeep_Click(object sender, RoutedEventArgs e)
+        {
+            if (tbDeepSecret.Text != "Deepbot API Secret")
+            {
+                // TODO connect to deepbot websocket
             }
         }
 
@@ -170,16 +182,6 @@ namespace OakBot
             return false;
         }
 
-        #endregion AnkhbotImport
-
-        private void btnImportDeep_Click(object sender, RoutedEventArgs e)
-        {
-            if (tbDeepSecret.Text != "Deepbot API Secret")
-            {
-                // TODO connect to deepbot websocket
-            }
-        }
-
         private void tbDeepSecret_GotFocus(object sender, RoutedEventArgs e)
         {
             tbDeepSecret.Clear();
@@ -194,5 +196,7 @@ namespace OakBot
                 tbDeepSecret.Text = "Deepbot API Secret";
             }
         }
+
+        #endregion Private Methods
     }
 }

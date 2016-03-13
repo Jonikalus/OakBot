@@ -8,9 +8,15 @@ namespace OakBot.Clients
 {
     public class TwitchAuthenticatedClient : TwitchReadOnlyClient, ITwitchClient
     {
-        private readonly string oauth;
+        #region Private Fields
+
         private readonly string clientId;
+        private readonly string oauth;
         private readonly string username;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public TwitchAuthenticatedClient(string oauth, string clientId) : base()
         {
@@ -25,25 +31,48 @@ namespace OakBot.Clients
             this.username = user.Name;
         }
 
-        public Channel GetMyChannel()
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        public TwitchResponse Block(string target)
         {
-            try
-            {
-                var request = GetRequest("channel", Method.GET);
-                var response = restClient.Execute<Channel>(request);
-                return response.Data;
-            }
-            catch (Exception ex)
-            {
-                throw new TwitchException("Error fetching channel data", ex);
-            }
+            var request = GetRequest("users/{user}/blocks/{target}", Method.PUT);
+            request.AddUrlSegment("user", username);
+            request.AddUrlSegment("target", target);
+            var response = restClient.Execute<TwitchResponse>(request);
+            return response.Data;
         }
 
-        // more details than GetUser(myname)
-        public User GetMyUser()
+        // has the channel a subscription programm?
+        public bool CanSubscribeToChannel(string channel)
         {
-            var request = GetRequest("user", Method.GET);
-            var response = restClient.Execute<User>(request);
+            return GetSubscribedChannel(channel).Status != 422;
+        }
+
+        public FollowedChannel Follow(string target, bool notifications = false)
+        {
+            var request = GetRequest("users/{user}/follows/channels/{target}", Method.PUT);
+            request.AddUrlSegment("user", username);
+            request.AddUrlSegment("target", target);
+            request.AddParameter("notifications", notifications);
+            var response = restClient.Execute<FollowedChannel>(request);
+            return response.Data;
+        }
+
+        public TwitchList<Block> GetBlocks()
+        {
+            var request = GetRequest("users/{user}/blocks", Method.GET);
+            request.AddUrlSegment("user", username);
+            var response = restClient.Execute<TwitchList<Block>>(request);
+            return response.Data;
+        }
+
+        public TwitchList<User> GetChannelEditors()
+        {
+            var request = GetRequest("channels/{channel}/editors", Method.GET);
+            request.AddUrlSegment("channel", username);
+            var response = restClient.Execute<TwitchList<User>>(request);
             return response.Data;
         }
 
@@ -63,69 +92,91 @@ namespace OakBot.Clients
             return response.Data;
         }
 
+        public TwitchList<Follower> GetFollowers(PagingInfo pagingInfo = null, SortDirection sortDirection = SortDirection.asc)
+        {
+            var request = GetRequest("channels/{channel}/follows", Method.GET);
+            request.AddUrlSegment("channel", username);
+            TwitchHelper.AddPaging(request, pagingInfo);
+            request.AddParameter("direction", sortDirection);
+            var response = restClient.Execute<TwitchList<Follower>>(request);
+            return response.Data;
+        }
+
+        public Channel GetMyChannel()
+        {
+            try
+            {
+                var request = GetRequest("channel", Method.GET);
+                var response = restClient.Execute<Channel>(request);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                throw new TwitchException("Error fetching channel data", ex);
+            }
+        }
+
         public StreamResult GetMyStream()
         {
             return GetStream(username);
         }
 
-        public TwitchList<Block> GetBlocks()
+        // more details than GetUser(myname)
+        public User GetMyUser()
         {
-            var request = GetRequest("users/{user}/blocks", Method.GET);
-            request.AddUrlSegment("user", username);
-            var response = restClient.Execute<TwitchList<Block>>(request);
+            var request = GetRequest("user", Method.GET);
+            var response = restClient.Execute<User>(request);
             return response.Data;
         }
 
-        public TwitchResponse Block(string target)
+        public RestRequest GetRequest(string url, Method method)
         {
-            var request = GetRequest("users/{user}/blocks/{target}", Method.PUT);
+            RestRequest restRequest = new RestRequest(url, method);
+            restRequest.AddHeader("Client-ID", clientId);
+            restRequest.AddHeader("Authorization", String.Format("OAuth {0}", oauth));
+            return restRequest;
+        }
+
+        // a channel you subscribed
+        public Subscription GetSubscribedChannel(string channel)
+        {
+            var request = GetRequest("users/{user}/subscriptions/{channel}", Method.GET);
             request.AddUrlSegment("user", username);
-            request.AddUrlSegment("target", target);
-            var response = restClient.Execute<TwitchResponse>(request);
+            request.AddUrlSegment("channel", channel);
+            var response = restClient.Execute<Subscription>(request);
             return response.Data;
         }
 
-        public TwitchResponse Unblock(string target)
+        // someone who subscribed your channel
+        public Subscription GetSubscriber(string user)
         {
-            var request = GetRequest("users/{user}/blocks/{target}", Method.DELETE);
-            request.AddUrlSegment("user", username);
-            request.AddUrlSegment("target", target);
-            var response = restClient.Execute<TwitchResponse>(request);
-            return response.Data;
-        }
-
-        public TwitchList<User> GetChannelEditors()
-        {
-            var request = GetRequest("channels/{channel}/editors", Method.GET);
+            var request = GetRequest("channels/{channel}/subscriptions/{user}", Method.GET);
             request.AddUrlSegment("channel", username);
-            var response = restClient.Execute<TwitchList<User>>(request);
+            request.AddUrlSegment("user", user);
+            var response = restClient.Execute<Subscription>(request);
             return response.Data;
         }
 
-        public Channel Update(string status = null, string game = null, long? delay = null)
+        public TwitchList<Subscription> GetSubscribers(PagingInfo pagingInfo = null, SortDirection sortDirection = SortDirection.asc)
         {
-            var request = GetRequest("channels/{channel}", Method.PUT);
+            var request = GetRequest("channels/{channel}/subscriptions", Method.GET);
             request.AddUrlSegment("channel", username);
-            request.RequestFormat = DataFormat.Json;
-            request.AddBody(new { channel = new { status, game, delay } });
-            var response = restClient.Execute<Channel>(request);
+            TwitchHelper.AddPaging(request, pagingInfo);
+            request.AddParameter("direction", sortDirection);
+            var response = restClient.Execute<TwitchList<Subscription>>(request);
             return response.Data;
         }
 
-        public Channel SetTitle(string title)
+        public bool IsSubscribedToChannel(string channel)
         {
-            return Update(title);
+            return GetSubscribedChannel(channel).Status != 404;
         }
 
-        public Channel SetGame(string game)
+        //may return true if request failed
+        public bool IsSubscriber(string user)
         {
-            return Update(null, game);
-        }
-
-        // only for partnered channels
-        public Channel SetDelay(long delay)
-        {
-            return Update(null, null, delay);
+            int state = GetSubscriber(user).Status;
+            return state != 404 && state != 422;
         }
 
         public User ResetStreamKey()
@@ -134,6 +185,22 @@ namespace OakBot.Clients
             request.AddUrlSegment("channel", username);
             var response = restClient.Execute<User>(request);
             return response.Data;
+        }
+
+        // only for partnered channels
+        public Channel SetDelay(long delay)
+        {
+            return Update(null, null, delay);
+        }
+
+        public Channel SetGame(string game)
+        {
+            return Update(null, game);
+        }
+
+        public Channel SetTitle(string title)
+        {
+            return Update(title);
         }
 
         /// <summary>
@@ -150,13 +217,12 @@ namespace OakBot.Clients
             return response.Data;
         }
 
-        public FollowedChannel Follow(string target, bool notifications = false)
+        public TwitchResponse Unblock(string target)
         {
-            var request = GetRequest("users/{user}/follows/channels/{target}", Method.PUT);
+            var request = GetRequest("users/{user}/blocks/{target}", Method.DELETE);
             request.AddUrlSegment("user", username);
             request.AddUrlSegment("target", target);
-            request.AddParameter("notifications", notifications);
-            var response = restClient.Execute<FollowedChannel>(request);
+            var response = restClient.Execute<TwitchResponse>(request);
             return response.Data;
         }
 
@@ -169,70 +235,16 @@ namespace OakBot.Clients
             return response.Data;
         }
 
-        public TwitchList<Follower> GetFollowers(PagingInfo pagingInfo = null, SortDirection sortDirection = SortDirection.asc)
+        public Channel Update(string status = null, string game = null, long? delay = null)
         {
-            var request = GetRequest("channels/{channel}/follows", Method.GET);
+            var request = GetRequest("channels/{channel}", Method.PUT);
             request.AddUrlSegment("channel", username);
-            TwitchHelper.AddPaging(request, pagingInfo);
-            request.AddParameter("direction", sortDirection);
-            var response = restClient.Execute<TwitchList<Follower>>(request);
+            request.RequestFormat = DataFormat.Json;
+            request.AddBody(new { channel = new { status, game, delay } });
+            var response = restClient.Execute<Channel>(request);
             return response.Data;
         }
 
-        public TwitchList<Subscription> GetSubscribers(PagingInfo pagingInfo = null, SortDirection sortDirection = SortDirection.asc)
-        {
-            var request = GetRequest("channels/{channel}/subscriptions", Method.GET);
-            request.AddUrlSegment("channel", username);
-            TwitchHelper.AddPaging(request, pagingInfo);
-            request.AddParameter("direction", sortDirection);
-            var response = restClient.Execute<TwitchList<Subscription>>(request);
-            return response.Data;
-        }
-
-        // someone who subscribed your channel
-        public Subscription GetSubscriber(string user)
-        {
-            var request = GetRequest("channels/{channel}/subscriptions/{user}", Method.GET);
-            request.AddUrlSegment("channel", username);
-            request.AddUrlSegment("user", user);
-            var response = restClient.Execute<Subscription>(request);
-            return response.Data;
-        }
-
-        //may return true if request failed
-        public bool IsSubscriber(string user)
-        {
-            int state = GetSubscriber(user).Status;
-            return state != 404 && state != 422;
-        }
-
-        // a channel you subscribed
-        public Subscription GetSubscribedChannel(string channel)
-        {
-            var request = GetRequest("users/{user}/subscriptions/{channel}", Method.GET);
-            request.AddUrlSegment("user", username);
-            request.AddUrlSegment("channel", channel);
-            var response = restClient.Execute<Subscription>(request);
-            return response.Data;
-        }
-
-        public bool IsSubscribedToChannel(string channel)
-        {
-            return GetSubscribedChannel(channel).Status != 404;
-        }
-
-        // has the channel a subscription programm?
-        public bool CanSubscribeToChannel(string channel)
-        {
-            return GetSubscribedChannel(channel).Status != 422;
-        }
-
-        public RestRequest GetRequest(string url, Method method)
-        {
-            RestRequest restRequest = new RestRequest(url, method);
-            restRequest.AddHeader("Client-ID", clientId);
-            restRequest.AddHeader("Authorization", String.Format("OAuth {0}", oauth));
-            return restRequest;
-        }
+        #endregion Public Methods
     }
 }

@@ -8,24 +8,16 @@ namespace OakBot
 {
     public class TwitchChatConnection
     {
-        #region Fields
+        #region Private Fields
 
-        private BotIrcClient ircClient;
         private TwitchCredentials connectedUser;
-        private string joinedChannel;
+        private BotIrcClient ircClient;
         private bool isBot;
+        private string joinedChannel;
 
-        #endregion Fields
+        #endregion Private Fields
 
-        #region Handlers
-
-        public delegate void ChatMessageReceivedHandler(object o, ChatMessageReceivedEventArgs e);
-
-        public event ChatMessageReceivedHandler ChatMessageReceived;
-
-        #endregion Handlers
-
-        #region Constructors
+        #region Public Constructors
 
         public TwitchChatConnection(TwitchCredentials connectingUser, bool isBot = true)
         {
@@ -48,9 +40,41 @@ namespace OakBot
             };
         }
 
-        #endregion Constructors
+        #endregion Public Constructors
 
-        #region Methods
+        #region Public Delegates
+
+        public delegate void ChatMessageReceivedHandler(object o, ChatMessageReceivedEventArgs e);
+
+        #endregion Public Delegates
+
+        #region Public Events
+
+        public event ChatMessageReceivedHandler ChatMessageReceived;
+
+        #endregion Public Events
+
+        #region Public Properties
+
+        public TwitchCredentials ConnectedUser
+        {
+            get
+            {
+                return connectedUser;
+            }
+        }
+
+        public BotIrcClient IrcClient
+        {
+            get
+            {
+                return ircClient;
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
 
         public void JoinChannel(string channel)
         {
@@ -64,6 +88,10 @@ namespace OakBot
                 "!" + connectedUser.UserName + "@" + connectedUser.UserName +
                 ".tmi.twitch.tv PRIVMSG #" + joinedChannel + " :" + message);
         }
+
+        #endregion Public Methods
+
+        #region Internal Methods
 
         internal void Run()
         {
@@ -190,26 +218,6 @@ namespace OakBot
             }
         }
 
-        #endregion Methods
-
-        #region Properies
-
-        public TwitchCredentials ConnectedUser
-        {
-            get
-            {
-                return connectedUser;
-            }
-        }
-
-        public BotIrcClient IrcClient
-        {
-            get
-            {
-                return ircClient;
-            }
-        }
-
-        #endregion Properies
+        #endregion Internal Methods
     }
 }

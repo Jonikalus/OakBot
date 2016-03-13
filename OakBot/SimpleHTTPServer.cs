@@ -9,10 +9,9 @@ namespace OakBot
 {
     public class SimpleHTTPServer
     {
+        #region Private Fields
+
         private static IDictionary<string, string> _mimeTypeMappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
-
-        #region extension to MIME type list
-
             {".asf", "video/x-ms-asf"},
             {".asx", "video/x-ms-asf"},
             {".avi", "video/x-msvideo"},
@@ -77,7 +76,6 @@ namespace OakBot
             {".xml", "text/xml"},
             {".xpi", "application/x-xpinstall"},
             {".zip", "application/zip"},
-        #endregion extension to MIME type list
         };
 
         private readonly string[] _indexFiles = {
@@ -86,10 +84,16 @@ namespace OakBot
             "default.html",
             "default.htm"
         };
+
         private HttpListener _listener;
         private int _port;
         private string _rootDirectory;
         private Thread _serverThread;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
         /// <summary>
         /// Construct server with given port.
         /// </summary>
@@ -114,11 +118,20 @@ namespace OakBot
             this.Initialize(path, port);
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
         public int Port
         {
             get { return _port; }
             private set { }
         }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
         /// <summary>
         /// Stop server and dispose all functions.
         /// </summary>
@@ -127,6 +140,10 @@ namespace OakBot
             _serverThread.Abort();
             _listener.Stop();
         }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private void Initialize(string path, int port)
         {
@@ -208,5 +225,7 @@ namespace OakBot
 
             context.Response.OutputStream.Close();
         }
+
+        #endregion Private Methods
     }
 }

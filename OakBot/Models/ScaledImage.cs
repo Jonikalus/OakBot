@@ -4,6 +4,8 @@ namespace OakBot.Models
 {
     public class ScaledImage
     {
+        #region Public Properties
+
         [JsonProperty("large")]
         public string Large { get; set; }
 
@@ -15,5 +17,7 @@ namespace OakBot.Models
 
         [JsonProperty("template")]
         public string Template { get; set; }
+
+        #endregion Public Properties
     }
 }

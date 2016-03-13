@@ -9,10 +9,16 @@ namespace OakBot
     /// </summary>
     public partial class WindowDatabaseCleanup : Window
     {
+        #region Public Constructors
+
         public WindowDatabaseCleanup()
         {
             InitializeComponent();
         }
+
+        #endregion Public Constructors
+
+        #region Private Methods
 
         private void btnClean_Click(object sender, RoutedEventArgs e)
         {
@@ -49,5 +55,7 @@ namespace OakBot
                 MessageBox.Show("Purge, not implemented yet.");
             }
         }
+
+        #endregion Private Methods
     }
 }

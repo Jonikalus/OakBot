@@ -5,6 +5,8 @@ namespace OakBot.Models
     [JsonObject("token")]
     public class Token
     {
+        #region Public Properties
+
         [JsonProperty("authorization")]
         public Authorization Authorization { get; set; }
 
@@ -13,5 +15,7 @@ namespace OakBot.Models
 
         [JsonProperty("valid")]
         public bool Valid { get; set; }
+
+        #endregion Public Properties
     }
 }

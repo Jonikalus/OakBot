@@ -2,18 +2,17 @@
 {
     public class TwitchWhisperConnection
     {
-        #region Fields
+        #region Private Fields
 
+        private TwitchCredentials _connectedUser;
         private MainWindow _mW;
 
         //MainWindow.delegateMessage delegateMessage;
         private BotIrcClient ircClient;
 
-        private TwitchCredentials _connectedUser;
+        #endregion Private Fields
 
-        #endregion Fields
-
-        #region Constructors
+        #region Public Constructors
 
         public TwitchWhisperConnection(TwitchCredentials connectingUser, MainWindow window)
         {
@@ -28,14 +27,33 @@
             ircClient.WriteLineThrottle("CAP REQ :twitch.tv/commands");
         }
 
-        #endregion Constructors
+        #endregion Public Constructors
 
-        #region Methods
+        #region Public Properties
 
-        internal void SendWhisper(string whisperMessage)
+        public TwitchCredentials connectedUser
         {
-            ircClient.WriteLineThrottle("PRIVMSG #jtv :" + whisperMessage);
+            get
+            {
+                return _connectedUser;
+            }
         }
+
+        //internal void dispatchMessage(IrcMessage message)
+        //{
+        //    _mW.Dispatcher.BeginInvoke(delegateMessage, message);
+        //}
+        public BotIrcClient IrcClient
+        {
+            get
+            {
+                return ircClient;
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Internal Methods
 
         internal void Run()
         {
@@ -56,31 +74,11 @@
             }
         }
 
-        //internal void dispatchMessage(IrcMessage message)
-        //{
-        //    _mW.Dispatcher.BeginInvoke(delegateMessage, message);
-        //}
-
-        #endregion Methods
-
-        #region Properties
-
-        public TwitchCredentials connectedUser
+        internal void SendWhisper(string whisperMessage)
         {
-            get
-            {
-                return _connectedUser;
-            }
+            ircClient.WriteLineThrottle("PRIVMSG #jtv :" + whisperMessage);
         }
 
-        public BotIrcClient IrcClient
-        {
-            get
-            {
-                return ircClient;
-            }
-        }
-
-        #endregion Properties
+        #endregion Internal Methods
     }
 }

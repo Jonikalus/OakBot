@@ -4,10 +4,14 @@ namespace OakBot.Models
 {
     public class StreamSummary : TwitchResponse
     {
-        [JsonProperty("viewers")]
-        public long Viewers { get; set; }
+        #region Public Properties
 
         [JsonProperty("channels")]
         public long Channels { get; set; }
+
+        [JsonProperty("viewers")]
+        public long Viewers { get; set; }
+
+        #endregion Public Properties
     }
 }

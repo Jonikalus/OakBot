@@ -8,48 +8,190 @@ namespace OakBot
 {
     public class Config
     {
-        #region Fields
+        #region Public Fields
 
+        public static readonly string AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OakBot";
+        public static readonly string GameWispClientID = "a9f873bd2bf4d17da94e7a1c4cd8a614645ebff";
+        public static readonly string GameWispClientSecret = "89ed9ed593e47c2a329f9e51d3e607e2f91c7f7";
+        public static readonly string TwitchAlertsClientID = "kriqzeVxRHIbIHMPZzilYEDjFgfGkR7088gSx3KM";
+        public static readonly string TwitchAlertsClientSecret = "7gGEWwG0i5E1LQDkEe9C9xwI3dgR6Y93v9kjrsYZ";
         public static readonly string TwitchClientID = "gtpc5vtk1r4u8fm9l45f9kg1fzezrv8";
         public static readonly string TwitchClientSecret = "ss6pafrg7i0nqhgvun9y5cq4wc61ogc";
 
-        public static readonly string TwitchAlertsClientID = "kriqzeVxRHIbIHMPZzilYEDjFgfGkR7088gSx3KM";
-        public static readonly string TwitchAlertsClientSecret = "7gGEWwG0i5E1LQDkEe9C9xwI3dgR6Y93v9kjrsYZ";
+        #endregion Public Fields
 
-        public static readonly string GameWispClientID = "a9f873bd2bf4d17da94e7a1c4cd8a614645ebff";
-        public static readonly string GameWispClientSecret = "89ed9ed593e47c2a329f9e51d3e607e2f91c7f7";
+        #region Private Fields
 
-        public static readonly string AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OakBot";
-
+        private static bool autoConnectBot;
+        private static bool autoConnectStreamer;
+        private static string botOAuthKey;
+        private static string botUsername;
         private static string channelName;
         private static string serverIP;
         private static int serverPort;
-
-        private static string botUsername;
-        private static string botOAuthKey;
-        private static bool autoConnectBot;
-
-        private static string streamerUsername;
         private static string streamerOAuthKey;
-        private static bool autoConnectStreamer;
+        private static string streamerUsername;
+
+        #endregion Private Fields
 
         // private static char commandPrefix;
 
-        #endregion Fields
-
-        #region Static Property Changed Event and Handler
+        #region Public Events
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
 
-        public static void RaiseStaticPropertyChanged(string propName)
+        #endregion Public Events
+
+        #region Public Properties
+
+        public static bool AutoConnectBot
         {
-            if (StaticPropertyChanged != null)
-                StaticPropertyChanged(null, new PropertyChangedEventArgs(propName));
+            get
+            {
+                return autoConnectBot;
+            }
+            set
+            {
+                if (value != autoConnectBot)
+                {
+                    autoConnectBot = value;
+                    SaveSettingPropertyToDB("AutoConnectBot", value.ToString());
+                }
+            }
         }
 
-        #endregion Static Property Changed Event and Handler
+        public static bool AutoConnectStreamer
+        {
+            get
+            {
+                return autoConnectStreamer;
+            }
+            set
+            {
+                if (value != autoConnectStreamer)
+                {
+                    autoConnectStreamer = value;
+                    SaveSettingPropertyToDB("AutoConnectStreamer", value.ToString());
+                }
+            }
+        }
 
-        #region Methods
+        public static string BotOAuthKey
+        {
+            get
+            {
+                return botOAuthKey;
+            }
+            set
+            {
+                if (value != botOAuthKey)
+                {
+                    botOAuthKey = value;
+                    SaveSettingPropertyToDB("BotOAuthToken", value);
+                }
+            }
+        }
+
+        public static string BotUsername
+        {
+            get
+            {
+                return botUsername;
+            }
+            set
+            {
+                if (value != botUsername)
+                {
+                    botUsername = value;
+                    SaveSettingPropertyToDB("BotTwitchUsername", value);
+                }
+            }
+        }
+
+        public static string ChannelName
+        {
+            get
+            {
+                return channelName;
+            }
+            set
+            {
+                if (value != channelName && !string.IsNullOrWhiteSpace(value))
+                {
+                    channelName = value.Trim().ToLower();
+                    SaveSettingPropertyToDB("ChannelName", value);
+                    RaiseStaticPropertyChanged("ChannelName");
+                }
+            }
+        }
+
+        public static string ServerIP
+        {
+            get
+            {
+                return serverIP;
+            }
+            set
+            {
+                if (value != serverIP)
+                {
+                    serverIP = value;
+                    SaveSettingPropertyToDB("ServerIP", value);
+                }
+            }
+        }
+
+        public static int ServerPort
+        {
+            get
+            {
+                return serverPort;
+            }
+            set
+            {
+                if (value != serverPort)
+                {
+                    serverPort = value;
+                    SaveSettingPropertyToDB("ServerPort", value.ToString());
+                }
+            }
+        }
+
+        public static string StreamerOAuthKey
+        {
+            get
+            {
+                return streamerOAuthKey;
+            }
+            set
+            {
+                if (value != streamerOAuthKey)
+                {
+                    streamerOAuthKey = value;
+                    SaveSettingPropertyToDB("StreamerOAuthToken", value);
+                }
+            }
+        }
+
+        public static string StreamerUsername
+        {
+            get
+            {
+                return streamerUsername;
+            }
+            set
+            {
+                if (value != streamerUsername)
+                {
+                    streamerUsername = value;
+                    SaveSettingPropertyToDB("StreamerTwitchUsername", value);
+                }
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
 
         public static void GetConfigFromDb()
         {
@@ -162,6 +304,12 @@ namespace OakBot
             }
         }
 
+        public static void RaiseStaticPropertyChanged(string propName)
+        {
+            if (StaticPropertyChanged != null)
+                StaticPropertyChanged(null, new PropertyChangedEventArgs(propName));
+        }
+
         public static void SaveSettingPropertyToDB(string settingName, string settingsValue)
         {
             try
@@ -187,154 +335,7 @@ namespace OakBot
             }
         }
 
-        #endregion Methods
-
-        #region Properties
-
-        public static string ChannelName
-        {
-            get
-            {
-                return channelName;
-            }
-            set
-            {
-                if (value != channelName && !string.IsNullOrWhiteSpace(value))
-                {
-                    channelName = value.Trim().ToLower();
-                    SaveSettingPropertyToDB("ChannelName", value);
-                    RaiseStaticPropertyChanged("ChannelName");
-                }
-            }
-        }
-
-        public static string ServerIP
-        {
-            get
-            {
-                return serverIP;
-            }
-            set
-            {
-                if (value != serverIP)
-                {
-                    serverIP = value;
-                    SaveSettingPropertyToDB("ServerIP", value);
-                }
-            }
-        }
-
-        public static int ServerPort
-        {
-            get
-            {
-                return serverPort;
-            }
-            set
-            {
-                if (value != serverPort)
-                {
-                    serverPort = value;
-                    SaveSettingPropertyToDB("ServerPort", value.ToString());
-                }
-            }
-        }
-
-        public static string BotUsername
-        {
-            get
-            {
-                return botUsername;
-            }
-            set
-            {
-                if (value != botUsername)
-                {
-                    botUsername = value;
-                    SaveSettingPropertyToDB("BotTwitchUsername", value);
-                }
-            }
-        }
-
-        public static string BotOAuthKey
-        {
-            get
-            {
-                return botOAuthKey;
-            }
-            set
-            {
-                if (value != botOAuthKey)
-                {
-                    botOAuthKey = value;
-                    SaveSettingPropertyToDB("BotOAuthToken", value);
-                }
-            }
-        }
-
-        public static bool AutoConnectBot
-        {
-            get
-            {
-                return autoConnectBot;
-            }
-            set
-            {
-                if (value != autoConnectBot)
-                {
-                    autoConnectBot = value;
-                    SaveSettingPropertyToDB("AutoConnectBot", value.ToString());
-                }
-            }
-        }
-
-        public static string StreamerUsername
-        {
-            get
-            {
-                return streamerUsername;
-            }
-            set
-            {
-                if (value != streamerUsername)
-                {
-                    streamerUsername = value;
-                    SaveSettingPropertyToDB("StreamerTwitchUsername", value);
-                }
-            }
-        }
-
-        public static string StreamerOAuthKey
-        {
-            get
-            {
-                return streamerOAuthKey;
-            }
-            set
-            {
-                if (value != streamerOAuthKey)
-                {
-                    streamerOAuthKey = value;
-                    SaveSettingPropertyToDB("StreamerOAuthToken", value);
-                }
-            }
-        }
-
-        public static bool AutoConnectStreamer
-        {
-            get
-            {
-                return autoConnectStreamer;
-            }
-            set
-            {
-                if (value != autoConnectStreamer)
-                {
-                    autoConnectStreamer = value;
-                    SaveSettingPropertyToDB("AutoConnectStreamer", value.ToString());
-                }
-            }
-        }
+        #endregion Public Methods
 
         //public static char CommandPrefix
         //{
@@ -351,7 +352,5 @@ namespace OakBot
         //        }
         //    }
         //}
-
-        #endregion Properties
     }
 }

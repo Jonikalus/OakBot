@@ -4,6 +4,8 @@ namespace OakBot.Helpers
 {
     public class TwitchException : Exception
     {
+        #region Public Constructors
+
         public TwitchException()
         {
         }
@@ -15,5 +17,7 @@ namespace OakBot.Helpers
         public TwitchException(string message, Exception inner) : base(message, inner)
         {
         }
+
+        #endregion Public Constructors
     }
 }

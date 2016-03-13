@@ -5,22 +5,25 @@ namespace OakBot
 {
     public class Quote : INotifyPropertyChanged
     {
-        #region Fields
+        #region Private Fields
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string quote;
-        private string quoter;
         private DateTime date;
+
         private bool displayDate;
-        private string game;
+
         private bool displayGame;
+
+        private string game;
 
         private DateTime lastDisplayed;
 
-        #endregion Fields
+        private string quote;
 
-        #region Constructor
+        private string quoter;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         /// <summary>
         /// Use to add new quote to the bot by command
@@ -65,82 +68,15 @@ namespace OakBot
             this.lastDisplayed = lastDisplayed;
         }
 
-        #endregion Constructor
+        #endregion Public Constructors
 
-        #region Methods
+        #region Public Events
 
-        /// <summary>
-        /// Private method to notify INotify on change
-        /// </summary>
-        /// <param name="property"></param>
-        private void NotifyPropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Set Last displayed to current UTC timestamp
-        /// </summary>
-        public void SetLastDisplayed()
-        {
-            lastDisplayed = DateTime.UtcNow;
-        }
+        #endregion Public Events
 
-        #endregion Methods
-
-        #region Properties
-
-        /// <summary>
-        /// Return the Index of the quote in the colQuotes
-        /// </summary>
-        public long Id
-        {
-            get
-            {
-                return MainWindow.colQuotes.IndexOf(this);
-            }
-        }
-
-        /// <summary>
-        /// Quote itself, has INotify
-        /// </summary>
-        public string QuoteString
-        {
-            get
-            {
-                return quote;
-            }
-            set
-            {
-                if (value != quote)
-                {
-                    quote = value;
-                    NotifyPropertyChanged("QuoteString");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Quoter of the quote, has INotify
-        /// </summary>
-        public string Quoter
-        {
-            get
-            {
-                return quoter;
-            }
-            set
-            {
-                if (value != quoter)
-                {
-                    quoter = value;
-                    NotifyPropertyChanged("Quoter");
-                }
-            }
-        }
+        #region Public Properties
 
         /// <summary>
         /// The date the quote was made, has INotify
@@ -210,25 +146,6 @@ namespace OakBot
         }
 
         /// <summary>
-        /// The game the streamer was playing during the quote, has INotify
-        /// </summary>
-        public string Game
-        {
-            get
-            {
-                return game;
-            }
-            set
-            {
-                if (value != game)
-                {
-                    game = value;
-                    NotifyPropertyChanged("Game");
-                }
-            }
-        }
-
-        /// <summary>
         /// Display Game, has INotify
         /// </summary>
         public bool DisplayGame
@@ -262,6 +179,36 @@ namespace OakBot
                 {
                     return "No";
                 }
+            }
+        }
+
+        /// <summary>
+        /// The game the streamer was playing during the quote, has INotify
+        /// </summary>
+        public string Game
+        {
+            get
+            {
+                return game;
+            }
+            set
+            {
+                if (value != game)
+                {
+                    game = value;
+                    NotifyPropertyChanged("Game");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return the Index of the quote in the colQuotes
+        /// </summary>
+        public long Id
+        {
+            get
+            {
+                return MainWindow.colQuotes.IndexOf(this);
             }
         }
 
@@ -302,6 +249,72 @@ namespace OakBot
             }
         }
 
-        #endregion Properties
+        /// <summary>
+        /// Quoter of the quote, has INotify
+        /// </summary>
+        public string Quoter
+        {
+            get
+            {
+                return quoter;
+            }
+            set
+            {
+                if (value != quoter)
+                {
+                    quoter = value;
+                    NotifyPropertyChanged("Quoter");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Quote itself, has INotify
+        /// </summary>
+        public string QuoteString
+        {
+            get
+            {
+                return quote;
+            }
+            set
+            {
+                if (value != quote)
+                {
+                    quote = value;
+                    NotifyPropertyChanged("QuoteString");
+                }
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        /// <summary>
+        /// Set Last displayed to current UTC timestamp
+        /// </summary>
+        public void SetLastDisplayed()
+        {
+            lastDisplayed = DateTime.UtcNow;
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// Private method to notify INotify on change
+        /// </summary>
+        /// <param name="property"></param>
+        private void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
+        #endregion Private Methods
     }
 }

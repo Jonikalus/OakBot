@@ -4,7 +4,22 @@ namespace OakBot.Args
 {
     public class ChatMessageReceivedEventArgs : EventArgs
     {
+        #region Private Fields
+
         private IrcMessage message;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
+        public ChatMessageReceivedEventArgs(IrcMessage message)
+        {
+            this.message = message;
+        }
+
+        #endregion Public Constructors
+
+        #region Public Properties
 
         public IrcMessage Message
         {
@@ -14,9 +29,6 @@ namespace OakBot.Args
             }
         }
 
-        public ChatMessageReceivedEventArgs(IrcMessage message)
-        {
-            this.message = message;
-        }
+        #endregion Public Properties
     }
 }

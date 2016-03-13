@@ -2,14 +2,14 @@
 {
     public class TwitchCredentials
     {
-        #region Fields
+        #region Private Fields
 
-        private string userName;
         private string oauth;
+        private string userName;
 
-        #endregion Fields
+        #endregion Private Fields
 
-        #region Constructors
+        #region Public Constructors
 
         public TwitchCredentials(string userName, string oauth)
         {
@@ -17,26 +17,9 @@
             this.oauth = oauth;
         }
 
-        #endregion Constructors
+        #endregion Public Constructors
 
-        #region Methods
-
-        public override string ToString()
-        {
-            return userName;
-        }
-
-        #endregion Methods
-
-        #region Properties
-
-        public string UserName
-        {
-            get
-            {
-                return userName;
-            }
-        }
+        #region Public Properties
 
         public string OAuth
         {
@@ -46,6 +29,23 @@
             }
         }
 
-        #endregion Properties
+        public string UserName
+        {
+            get
+            {
+                return userName;
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public override string ToString()
+        {
+            return userName;
+        }
+
+        #endregion Public Methods
     }
 }

@@ -4,8 +4,7 @@ namespace OakBot.Models
 {
     public class BadgeResult
     {
-        [JsonProperty("global_mod")]
-        public Badge GlobalMod { get; set; }
+        #region Public Properties
 
         [JsonProperty("admin")]
         public Badge Admin { get; set; }
@@ -13,16 +12,21 @@ namespace OakBot.Models
         [JsonProperty("broadcaster")]
         public Badge Broadcaster { get; set; }
 
+        [JsonProperty("global_mod")]
+        public Badge GlobalMod { get; set; }
+
         [JsonProperty("mod")]
         public Badge Mod { get; set; }
 
         [JsonProperty("staff")]
         public Badge Staff { get; set; }
 
+        [JsonProperty("subscriber")]
+        public Badge Subscriber { get; set; }
+
         [JsonProperty("turbo")]
         public Badge Turbo { get; set; }
 
-        [JsonProperty("subscriber")]
-        public Badge Subscriber { get; set; }
+        #endregion Public Properties
     }
 }

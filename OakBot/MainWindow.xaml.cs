@@ -30,58 +30,71 @@ namespace OakBot
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Fields
+
+        #region Public Fields
+
+        public static ObservableCollection<UserCommand> colBotCommands = new ObservableCollection<UserCommand>();
+
+        // Collections
+        public static ObservableCollection<IrcMessage> colChatMessages = new ObservableCollection<IrcMessage>();
+
+        public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
+
+        public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
+
+        public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
+
+        public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
+
+        public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
+
+        public static DiscordClient discord;
+
+        public static int indexSong = -1;
 
         // Instance of itself
         public static MainWindow instance;
 
-        // Streamer and Bot account info
-        public TwitchCredentials accountStreamer;
+        // Song Info
+        public static bool playState = false;
 
         public TwitchCredentials accountBot;
+
+        // Streamer and Bot account info
+        public TwitchCredentials accountStreamer;
 
         // Chat connections
         public TwitchChatConnection botChatConnection;
 
         public TwitchChatConnection streamerChatConnection;
 
-        // API Client
-        private TwitchAuthenticatedClient client;
+        public Giveaway testGw, testGw2;
 
-        // Collections
-        public static ObservableCollection<IrcMessage> colChatMessages = new ObservableCollection<IrcMessage>();
+        #endregion Public Fields
 
-        public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
-        public static ObservableCollection<Viewer> colDatabase = new ObservableCollection<Viewer>();
-        public static ObservableCollection<WindowViewerChat> colChatWindows = new ObservableCollection<WindowViewerChat>();
-        public static ObservableCollection<UserCommand> colBotCommands = new ObservableCollection<UserCommand>();
-        public static ObservableCollection<Quote> colQuotes = new ObservableCollection<Quote>();
-        public static ObservableCollection<Song> colSongs = new ObservableCollection<Song>();
+        #region Private Fields
 
         private object _lockChat = new object();
-        private object _lockViewers = new object();
+
         private object _lockDatabase = new object();
+
         private object _lockSongs = new object();
+
+        private object _lockViewers = new object();
+
+        private Thread botChat;
+
+        // API Client
+        private TwitchAuthenticatedClient client;
 
         private ICollectionView databaseView;
 
         // Threads
         private Thread streamerChat;
 
-        private Thread botChat;
+        #endregion Private Fields
 
-        // Song Info
-        public static bool playState = false;
-
-        public static int indexSong = -1;
-
-        public static DiscordClient discord;
-
-        public Giveaway testGw, testGw2;
-
-        #endregion Fields
-
-        #region Constructor
+        #region Public Constructors
 
         public MainWindow()
         {
@@ -165,27 +178,544 @@ namespace OakBot
             }
         }
 
-        private void Discord_MessageReceived(object sender, MessageEventArgs e)
-        {
-            string firstWord = Regex.Match(e.Message.Text, @"^\S+\b").Value.ToLower();
-            UserCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x =>
-                x.Command == firstWord);
+        #endregion Public Constructors
 
-            if (foundCommand != null)
+        #region Public Properties
+
+        // For binding
+        public ObservableCollection<IrcMessage> ChatMessages
+        {
+            get
             {
-                //foundCommand.ExecuteCommand(new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
-                foundCommand.ExecuteCommandDiscord(e.Message);
-            }
-            else
-            {
-                //BotCommands.RunBotCommand(firstWord, new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
-                BotCommands.RunBotCommandDiscord(firstWord, e.Message);
+                return colChatMessages;
             }
         }
 
-        #endregion Constructor
+        // For binding
+        public ObservableCollection<Viewer> Chatters
+        {
+            get
+            {
+                return colViewers;
+            }
+        }
 
-        #region Methods
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public void DisconnectBot()
+        {
+            try
+            {
+                botChat.Abort();
+            }
+            catch (ThreadAbortException)
+            {
+            }
+            catch (Exception)
+            {
+            }
+
+            // Enable UI elements
+            textBoxBotName.IsEnabled = true;
+            buttonBotConnect.IsEnabled = true;
+            tbChannelName.IsEnabled = true;
+            cbServerIP.IsEnabled = true;
+            cbServerPort.IsEnabled = true;
+            cbAutoConnectBot.IsEnabled = true;
+            btnBotConnect.Content = "Connect";
+        }
+
+        public void DisconnectStreamer()
+        {
+            try
+            {
+                streamerChat.Abort();
+            }
+            catch (ThreadAbortException)
+            {
+            }
+            catch (Exception)
+            {
+            }
+
+            // Enable UI elements
+            textBoxStreamerName.IsEnabled = true;
+            buttonStreamerConnect.IsEnabled = true;
+            cbAutoConnectStreamer.IsEnabled = true;
+            btnStreamerConnect.Content = "Connect";
+        }
+
+        public void LoadConfigToUI()
+        {
+            textBoxBotName.Text = Config.BotUsername;
+            tbChannelName.Text = Config.ChannelName;
+            cbAutoConnectBot.IsChecked = Config.AutoConnectBot;
+            textBoxStreamerName.Text = Config.StreamerUsername;
+            cbAutoConnectBot.IsChecked = Config.AutoConnectStreamer;
+            cbAutoConnectStreamer.IsChecked = Config.AutoConnectStreamer;
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private void AddEntered(string v)
+        {
+            lbEntered.Items.Add(v);
+        }
+
+        private void btn120Secs_Click(object sender, RoutedEventArgs e)
+        {
+            RunManualCommercial(120);
+        }
+
+        private void btn150Secs_Click(object sender, RoutedEventArgs e)
+        {
+            RunManualCommercial(150);
+        }
+
+        private void btn180Secs_Click(object sender, RoutedEventArgs e)
+        {
+            RunManualCommercial(180);
+        }
+
+        private void btn30Sec_Click(object sender, RoutedEventArgs e)
+        {
+            RunManualCommercial(30);
+        }
+
+        private void btn60Sec_Click(object sender, RoutedEventArgs e)
+        {
+            RunManualCommercial(60);
+        }
+
+        private void btn90Secs_Click(object sender, RoutedEventArgs e)
+        {
+            RunManualCommercial(90);
+        }
+
+        private void btnBotConnect_Click(object sender, RoutedEventArgs e)
+        {
+            if (btnBotConnect.Content.ToString() == "Connect")
+            {
+                ConnectBot();
+            }
+            else
+            {
+                DisconnectBot();
+            }
+        }
+
+        private void btnDatabaseCleanup_Click(object sender, RoutedEventArgs e)
+        {
+            WindowDatabaseCleanup windowCleanup = new WindowDatabaseCleanup();
+            windowCleanup.ShowDialog();
+        }
+
+        private void btnImport_Click(object sender, RoutedEventArgs e)
+        {
+            WindowImportData windowImport = new WindowImportData();
+            windowImport.ShowDialog();
+        }
+
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            discord.Connect(txtEmail.Text, pwdPassword.Password);
+            while (discord.State != ConnectionState.Connected)
+            {
+                Task.Delay(25);
+            }
+            discord.MessageReceived += Discord_MessageReceived;
+            txtUsername.Text = discord.CurrentUser.Name;
+            int serverCounter = 0, channelCounter = 0, userCounter = 0;
+            foreach (Server s in discord.Servers)
+            {
+                serverCounter++;
+                TreeViewItem server = new TreeViewItem();
+                server.Header = s.Name;
+                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
+                voice.Header = "Voice Channels";
+                text.Header = "Text Channels";
+                foreach (Discord.Channel c in s.VoiceChannels)
+                {
+                    channelCounter++;
+                    TreeViewItem channel = new TreeViewItem();
+                    channel.Header = c.Name;
+                    foreach (Discord.User u in c.Users)
+                    {
+                        userCounter++;
+                        channel.Items.Add(u.Name);
+                    }
+                    voice.Items.Add(channel);
+                }
+                foreach (Discord.Channel c in s.TextChannels)
+                {
+                    channelCounter++;
+                    text.Items.Add(c);
+                }
+                server.Items.Add(voice);
+                server.Items.Add(text);
+                tvServerBrowser.Items.Add(server);
+            }
+            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
+        }
+
+        private void btnNext_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(indexSong.ToString());
+            if (indexSong == colSongs.Count - 1)
+            {
+                indexSong = 0;
+            }
+            else
+            {
+                indexSong++;
+            }
+            Song play = colSongs[indexSong];
+            cefSong.Load(play.Link);
+            MessageBox.Show(indexSong.ToString());
+        }
+
+        private void btnPlay_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Song first = (Song)lvSongs.Items[0];
+                cefSong.Load(first.Link);
+                playState = true;
+                indexSong = 0;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("No songs in the playlist!");
+                playState = false;
+            }
+        }
+
+        private void btnPlayerCtl_Click(object sender, RoutedEventArgs e)
+        {
+            if (playState)
+            {
+                // Pause
+                cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.pauseVideo();");
+                btnPlayerCtl.Content = "Play";
+            }
+            else
+            {
+                // Play
+                cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.playVideo();");
+                btnPlayerCtl.Content = "Pause";
+            }
+            playState = !playState;
+        }
+
+        private void btnPrev_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(indexSong.ToString());
+            if (indexSong == 0)
+            {
+                indexSong = colSongs.Count - 1;
+            }
+            else
+            {
+                indexSong--;
+            }
+            Song play = colSongs[indexSong];
+            cefSong.Load(play.Link);
+            MessageBox.Show(indexSong.ToString());
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            tvServerBrowser.Items.Clear();
+            int serverCounter = 0, channelCounter = 0, userCounter = 0;
+            foreach (Server s in discord.Servers)
+            {
+                serverCounter++;
+                TreeViewItem server = new TreeViewItem();
+                server.Header = s.Name;
+                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
+                voice.Header = "Voice Channels";
+                text.Header = "Text Channels";
+                foreach (Discord.Channel c in s.VoiceChannels)
+                {
+                    channelCounter++;
+                    TreeViewItem channel = new TreeViewItem();
+                    channel.Header = c.Name;
+                    foreach (Discord.User u in c.Users)
+                    {
+                        userCounter++;
+                        channel.Items.Add(u.Name);
+                    }
+                    voice.Items.Add(channel);
+                }
+                foreach (Discord.Channel c in s.TextChannels)
+                {
+                    channelCounter++;
+                    text.Items.Add(c);
+                }
+                server.Items.Add(voice);
+                server.Items.Add(text);
+                tvServerBrowser.Items.Add(server);
+            }
+            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
+        }
+
+        private void btnStreamerConnect_Click(object sender, RoutedEventArgs e)
+        {
+            if (btnBotConnect.Content.ToString() != "Connect")
+            {
+                if (btnStreamerConnect.Content.ToString() == "Connect")
+                {
+                    ConnectStreamer();
+                }
+                else
+                {
+                    DisconnectStreamer();
+                }
+            }
+            else
+            {
+                MessageBox.Show("You need to connect the bot account first before you can connect the streamer account.\n" +
+                    "If you only want to use the bot functionality and not the Twitch dashboard login with your account as bot.",
+                    "Streamer Chat Connect", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (client.GetMyUser().Partnered)
+            {
+                int streamDelay;
+
+                try
+                {
+                    streamDelay = Convert.ToInt32(tbStreamDelay.Text);
+                    if (streamDelay < 0 || streamDelay > 900)
+                    {
+                        throw new ArgumentOutOfRangeException();
+                    }
+                }
+                catch (Exception)
+                {
+                    streamDelay = 0;
+                    MessageBox.Show("Invalid delay given of 0 up to and including 900.\nDelay is will be reverted to 0 seconds.",
+                        "OakBot Channel Update", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                //client.Update(txtTitle.Text, cbGame.Text, Convert.ToString(streamDelay));
+                client.Update(txtTitle.Text, cbGame.Text, streamDelay);
+            }
+            else
+            {
+                client.Update(txtTitle.Text, cbGame.Text);
+            }
+
+            MessageBox.Show("Channel information updated!",
+                "Oakbot Channel Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+        }
+
+        private void btnViewerAddPoints_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Viewer viewer in colViewers)
+            {
+                viewer.Points += 10;
+            }
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.StartWebserver();
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            testGw = new Giveaway("Test", new TimeSpan(0, 0, 30), "!giveaway", 0, false, 1, new TimeSpan(0, 1, 0));
+            testGw.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
+            {
+                Dispatcher.BeginInvoke(new Action(delegate ()
+                {
+                    AddEntered(ev.Viewer);
+                }));
+            };
+            testGw.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
+            {
+                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
+            };
+            testGw.Start();
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            testGw.DrawWinner();
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            testGw2 = new Giveaway("Active", new TimeSpan(0, 0, 30), "", 0, false, 1, new TimeSpan());
+            testGw2.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
+            {
+                Dispatcher.BeginInvoke(new Action(delegate ()
+                {
+                    AddEntered(ev.Viewer);
+                }));
+            };
+            testGw2.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
+            {
+                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
+            };
+            testGw2.Start();
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            testGw2.DrawWinner();
+        }
+
+        private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBoxBotName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            {
+                MessageBox.Show("Please enter the bot Twitch username first before trying to connect with Twitch.",
+                    "Bot Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                WindowAuthBrowser tab = new WindowAuthBrowser(false);
+                tab.Show();
+            }
+        }
+
+        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
+        {
+            if (textBoxStreamerName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
+            {
+                MessageBox.Show("Please enter the streamer Twitch username first before trying to connect with Twitch if you want to use features that require a connected streamer account.",
+                    "Streamer Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                WindowAuthBrowser tab = new WindowAuthBrowser(true);
+                tab.Show();
+            }
+        }
+
+        private void cbAutoConnectBot_Checked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectBot.IsChecked == true)
+            {
+                Config.AutoConnectBot = true;
+            }
+            else
+            {
+                Config.AutoConnectBot = false;
+            }
+        }
+
+        private void cbAutoConnectBot_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectBot.IsChecked == false)
+            {
+                Config.AutoConnectBot = false;
+            }
+            else
+            {
+                Config.AutoConnectBot = true;
+            }
+        }
+
+        private void cbAutoConnectStreamer_Checked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectStreamer.IsChecked == true)
+            {
+                Config.AutoConnectStreamer = true;
+            }
+            else
+            {
+                Config.AutoConnectStreamer = false;
+            }
+        }
+
+        private void cbAutoConnectStreamer_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (cbAutoConnectStreamer.IsChecked == false)
+            {
+                Config.AutoConnectStreamer = false;
+            }
+            else
+            {
+                Config.AutoConnectStreamer = true;
+            }
+        }
+
+        private void ChatSend_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                // Get the line and
+                if (!string.IsNullOrWhiteSpace(ChatSend.Text))
+                {
+                    // Speak as Streamer or Bot
+                    if (SpeakAs.SelectedIndex == 0) // streamer
+                    {
+                        if (ChatSend.Text.StartsWith("/w"))
+                        {
+                            //streamerWhisperConnection.SendWhisper(ChatSend.Text);
+                        }
+                        else
+                        {
+                            // No need to append this message to the colChat,
+                            // as the bot (primary) account will receive this message.
+                            streamerChatConnection.SendChatMessage(ChatSend.Text);
+                        }
+                    }
+                    else if (SpeakAs.SelectedIndex == 1) // Bot
+                    {
+                        if (ChatSend.Text.StartsWith("/w"))
+                        {
+                            //botWhisperConnection.SendWhisper(ChatSend.Text);
+                        }
+                        else
+                        {
+                            // Append this message to colChat in order
+                            // to let the streamer see their own messages send.
+                            colChatMessages.Add(new IrcMessage(accountBot.UserName, ChatSend.Text));
+                            botChatConnection.SendChatMessage(ChatSend.Text);
+                        }
+                    }
+                }
+
+                // Clear the chat input
+                ChatSend.Clear();
+            }
+        }
+
+        private void colChatMessages_Changed(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
+            {
+                foreach (IrcMessage addedMessage in e.NewItems)
+                {
+                    var chatWindow = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == addedMessage.Author);
+                    if (chatWindow != null)
+                    {
+                        chatWindow.AddViewerMessage(addedMessage);
+                    }
+                }
+            }
+        }
+
+        private void comboBox_Copy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO
+        }
+
+        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO
+        }
 
         private void ConnectBot()
         {
@@ -221,29 +751,6 @@ namespace OakBot
 
             // Start the chat connection threads
             botChat.Start();
-        }
-
-        public void DisconnectBot()
-        {
-            try
-            {
-                botChat.Abort();
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (Exception)
-            {
-            }
-
-            // Enable UI elements
-            textBoxBotName.IsEnabled = true;
-            buttonBotConnect.IsEnabled = true;
-            tbChannelName.IsEnabled = true;
-            cbServerIP.IsEnabled = true;
-            cbServerPort.IsEnabled = true;
-            cbAutoConnectBot.IsEnabled = true;
-            btnBotConnect.Content = "Connect";
         }
 
         private void ConnectStreamer()
@@ -319,259 +826,27 @@ namespace OakBot
             }
         }
 
-        public void DisconnectStreamer()
+        private bool DatabaseFilter(object item)
         {
-            try
-            {
-                streamerChat.Abort();
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (Exception)
-            {
-            }
-
-            // Enable UI elements
-            textBoxStreamerName.IsEnabled = true;
-            buttonStreamerConnect.IsEnabled = true;
-            cbAutoConnectStreamer.IsEnabled = true;
-            btnStreamerConnect.Content = "Connect";
+            Viewer viewer = item as Viewer;
+            return viewer.UserName.Contains(tbFilterOnName.Text);
         }
 
-        public void LoadConfigToUI()
+        private void Discord_MessageReceived(object sender, MessageEventArgs e)
         {
-            textBoxBotName.Text = Config.BotUsername;
-            tbChannelName.Text = Config.ChannelName;
-            cbAutoConnectBot.IsChecked = Config.AutoConnectBot;
-            textBoxStreamerName.Text = Config.StreamerUsername;
-            cbAutoConnectBot.IsChecked = Config.AutoConnectStreamer;
-            cbAutoConnectStreamer.IsChecked = Config.AutoConnectStreamer;
-        }
+            string firstWord = Regex.Match(e.Message.Text, @"^\S+\b").Value.ToLower();
+            UserCommand foundCommand = MainWindow.colBotCommands.FirstOrDefault(x =>
+                x.Command == firstWord);
 
-        #endregion Methods
-
-        #region Settings EventHandlers
-
-        #region BotConnect
-
-        private void textBoxBotName_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            if (foundCommand != null)
             {
-                MessageBox.Show("Please enter the bot Twitch username.",
-                    "Bot Twitch Username", MessageBoxButton.OK, MessageBoxImage.Error);
+                //foundCommand.ExecuteCommand(new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
+                foundCommand.ExecuteCommandDiscord(e.Message);
             }
             else
             {
-                Config.BotUsername = textBoxBotName.Text.Trim().ToLower();
-            }
-        }
-
-        private void buttonBotConnect_Click(object sender, RoutedEventArgs e)
-        {
-            if (textBoxBotName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxBotName.Text))
-            {
-                MessageBox.Show("Please enter the bot Twitch username first before trying to connect with Twitch.",
-                    "Bot Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                WindowAuthBrowser tab = new WindowAuthBrowser(false);
-                tab.Show();
-            }
-        }
-
-        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // TODO
-        }
-
-        private void comboBox_Copy_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // TODO
-        }
-
-        private void cbAutoConnectBot_Checked(object sender, RoutedEventArgs e)
-        {
-            if (cbAutoConnectBot.IsChecked == true)
-            {
-                Config.AutoConnectBot = true;
-            }
-            else
-            {
-                Config.AutoConnectBot = false;
-            }
-        }
-
-        private void cbAutoConnectBot_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (cbAutoConnectBot.IsChecked == false)
-            {
-                Config.AutoConnectBot = false;
-            }
-            else
-            {
-                Config.AutoConnectBot = true;
-            }
-        }
-
-        private void btnBotConnect_Click(object sender, RoutedEventArgs e)
-        {
-            if (btnBotConnect.Content.ToString() == "Connect")
-            {
-                ConnectBot();
-            }
-            else
-            {
-                DisconnectBot();
-            }
-        }
-
-        #endregion BotConnect
-
-        #region Streamer Connect
-
-        private void textBoxStreamerName_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
-            {
-                MessageBox.Show("Please enter the streamer Twitch username if you want to use the features that require a connected streamer account.",
-                    "Streamer Twitch Username", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                Config.StreamerUsername = textBoxStreamerName.Text.Trim().ToLower();
-            }
-        }
-
-        private void buttonStreamerConnect_Click(object sender, RoutedEventArgs e)
-        {
-            if (textBoxStreamerName.Text == "notSet" || string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
-            {
-                MessageBox.Show("Please enter the streamer Twitch username first before trying to connect with Twitch if you want to use features that require a connected streamer account.",
-                    "Streamer Twitch Connect", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            else
-            {
-                WindowAuthBrowser tab = new WindowAuthBrowser(true);
-                tab.Show();
-            }
-        }
-
-        private void cbAutoConnectStreamer_Checked(object sender, RoutedEventArgs e)
-        {
-            if (cbAutoConnectStreamer.IsChecked == true)
-            {
-                Config.AutoConnectStreamer = true;
-            }
-            else
-            {
-                Config.AutoConnectStreamer = false;
-            }
-        }
-
-        private void cbAutoConnectStreamer_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (cbAutoConnectStreamer.IsChecked == false)
-            {
-                Config.AutoConnectStreamer = false;
-            }
-            else
-            {
-                Config.AutoConnectStreamer = true;
-            }
-        }
-
-        private void btnStreamerConnect_Click(object sender, RoutedEventArgs e)
-        {
-            if (btnBotConnect.Content.ToString() != "Connect")
-            {
-                if (btnStreamerConnect.Content.ToString() == "Connect")
-                {
-                    ConnectStreamer();
-                }
-                else
-                {
-                    DisconnectStreamer();
-                }
-            }
-            else
-            {
-                MessageBox.Show("You need to connect the bot account first before you can connect the streamer account.\n" +
-                    "If you only want to use the bot functionality and not the Twitch dashboard login with your account as bot.",
-                    "Streamer Chat Connect", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
-        #endregion Streamer Connect
-
-        private void btnImport_Click(object sender, RoutedEventArgs e)
-        {
-            WindowImportData windowImport = new WindowImportData();
-            windowImport.ShowDialog();
-        }
-
-        #endregion Settings EventHandlers
-
-
-
-        #region Twitch Chat
-
-        private void SpeakAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (accountStreamer != null)
-            {
-                if (SpeakAs.SelectedIndex == 0) // streamer
-                {
-                    colChatMessages.Add(new IrcMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.UserName)));
-                }
-                else if (SpeakAs.SelectedIndex == 1) // bot
-                {
-                    colChatMessages.Add(new IrcMessage("OakBot", string.Format("Speaking as {0}.", accountBot.UserName)));
-                }
-            }
-        }
-
-        private void ChatSend_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Return)
-            {
-                // Get the line and
-                if (!string.IsNullOrWhiteSpace(ChatSend.Text))
-                {
-                    // Speak as Streamer or Bot
-                    if (SpeakAs.SelectedIndex == 0) // streamer
-                    {
-                        if (ChatSend.Text.StartsWith("/w"))
-                        {
-                            //streamerWhisperConnection.SendWhisper(ChatSend.Text);
-                        }
-                        else
-                        {
-                            // No need to append this message to the colChat,
-                            // as the bot (primary) account will receive this message.
-                            streamerChatConnection.SendChatMessage(ChatSend.Text);
-                        }
-                    }
-                    else if (SpeakAs.SelectedIndex == 1) // Bot
-                    {
-                        if (ChatSend.Text.StartsWith("/w"))
-                        {
-                            //botWhisperConnection.SendWhisper(ChatSend.Text);
-                        }
-                        else
-                        {
-                            // Append this message to colChat in order
-                            // to let the streamer see their own messages send.
-                            colChatMessages.Add(new IrcMessage(accountBot.UserName, ChatSend.Text));
-                            botChatConnection.SendChatMessage(ChatSend.Text);
-                        }
-                    }
-                }
-
-                // Clear the chat input
-                ChatSend.Clear();
+                //BotCommands.RunBotCommand(firstWord, new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
+                BotCommands.RunBotCommandDiscord(firstWord, e.Message);
             }
         }
 
@@ -604,61 +879,15 @@ namespace OakBot
             }
         }
 
-        private void btnViewerAddPoints_Click(object sender, RoutedEventArgs e)
+        private void lvSongs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            foreach (Viewer viewer in colViewers)
+            if (lvSongs.SelectedIndex != -1)
             {
-                viewer.Points += 10;
+                Song selectedSong = (Song)lvSongs.SelectedItem;
+                cefSong.Load(selectedSong.Link);
+                playState = true;
+                indexSong = lvSongs.SelectedIndex;
             }
-        }
-
-        #endregion Twitch Chat
-
-        #region Database
-
-        private void tbFilterOnName_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (databaseView != null)
-            {
-                databaseView.Refresh();
-                lblFilterCnt.Content = databaseView.Cast<Viewer>().Count();
-            }
-        }
-
-        private bool DatabaseFilter(object item)
-        {
-            Viewer viewer = item as Viewer;
-            return viewer.UserName.Contains(tbFilterOnName.Text);
-        }
-
-        #endregion Database
-
-        #region Global EventHandlers
-
-        private void colChatMessages_Changed(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
-            {
-                foreach (IrcMessage addedMessage in e.NewItems)
-                {
-                    var chatWindow = colChatWindows.FirstOrDefault(x => x.Viewer.UserName == addedMessage.Author);
-                    if (chatWindow != null)
-                    {
-                        chatWindow.AddViewerMessage(addedMessage);
-                    }
-                }
-            }
-        }
-
-        private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-        }
-
-        #endregion Global EventHandlers
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            Utils.StartWebserver();
         }
 
         private void lvViewerDatabase_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -684,123 +913,8 @@ namespace OakBot
             }
         }
 
-        private void btnDatabaseCleanup_Click(object sender, RoutedEventArgs e)
+        private void OakBot_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            WindowDatabaseCleanup windowCleanup = new WindowDatabaseCleanup();
-            windowCleanup.ShowDialog();
-        }
-
-        private void lvSongs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (lvSongs.SelectedIndex != -1)
-            {
-                Song selectedSong = (Song)lvSongs.SelectedItem;
-                cefSong.Load(selectedSong.Link);
-                playState = true;
-                indexSong = lvSongs.SelectedIndex;
-            }
-        }
-
-        private void btnPlay_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Song first = (Song)lvSongs.Items[0];
-                cefSong.Load(first.Link);
-                playState = true;
-                indexSong = 0;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("No songs in the playlist!");
-                playState = false;
-            }
-        }
-
-        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.setVolume(" + e.NewValue + "); ");
-        }
-
-        private void btnPlayerCtl_Click(object sender, RoutedEventArgs e)
-        {
-            if (playState)
-            {
-                // Pause
-                cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.pauseVideo();");
-                btnPlayerCtl.Content = "Play";
-            }
-            else
-            {
-                // Play
-                cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.playVideo();");
-                btnPlayerCtl.Content = "Pause";
-            }
-            playState = !playState;
-        }
-
-        private void btnPrev_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(indexSong.ToString());
-            if (indexSong == 0)
-            {
-                indexSong = colSongs.Count - 1;
-            }
-            else
-            {
-                indexSong--;
-            }
-            Song play = colSongs[indexSong];
-            cefSong.Load(play.Link);
-            MessageBox.Show(indexSong.ToString());
-        }
-
-        private void btnNext_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(indexSong.ToString());
-            if (indexSong == colSongs.Count - 1)
-            {
-                indexSong = 0;
-            }
-            else
-            {
-                indexSong++;
-            }
-            Song play = colSongs[indexSong];
-            cefSong.Load(play.Link);
-            MessageBox.Show(indexSong.ToString());
-        }
-
-        #region Manual Commercial
-
-        private void btn30Sec_Click(object sender, RoutedEventArgs e)
-        {
-            RunManualCommercial(30);
-        }
-
-        private void btn60Sec_Click(object sender, RoutedEventArgs e)
-        {
-            RunManualCommercial(60);
-        }
-
-        private void btn90Secs_Click(object sender, RoutedEventArgs e)
-        {
-            RunManualCommercial(90);
-        }
-
-        private void btn120Secs_Click(object sender, RoutedEventArgs e)
-        {
-            RunManualCommercial(120);
-        }
-
-        private void btn150Secs_Click(object sender, RoutedEventArgs e)
-        {
-            RunManualCommercial(150);
-        }
-
-        private void btn180Secs_Click(object sender, RoutedEventArgs e)
-        {
-            RunManualCommercial(180);
         }
 
         private async void RunManualCommercial(int length)
@@ -854,184 +968,62 @@ namespace OakBot
             }
         }
 
-        #endregion Manual Commercial
-
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (client.GetMyUser().Partnered)
+            cefSong.Load("javascript:var mv = document.getElementById('movie_player'); mv.setVolume(" + e.NewValue + "); ");
+        }
+
+        private void SpeakAs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (accountStreamer != null)
             {
-                int streamDelay;
-
-                try
+                if (SpeakAs.SelectedIndex == 0) // streamer
                 {
-                    streamDelay = Convert.ToInt32(tbStreamDelay.Text);
-                    if (streamDelay < 0 || streamDelay > 900)
-                    {
-                        throw new ArgumentOutOfRangeException();
-                    }
+                    colChatMessages.Add(new IrcMessage("OakBot", string.Format("Speaking as {0}.", accountStreamer.UserName)));
                 }
-                catch (Exception)
+                else if (SpeakAs.SelectedIndex == 1) // bot
                 {
-                    streamDelay = 0;
-                    MessageBox.Show("Invalid delay given of 0 up to and including 900.\nDelay is will be reverted to 0 seconds.",
-                        "OakBot Channel Update", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    colChatMessages.Add(new IrcMessage("OakBot", string.Format("Speaking as {0}.", accountBot.UserName)));
                 }
+            }
+        }
 
-                //client.Update(txtTitle.Text, cbGame.Text, Convert.ToString(streamDelay));
-                client.Update(txtTitle.Text, cbGame.Text, streamDelay);
+        private void tbFilterOnName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (databaseView != null)
+            {
+                databaseView.Refresh();
+                lblFilterCnt.Content = databaseView.Cast<Viewer>().Count();
+            }
+        }
+
+        private void textBoxBotName_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            {
+                MessageBox.Show("Please enter the bot Twitch username.",
+                    "Bot Twitch Username", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
-                client.Update(txtTitle.Text, cbGame.Text);
-            }
-
-            MessageBox.Show("Channel information updated!",
-                "Oakbot Channel Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-        }
-
-        // For binding
-        public ObservableCollection<IrcMessage> ChatMessages
-        {
-            get
-            {
-                return colChatMessages;
+                Config.BotUsername = textBoxBotName.Text.Trim().ToLower();
             }
         }
 
-        // For binding
-        public ObservableCollection<Viewer> Chatters
+        private void textBoxStreamerName_LostFocus(object sender, RoutedEventArgs e)
         {
-            get
+            if (string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
             {
-                return colViewers;
+                MessageBox.Show("Please enter the streamer Twitch username if you want to use the features that require a connected streamer account.",
+                    "Streamer Twitch Username", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                Config.StreamerUsername = textBoxStreamerName.Text.Trim().ToLower();
             }
         }
 
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-            discord.Connect(txtEmail.Text, pwdPassword.Password);
-            while (discord.State != ConnectionState.Connected)
-            {
-                Task.Delay(25);
-            }
-            discord.MessageReceived += Discord_MessageReceived;
-            txtUsername.Text = discord.CurrentUser.Name;
-            int serverCounter = 0, channelCounter = 0, userCounter = 0;
-            foreach (Server s in discord.Servers)
-            {
-                serverCounter++;
-                TreeViewItem server = new TreeViewItem();
-                server.Header = s.Name;
-                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
-                voice.Header = "Voice Channels";
-                text.Header = "Text Channels";
-                foreach (Discord.Channel c in s.VoiceChannels)
-                {
-                    channelCounter++;
-                    TreeViewItem channel = new TreeViewItem();
-                    channel.Header = c.Name;
-                    foreach (Discord.User u in c.Users)
-                    {
-                        userCounter++;
-                        channel.Items.Add(u.Name);
-                    }
-                    voice.Items.Add(channel);
-                }
-                foreach (Discord.Channel c in s.TextChannels)
-                {
-                    channelCounter++;
-                    text.Items.Add(c);
-                }
-                server.Items.Add(voice);
-                server.Items.Add(text);
-                tvServerBrowser.Items.Add(server);
-            }
-            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
-        }
+        #endregion Private Methods
 
-        private void btnRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            tvServerBrowser.Items.Clear();
-            int serverCounter = 0, channelCounter = 0, userCounter = 0;
-            foreach (Server s in discord.Servers)
-            {
-                serverCounter++;
-                TreeViewItem server = new TreeViewItem();
-                server.Header = s.Name;
-                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
-                voice.Header = "Voice Channels";
-                text.Header = "Text Channels";
-                foreach (Discord.Channel c in s.VoiceChannels)
-                {
-                    channelCounter++;
-                    TreeViewItem channel = new TreeViewItem();
-                    channel.Header = c.Name;
-                    foreach (Discord.User u in c.Users)
-                    {
-                        userCounter++;
-                        channel.Items.Add(u.Name);
-                    }
-                    voice.Items.Add(channel);
-                }
-                foreach (Discord.Channel c in s.TextChannels)
-                {
-                    channelCounter++;
-                    text.Items.Add(c);
-                }
-                server.Items.Add(voice);
-                server.Items.Add(text);
-                tvServerBrowser.Items.Add(server);
-            }
-            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
-        }
-
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            testGw = new Giveaway("Test", new TimeSpan(0, 0, 30), "!giveaway", 0, false, 1, new TimeSpan(0, 1, 0));
-            testGw.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
-            {
-                Dispatcher.BeginInvoke(new Action(delegate ()
-                {
-                    AddEntered(ev.Viewer);
-                }));
-            };
-            testGw.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
-            {
-                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
-            };
-            testGw.Start();
-        }
-
-        private void button2_Click(object sender, RoutedEventArgs e)
-        {
-            testGw.DrawWinner();
-        }
-
-        private void AddEntered(string v)
-        {
-            lbEntered.Items.Add(v);
-        }
-
-        private void button4_Click(object sender, RoutedEventArgs e)
-        {
-            testGw2.DrawWinner();
-        }
-
-        private void button3_Click(object sender, RoutedEventArgs e)
-        {
-            testGw2 = new Giveaway("Active", new TimeSpan(0, 0, 30), "", 0, false, 1, new TimeSpan());
-            testGw2.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
-            {
-                Dispatcher.BeginInvoke(new Action(delegate ()
-                {
-                    AddEntered(ev.Viewer);
-                }));
-            };
-            testGw2.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
-            {
-                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
-            };
-            testGw2.Start();
-        }
     }
 }

@@ -7,17 +7,26 @@ namespace OakBot
 {
     public class BackgroundTasks
     {
-        private DateTime activated;
-        private double secondsPassed;
+        #region Private Fields
 
+        private DateTime activated;
         private int intervalPoints;
         private int intervalSave;
+        private double secondsPassed;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public BackgroundTasks(int intervalPoints, int intervalSave)
         {
             this.intervalPoints = intervalPoints;
             this.intervalSave = intervalSave;
         }
+
+        #endregion Public Constructors
+
+        #region Internal Methods
 
         // For running in seperate thread with auto sleep balancing
         internal void Run()
@@ -52,5 +61,7 @@ namespace OakBot
                 }
             }
         }
+
+        #endregion Internal Methods
     }
 }

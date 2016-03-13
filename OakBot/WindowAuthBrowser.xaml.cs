@@ -9,13 +9,19 @@ namespace OakBot
     /// </summary>
     public partial class WindowAuthBrowser : Window
     {
-        private bool _isStreamer;
+        #region Private Fields
+
+        //Twitch Auth Link Bot scope
+        private static string twitchAuthLinkBot = string.Format("https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id={0}&redirect_uri=http://localhost&scope=chat_login", Config.TwitchClientID);
 
         //Twitch Auth Link Streamer scope
         private static string twitchAuthLinkStreamer = string.Format("https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id={0}&redirect_uri=http://localhost&scope=user_read+user_blocks_edit+user_blocks_read+user_follows_edit+channel_read+channel_editor+channel_commercial+channel_stream+channel_subscriptions+user_subscriptions+channel_check_subscription+chat_login", Config.TwitchClientID);
 
-        //Twitch Auth Link Bot scope
-        private static string twitchAuthLinkBot = string.Format("https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id={0}&redirect_uri=http://localhost&scope=chat_login", Config.TwitchClientID);
+        private bool _isStreamer;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public WindowAuthBrowser(bool isStreamer)
         {
@@ -34,6 +40,43 @@ namespace OakBot
             {
                 wbTwitchAuth.Navigate(twitchAuthLinkBot);
             }
+        }
+
+        #endregion Public Constructors
+
+        #region Private Methods
+
+        private void wbTwitchAuth_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            HTMLDocument doc = (HTMLDocument)wbTwitchAuth.Document;
+            object tb = doc.getElementById("username");
+            if (tb != null)
+            {
+                if (tb is IHTMLInputElement)
+                {
+                    if (_isStreamer)
+                    {
+                        ((IHTMLInputElement)tb).value = Config.StreamerUsername;
+                    }
+                    else
+                    {
+                        ((IHTMLInputElement)tb).value = Config.BotUsername;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Not a box!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No field!");
+            }
+        }
+
+        private void wbTwitchAuth_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            Utils.HideScriptErrors(wbTwitchAuth, true);
         }
 
         private void wbTwitchAuth_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
@@ -71,37 +114,6 @@ namespace OakBot
             }
         }
 
-        private void wbTwitchAuth_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {
-            Utils.HideScriptErrors(wbTwitchAuth, true);
-        }
-
-        private void wbTwitchAuth_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {
-            HTMLDocument doc = (HTMLDocument)wbTwitchAuth.Document;
-            object tb = doc.getElementById("username");
-            if (tb != null)
-            {
-                if (tb is IHTMLInputElement)
-                {
-                    if (_isStreamer)
-                    {
-                        ((IHTMLInputElement)tb).value = Config.StreamerUsername;
-                    }
-                    else
-                    {
-                        ((IHTMLInputElement)tb).value = Config.BotUsername;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Not a box!");
-                }
-            }
-            else
-            {
-                MessageBox.Show("No field!");
-            }
-        }
+        #endregion Private Methods
     }
 }

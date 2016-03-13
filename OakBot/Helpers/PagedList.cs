@@ -7,15 +7,14 @@ namespace OakBot.Helpers
     // @author gibletto
     public class PagedList<T> : IPagedList<T>
     {
-        private int _pageSize = 25;
-        private const int MaxPageSize = 100;
+        #region Private Fields
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PagedList{T}"/> class.
-        /// </summary>
-        protected PagedList()
-        {
-        }
+        private const int MaxPageSize = 100;
+        private int _pageSize = 25;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PagedList{T}"/> class.
@@ -35,23 +34,23 @@ namespace OakBot.Helpers
             Count = count;
         }
 
-        /// <inheritdoc />
-        public IEnumerable<T> List { get; set; }
+        #endregion Public Constructors
 
-        /// <inheritdoc />
-        public int Page { get; set; }
+        #region Protected Constructors
 
-        /// <inheritdoc />
-        public int PageSize { get { return _pageSize; } set { _pageSize = Math.Max(value, MaxPageSize); } }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PagedList{T}"/> class.
+        /// </summary>
+        protected PagedList()
+        {
+        }
+
+        #endregion Protected Constructors
+
+        #region Public Properties
 
         /// <inheritdoc />
         public int Count { get; set; }
-
-        /// <inheritdoc />
-        public int Start
-        {
-            get { return ((Page - 1) * PageSize) + 1; }
-        }
 
         /// <inheritdoc />
         public int End
@@ -72,16 +71,16 @@ namespace OakBot.Helpers
         }
 
         /// <inheritdoc />
+        public IEnumerable<T> List { get; set; }
+
+        /// <inheritdoc />
         public int NextPage
         {
             get { return Page + 1; }
         }
 
         /// <inheritdoc />
-        public int PrevPage
-        {
-            get { return Math.Max(Page - 1, 1); }
-        }
+        public int Page { get; set; }
 
         /// <inheritdoc />
         public int PageCount
@@ -92,5 +91,22 @@ namespace OakBot.Helpers
                 return (Count / PageSize) + (hasRemainder ? 1 : 0);
             }
         }
+
+        /// <inheritdoc />
+        public int PageSize { get { return _pageSize; } set { _pageSize = Math.Max(value, MaxPageSize); } }
+
+        /// <inheritdoc />
+        public int PrevPage
+        {
+            get { return Math.Max(Page - 1, 1); }
+        }
+
+        /// <inheritdoc />
+        public int Start
+        {
+            get { return ((Page - 1) * PageSize) + 1; }
+        }
+
+        #endregion Public Properties
     }
 }

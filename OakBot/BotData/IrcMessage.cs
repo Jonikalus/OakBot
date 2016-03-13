@@ -15,38 +15,43 @@ namespace OakBot
 
     public class IrcMessage
     {
-        #region Fields
+        #region Private Fields
 
-        // Tracking
-        private DateTime timestamp;
-
-        private TwitchCredentials messageSource;
+        private string[] arguments;
 
         // Basic IRC Message
         private string author;
 
-        private string host;
         private string command;
-        private string[] arguments;
+
+        private string displayName;
+
+        private string emotes;
+
+        private string host;
+
         private string message;
+
+        private TwitchCredentials messageSource;
+
+        private bool moderator;
 
         // IRC v3 TAGS
         private string nameColor;
 
-        private string displayName;
-        private string emotes;
-        private bool moderator;
-
         //private string roomId;
         private bool subscriber;
+
+        // Tracking
+        private DateTime timestamp;
 
         private bool turbo;
         private int userId;
         private uType userType;
 
-        #endregion Fields
+        #endregion Private Fields
 
-        #region Constructors
+        #region Public Constructors
 
         /// <summary>
         /// Constructor to be used to parse receoved IRC message.
@@ -147,25 +152,9 @@ namespace OakBot
             this.userType = uType.BOT;
         }
 
-        #endregion Constructors
+        #endregion Public Constructors
 
-        #region Properties
-
-        public string ShortTime
-        {
-            get
-            {
-                return timestamp.ToShortTimeString();
-            }
-        }
-
-        public string Command
-        {
-            get
-            {
-                return command;
-            }
-        }
+        #region Public Properties
 
         public string[] Args
         {
@@ -180,6 +169,22 @@ namespace OakBot
             get
             {
                 return author;
+            }
+        }
+
+        public string Command
+        {
+            get
+            {
+                return command;
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                return string.IsNullOrEmpty(displayName) ? author : displayName;
             }
         }
 
@@ -199,11 +204,11 @@ namespace OakBot
             }
         }
 
-        public string DisplayName
+        public string ShortTime
         {
             get
             {
-                return string.IsNullOrEmpty(displayName) ? author : displayName;
+                return timestamp.ToShortTimeString();
             }
         }
 
@@ -215,6 +220,6 @@ namespace OakBot
             }
         }
 
-        #endregion Properties
+        #endregion Public Properties
     }
 }

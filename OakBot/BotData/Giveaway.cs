@@ -12,87 +12,214 @@ namespace OakBot
 {
     public class Giveaway : INotifyPropertyChanged
     {
-        #region Fields
+        #region Private Fields
 
+        private ObservableCollection<string> entries, winners;
+        private string giveawayName, keyword;
         private Timer giveawayTimer;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string giveawayName, keyword;
-        private int price;
         private bool needsFollow, running;
-        private byte subscriberLuck;
+
+        private int price;
+
         private TimeSpan responseTime, giveawayTime;
+
+        private byte subscriberLuck;
+
         private Viewer winner;
-        private ObservableCollection<string> entries, winners;
 
-        #endregion Fields
+        #endregion Private Fields
 
-        #region Handlers
+        #region Public Constructors
 
-        public delegate void WinnerChosenEventHandler(object o, WinnerChosenEventArgs e);
+        public Giveaway(string name, TimeSpan time, string word, int cost, bool followed, byte luck, TimeSpan response)
+        {
+            giveawayName = name;
+            giveawayTime = time;
+            subscriberLuck = luck;
+            keyword = word;
+            price = cost;
+            needsFollow = followed;
+            responseTime = response;
+            entries = new ObservableCollection<string>();
+            winners = new ObservableCollection<string>();
 
-        public event WinnerChosenEventHandler WinnerChosen;
+            giveawayTimer = new Timer();
+            giveawayTimer.Interval = giveawayTime.TotalMilliseconds;
+            giveawayTimer.Enabled = true;
+            giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
+            giveawayTimer.AutoReset = false;
+        }
+
+        #endregion Public Constructors
+
+        #region Public Delegates
 
         public delegate void ViewerEnteredEventHandler(object o, ViewerEnteredEventArgs e);
 
+        public delegate void WinnerChosenEventHandler(object o, WinnerChosenEventArgs e);
+
+        #endregion Public Delegates
+
+        #region Public Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public event ViewerEnteredEventHandler ViewerEntered;
 
-        #endregion Handlers
+        public event WinnerChosenEventHandler WinnerChosen;
 
-        #region Methods
+        #endregion Public Events
 
-        private void NotifyPropertyChanged(string info)
+        #region Public Properties
+
+        public ObservableCollection<string> Entries
         {
-            if (PropertyChanged != null)
+            get
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
+                return entries;
             }
         }
 
-        public void Start()
+        /// <summary>
+        /// Name of the giveaway
+        /// </summary>
+        public string GiveawayName
         {
-            //TimerCallback cb = delegate (object o)
-            //{
-            //    running = false;
-            //    MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
-            //};
-            //giveawayTimer = new Timer(cb, new ManualResetEvent(true), new TimeSpan(0), giveawayTime);
-            running = true;
-            MainWindow.instance.botChatConnection.ChatMessageReceived += BotChatConnection_ChatMessageReceived;
-            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway has started! Type {1} in chat to enter! Following is {2} Duration: {3}h {4}m {5}s", giveawayName, keyword, (needsFollow ? "needed." : "not needed."), giveawayTime.Hours, giveawayTime.Minutes, giveawayTime.Seconds));
+            get
+            {
+                return giveawayName;
+            }
+            set
+            {
+                giveawayName = value;
+                NotifyPropertyChanged("GiveawayName");
+            }
         }
 
-        private void BotChatConnection_ChatMessageReceived(object o, ChatMessageReceivedEventArgs e)
+        /// <summary>
+        /// Amount of time a user has to either enter the keyword or type in chat
+        /// </summary>
+        public TimeSpan GiveawayTime
         {
-            if (keyword != "")
+            get
             {
-                if (e.Message.Message == keyword)
+                return giveawayTime;
+            }
+            set
+            {
+                giveawayTime = value;
+                NotifyPropertyChanged("GiveawayTime");
+            }
+        }
+
+        /// <summary>
+        /// Keyword to type
+        /// </summary>
+        public string Keyword
+        {
+            get
+            {
+                return keyword;
+            }
+            set
+            {
+                keyword = value;
+                NotifyPropertyChanged("Keyword");
+            }
+        }
+
+        /// <summary>
+        /// Viewer needs to follow to participate
+        /// </summary>
+        public bool NeedsFollow
+        {
+            get
+            {
+                return needsFollow;
+            }
+            set
+            {
+                needsFollow = value;
+                NotifyPropertyChanged("NeedsFollow");
+            }
+        }
+
+        /// <summary>
+        /// Price to enter the giveaway
+        /// </summary>
+        public int Price
+        {
+            get
+            {
+                return price;
+            }
+            set
+            {
+                price = value;
+                NotifyPropertyChanged("Price");
+            }
+        }
+
+        /// <summary>
+        /// Amount of time the viewer has to answer to win the giveaway
+        /// </summary>
+        public TimeSpan ResponseTime
+        {
+            get
+            {
+                return responseTime;
+            }
+            set
+            {
+                responseTime = value;
+                NotifyPropertyChanged("ResponseTime");
+            }
+        }
+
+        public bool Running
+        {
+            get
+            {
+                return running;
+            }
+        }
+
+        /// <summary>
+        /// Luck for Subscribers (0 is no additional luck, 10 is only subscribers can win). Can only be from 0 to 10, if not in this range, it will be 0
+        /// </summary>
+        public byte SubscriberLuck
+        {
+            get
+            {
+                return subscriberLuck;
+            }
+            set
+            {
+                if (subscriberLuck < 10 && subscriberLuck > 0)
                 {
-                    if (!entries.Contains(e.Message.Author))
-                    {
-                        entries.Add(e.Message.Author);
-                        ViewerEntered(this, new ViewerEnteredEventArgs(e.Message.Author));
-                        MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0}, you've entered the {1} giveaway!", e.Message.Author, giveawayName));
-                    }
+                    subscriberLuck = value;
+                    NotifyPropertyChanged("SubscriberLuck");
+                }
+                else
+                {
+                    subscriberLuck = 0;
+                    NotifyPropertyChanged("SubscriberLuck");
                 }
             }
-            else
+        }
+
+        public Viewer Winner
+        {
+            get
             {
-                if (!entries.Contains(e.Message.Author))
-                {
-                    entries.Add(e.Message.Author);
-                    ViewerEntered(this, new ViewerEnteredEventArgs(e.Message.Author));
-                }
+                return winner;
             }
         }
 
-        public void Stop()
-        {
-            giveawayTimer.Dispose();
-            running = false;
-            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!"));
-        }
+        #endregion Public Properties
+
+        #region Public Methods
 
         public void DrawWinner()
         {
@@ -160,6 +287,69 @@ namespace OakBot
             OnWinnerChosen(args);
         }
 
+        public void Start()
+        {
+            //TimerCallback cb = delegate (object o)
+            //{
+            //    running = false;
+            //    MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
+            //};
+            //giveawayTimer = new Timer(cb, new ManualResetEvent(true), new TimeSpan(0), giveawayTime);
+            running = true;
+            MainWindow.instance.botChatConnection.ChatMessageReceived += BotChatConnection_ChatMessageReceived;
+            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway has started! Type {1} in chat to enter! Following is {2} Duration: {3}h {4}m {5}s", giveawayName, keyword, (needsFollow ? "needed." : "not needed."), giveawayTime.Hours, giveawayTime.Minutes, giveawayTime.Seconds));
+        }
+
+        public void Stop()
+        {
+            giveawayTimer.Dispose();
+            running = false;
+            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!"));
+        }
+
+        #endregion Public Methods
+
+        #region Protected Methods
+
+        protected void OnWinnerChosen(WinnerChosenEventArgs e)
+        {
+            WinnerChosen(this, e);
+        }
+
+        #endregion Protected Methods
+
+        #region Private Methods
+
+        private void BotChatConnection_ChatMessageReceived(object o, ChatMessageReceivedEventArgs e)
+        {
+            if (keyword != "")
+            {
+                if (e.Message.Message == keyword)
+                {
+                    if (!entries.Contains(e.Message.Author))
+                    {
+                        entries.Add(e.Message.Author);
+                        ViewerEntered(this, new ViewerEnteredEventArgs(e.Message.Author));
+                        MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0}, you've entered the {1} giveaway!", e.Message.Author, giveawayName));
+                    }
+                }
+            }
+            else
+            {
+                if (!entries.Contains(e.Message.Author))
+                {
+                    entries.Add(e.Message.Author);
+                    ViewerEntered(this, new ViewerEnteredEventArgs(e.Message.Author));
+                }
+            }
+        }
+
+        private void GiveawayTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            running = false;
+            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
+        }
+
         private bool MeetsRequirements(Viewer user)
         {
             if (needsFollow)
@@ -179,192 +369,14 @@ namespace OakBot
             return true;
         }
 
-        protected void OnWinnerChosen(WinnerChosenEventArgs e)
+        private void NotifyPropertyChanged(string info)
         {
-            WinnerChosen(this, e);
-        }
-
-        #endregion Methods
-
-        #region Properties
-
-        /// <summary>
-        /// Name of the giveaway
-        /// </summary>
-        public string GiveawayName
-        {
-            get
+            if (PropertyChanged != null)
             {
-                return giveawayName;
-            }
-            set
-            {
-                giveawayName = value;
-                NotifyPropertyChanged("GiveawayName");
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
 
-        /// <summary>
-        /// Keyword to type
-        /// </summary>
-        public string Keyword
-        {
-            get
-            {
-                return keyword;
-            }
-            set
-            {
-                keyword = value;
-                NotifyPropertyChanged("Keyword");
-            }
-        }
-
-        /// <summary>
-        /// Price to enter the giveaway
-        /// </summary>
-        public int Price
-        {
-            get
-            {
-                return price;
-            }
-            set
-            {
-                price = value;
-                NotifyPropertyChanged("Price");
-            }
-        }
-
-        /// <summary>
-        /// Viewer needs to follow to participate
-        /// </summary>
-        public bool NeedsFollow
-        {
-            get
-            {
-                return needsFollow;
-            }
-            set
-            {
-                needsFollow = value;
-                NotifyPropertyChanged("NeedsFollow");
-            }
-        }
-
-        /// <summary>
-        /// Luck for Subscribers (0 is no additional luck, 10 is only subscribers can win). Can only be from 0 to 10, if not in this range, it will be 0
-        /// </summary>
-        public byte SubscriberLuck
-        {
-            get
-            {
-                return subscriberLuck;
-            }
-            set
-            {
-                if (subscriberLuck < 10 && subscriberLuck > 0)
-                {
-                    subscriberLuck = value;
-                    NotifyPropertyChanged("SubscriberLuck");
-                }
-                else
-                {
-                    subscriberLuck = 0;
-                    NotifyPropertyChanged("SubscriberLuck");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Amount of time the viewer has to answer to win the giveaway
-        /// </summary>
-        public TimeSpan ResponseTime
-        {
-            get
-            {
-                return responseTime;
-            }
-            set
-            {
-                responseTime = value;
-                NotifyPropertyChanged("ResponseTime");
-            }
-        }
-
-        /// <summary>
-        /// Amount of time a user has to either enter the keyword or type in chat
-        /// </summary>
-        public TimeSpan GiveawayTime
-        {
-            get
-            {
-                return giveawayTime;
-            }
-            set
-            {
-                giveawayTime = value;
-                NotifyPropertyChanged("GiveawayTime");
-            }
-        }
-
-        public Viewer Winner
-        {
-            get
-            {
-                return winner;
-            }
-        }
-
-        public ObservableCollection<string> Entries
-        {
-            get
-            {
-                return entries;
-            }
-        }
-
-        public bool Running
-        {
-            get
-            {
-                return running;
-            }
-        }
-
-        #endregion Properties
-
-        #region Constructors
-
-        public Giveaway(string name, TimeSpan time, string word, int cost, bool followed, byte luck, TimeSpan response)
-        {
-            giveawayName = name;
-            giveawayTime = time;
-            subscriberLuck = luck;
-            keyword = word;
-            price = cost;
-            needsFollow = followed;
-            responseTime = response;
-            entries = new ObservableCollection<string>();
-            winners = new ObservableCollection<string>();
-
-            giveawayTimer = new Timer();
-            giveawayTimer.Interval = giveawayTime.TotalMilliseconds;
-            giveawayTimer.Enabled = true;
-            giveawayTimer.Elapsed += GiveawayTimer_Elapsed;
-            giveawayTimer.AutoReset = false;
-        }
-
-        #endregion Constructors
-
-        #region Events
-
-        private void GiveawayTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            running = false;
-            MainWindow.instance.botChatConnection.SendChatMessage(string.Format("{0} giveaway ended! Winner will be drawn by the streamer!", giveawayName));
-        }
-
-        #endregion Events
+        #endregion Private Methods
     }
 }

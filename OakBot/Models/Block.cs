@@ -6,6 +6,8 @@ namespace OakBot.Models
     [JsonObject("blocks")]
     public class Block
     {
+        #region Public Properties
+
         [JsonProperty("_id")]
         public long Id { get; set; }
 
@@ -14,5 +16,7 @@ namespace OakBot.Models
 
         [JsonProperty("user")]
         public User User { get; set; }
+
+        #endregion Public Properties
     }
 }

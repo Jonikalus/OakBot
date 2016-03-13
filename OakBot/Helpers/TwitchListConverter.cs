@@ -9,9 +9,11 @@ namespace OakBot.Helpers
     // @author gibletto
     internal class TwitchListConverter : JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        #region Public Methods
+
+        public override bool CanConvert(Type objectType)
         {
-            throw new NotImplementedException();
+            return objectType.IsGenericType && typeof(TwitchList<>) == objectType.GetGenericTypeDefinition();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -34,10 +36,14 @@ namespace OakBot.Helpers
             return value;
         }
 
-        public override bool CanConvert(Type objectType)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            return objectType.IsGenericType && typeof(TwitchList<>) == objectType.GetGenericTypeDefinition();
+            throw new NotImplementedException();
         }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private T SetValue<T>(JToken token)
         {
@@ -47,5 +53,7 @@ namespace OakBot.Helpers
             }
             return default(T);
         }
+
+        #endregion Private Methods
     }
 }

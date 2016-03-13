@@ -20,37 +20,47 @@ namespace OakBot
 
     public class UserCommand : INotifyPropertyChanged
     {
-        #region Fields
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        #region Private Fields
 
         private string command;
-        private string response;
-        private bool enabled;
-        private bool sendAsStreamer;
 
-        private int gCooldownSec;
-        private int uCooldownSec;
-
-        private int costViewer;
-        private int costRegular;
-        private int costVIP1;
-        private int costVIP2;
-        private int costVIP3;
         private int costMod;
 
-        private string var1;
-        private string var2;
-        private string var3;
+        private int costRegular;
+
+        private int costViewer;
+
+        private int costVIP1;
+
+        private int costVIP2;
+
+        private int costVIP3;
+
+        private Dictionary<string, DateTime> dictLastUsed = new Dictionary<string, DateTime>();
+
+        private bool enabled;
+
+        private int gCooldownSec;
+
+        private DateTime lastUsed;
 
         private Rank rankRequired;
 
-        private DateTime lastUsed;
-        private Dictionary<string, DateTime> dictLastUsed = new Dictionary<string, DateTime>();
+        private string response;
 
-        #endregion Fields
+        private bool sendAsStreamer;
 
-        #region Constructor
+        private int uCooldownSec;
+
+        private string var1;
+
+        private string var2;
+
+        private string var3;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public UserCommand(string command, string response, int gCooldownSec,
             int uCooldownSec, bool enabled, bool sendAsStreamer = false)
@@ -70,77 +80,65 @@ namespace OakBot
             this.costMod = 0;
         }
 
-        #endregion Constructor
+        #endregion Public Constructors
 
-        #region Methods
+        #region Public Events
 
-        private void NotifyPropertyChanged(string info)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion Public Events
+
+        #region Public Properties
+
+        public string Command
         {
-            if (PropertyChanged != null)
+            get
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
+                return command;
             }
         }
 
-        public void ExecuteCommandDiscord(Message message)
+        public string LastUsed
         {
-            Viewer viewer = new Viewer(message.User.Name);
-            if (viewer == null)
+            get
             {
-                return;
-            }
-
-            if (CanExecute(viewer))
-            {
-                Match targetMatch = Regex.Match(message.Text, @"@(?<name>[a-zA-Z0-9_]{4,25})");
-                string target = targetMatch.Groups["name"].Value;
-
-                // Parse response line here
-                // @user@ -> Display name of the user of the command
-
-                // @followdate@ -> Command user's follow date
-                // @followdatetime@ -> Command user's follow date and time
-
-                // @game@ -> Channels current game
-                // @title@ -> Channels current title
-
-                string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
+                if (lastUsed == DateTime.MinValue)
                 {
-                    string[] split = Regex.Split(message.Text, @"\s+");
-
-                    switch (m.Groups["item"].Value.ToLower())
-                    {
-                        case "user":
-                            return viewer.UserName;
-
-                        case "followdate":
-                            return viewer.GetFollowDateTime("yyyy-MM-dd");
-
-                        case "followdatetime":
-                            return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
-
-                        case "game":
-                            return Utils.GetClient().GetMyChannel().Game;
-
-                        case "title":
-                            return Utils.GetClient().GetMyChannel().Status;
-
-                        case "var1":
-                            if (split.Count() == 2)
-                            {
-                                var1 = split[1];
-                                return var1;
-                            }
-                            return "";
-
-                        default:
-                            return "";
-                    }
-                });
-
-                MainWindow.discord.GetServer(message.Server.Id).GetChannel(message.Channel.Id).SendMessage(parsedResponse.Trim());
+                    return "Never";
+                }
+                else
+                {
+                    return lastUsed.ToString("yyyy-MM-dd hh:mm");
+                }
             }
         }
+
+        public string Response
+        {
+            get
+            {
+                return response;
+            }
+        }
+
+        public string Status
+        {
+            get
+            {
+                if (enabled)
+                {
+                    return "Enabled";
+                }
+                else
+                {
+                    return "Disabled";
+                }
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Public Methods
 
         public void ExecuteCommand(IrcMessage message)
         {
@@ -227,6 +225,70 @@ namespace OakBot
             }
         }
 
+        public void ExecuteCommandDiscord(Message message)
+        {
+            Viewer viewer = new Viewer(message.User.Name);
+            if (viewer == null)
+            {
+                return;
+            }
+
+            if (CanExecute(viewer))
+            {
+                Match targetMatch = Regex.Match(message.Text, @"@(?<name>[a-zA-Z0-9_]{4,25})");
+                string target = targetMatch.Groups["name"].Value;
+
+                // Parse response line here
+                // @user@ -> Display name of the user of the command
+
+                // @followdate@ -> Command user's follow date
+                // @followdatetime@ -> Command user's follow date and time
+
+                // @game@ -> Channels current game
+                // @title@ -> Channels current title
+
+                string parsedResponse = Regex.Replace(response, @"@(?<item>\w+)@", m =>
+                {
+                    string[] split = Regex.Split(message.Text, @"\s+");
+
+                    switch (m.Groups["item"].Value.ToLower())
+                    {
+                        case "user":
+                            return viewer.UserName;
+
+                        case "followdate":
+                            return viewer.GetFollowDateTime("yyyy-MM-dd");
+
+                        case "followdatetime":
+                            return viewer.GetFollowDateTime("yyyy-MM-dd HH:mm");
+
+                        case "game":
+                            return Utils.GetClient().GetMyChannel().Game;
+
+                        case "title":
+                            return Utils.GetClient().GetMyChannel().Status;
+
+                        case "var1":
+                            if (split.Count() == 2)
+                            {
+                                var1 = split[1];
+                                return var1;
+                            }
+                            return "";
+
+                        default:
+                            return "";
+                    }
+                });
+
+                MainWindow.discord.GetServer(message.Server.Id).GetChannel(message.Channel.Id).SendMessage(parsedResponse.Trim());
+            }
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
         private bool CanExecute(Viewer viewer)
         {
             // Check if command user has PERMISSION to use the command
@@ -254,56 +316,14 @@ namespace OakBot
             return false;
         }
 
-        #endregion Methods
-
-        #region Fields
-
-        public string Command
+        private void NotifyPropertyChanged(string info)
         {
-            get
+            if (PropertyChanged != null)
             {
-                return command;
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
 
-        public string Response
-        {
-            get
-            {
-                return response;
-            }
-        }
-
-        public string Status
-        {
-            get
-            {
-                if (enabled)
-                {
-                    return "Enabled";
-                }
-                else
-                {
-                    return "Disabled";
-                }
-            }
-        }
-
-        public string LastUsed
-        {
-            get
-            {
-                if (lastUsed == DateTime.MinValue)
-                {
-                    return "Never";
-                }
-                else
-                {
-                    return lastUsed.ToString("yyyy-MM-dd hh:mm");
-                }
-            }
-        }
-
-        #endregion Fields
+        #endregion Private Methods
     }
 }

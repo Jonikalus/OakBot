@@ -13,17 +13,16 @@ namespace OakBot
     /// </summary>
     public partial class WindowViewerChat : Window
     {
-        #region Fields
+        #region Private Fields
 
-        private MainWindow window;
-        private Viewer viewer;
-
-        private ObservableCollection<IrcMessage> colViewerMessages;
         private object colLock = new object();
+        private ObservableCollection<IrcMessage> colViewerMessages;
+        private Viewer viewer;
+        private MainWindow window;
 
-        #endregion Fields
+        #endregion Private Fields
 
-        #region Constructors
+        #region Public Constructors
 
         public WindowViewerChat(MainWindow window, Viewer viewer)
         {
@@ -66,62 +65,9 @@ namespace OakBot
             }
         }
 
-        #endregion Constructors
+        #endregion Public Constructors
 
-        #region Methods
-
-        public void AddViewerMessage(IrcMessage message)
-        {
-            colViewerMessages.Add(message);
-        }
-
-        #endregion Methods
-
-        #region EventHandlers
-
-        private void btnPurge_Click(object sender, RoutedEventArgs e)
-        {
-            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 1", viewer.UserName));
-        }
-
-        private void btnTimeout5_Click(object sender, RoutedEventArgs e)
-        {
-            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 300", viewer.UserName));
-        }
-
-        private void btnTimeout10_Click(object sender, RoutedEventArgs e)
-        {
-            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0}", viewer.UserName));
-        }
-
-        private void btnBan_Click(object sender, RoutedEventArgs e)
-        {
-            window.streamerChatConnection.SendChatMessage(string.Format("/ban {0}", viewer.UserName));
-        }
-
-        private void btnUnban_Click(object sender, RoutedEventArgs e)
-        {
-            window.streamerChatConnection.SendChatMessage(string.Format("/unban {0}", viewer.UserName));
-        }
-
-        private void btnTwitchProfile_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(string.Format("http://www.twitch.tv/{0}/profile", viewer.UserName));
-        }
-
-        private void btnTwitchCompose_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(string.Format("http://www.twitch.tv/message/compose?to={0}", viewer.UserName));
-        }
-
-        private void windowViewerChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            MainWindow.colChatWindows.Remove(this);
-        }
-
-        #endregion EventHandlers
-
-        #region Properties
+        #region Public Properties
 
         public Viewer Viewer
         {
@@ -131,6 +77,59 @@ namespace OakBot
             }
         }
 
-        #endregion Properties
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public void AddViewerMessage(IrcMessage message)
+        {
+            colViewerMessages.Add(message);
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private void btnBan_Click(object sender, RoutedEventArgs e)
+        {
+            window.streamerChatConnection.SendChatMessage(string.Format("/ban {0}", viewer.UserName));
+        }
+
+        private void btnPurge_Click(object sender, RoutedEventArgs e)
+        {
+            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 1", viewer.UserName));
+        }
+
+        private void btnTimeout10_Click(object sender, RoutedEventArgs e)
+        {
+            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0}", viewer.UserName));
+        }
+
+        private void btnTimeout5_Click(object sender, RoutedEventArgs e)
+        {
+            window.streamerChatConnection.SendChatMessage(string.Format("/timeout {0} 300", viewer.UserName));
+        }
+
+        private void btnTwitchCompose_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(string.Format("http://www.twitch.tv/message/compose?to={0}", viewer.UserName));
+        }
+
+        private void btnTwitchProfile_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(string.Format("http://www.twitch.tv/{0}/profile", viewer.UserName));
+        }
+
+        private void btnUnban_Click(object sender, RoutedEventArgs e)
+        {
+            window.streamerChatConnection.SendChatMessage(string.Format("/unban {0}", viewer.UserName));
+        }
+
+        private void windowViewerChat_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MainWindow.colChatWindows.Remove(this);
+        }
+
+        #endregion Private Methods
     }
 }

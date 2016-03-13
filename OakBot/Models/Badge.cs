@@ -5,6 +5,8 @@ namespace OakBot.Models
     [JsonObject("badges")]
     public class Badge
     {
+        #region Public Properties
+
         [JsonProperty("alpha")]
         public string Alpha { get; set; }
 
@@ -13,5 +15,7 @@ namespace OakBot.Models
 
         [JsonProperty("svg")]
         public string Svg { get; set; }
+
+        #endregion Public Properties
     }
 }

@@ -6,6 +6,8 @@ namespace OakBot.Models
     [JsonObject("follows")]
     public class Follower
     {
+        #region Public Properties
+
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; }
 
@@ -14,5 +16,7 @@ namespace OakBot.Models
 
         [JsonProperty("user")]
         public User User { get; set; }
+
+        #endregion Public Properties
     }
 }

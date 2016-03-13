@@ -7,9 +7,13 @@ namespace OakBot.Dialogs
     /// </summary>
     public partial class DialogEditCommand : Window
     {
+        #region Public Constructors
+
         public DialogEditCommand()
         {
             InitializeComponent();
         }
+
+        #endregion Public Constructors
     }
 }

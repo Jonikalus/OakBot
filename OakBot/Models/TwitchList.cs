@@ -9,6 +9,10 @@ namespace OakBot.Models
     [JsonObject(ItemConverterType = typeof(TwitchListConverter))]
     public class TwitchList<T> : TwitchResponse
     {
+        #region Public Properties
+
         public List<T> List { get; set; }
+
+        #endregion Public Properties
     }
 }

@@ -6,21 +6,31 @@ namespace OakBot.Models
 {
     public class TwitchResponse
     {
-        [JsonProperty("error")]
-        public string Error { get; set; }
-
-        [JsonProperty("status")]
-        public int Status { get; set; }
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
-
-        [JsonProperty("_total")]
-        public long Total { get; set; }
+        #region Public Constructors
 
         public TwitchResponse()
         {
         }
+
+        #endregion Public Constructors
+
+        #region Public Properties
+
+        [JsonProperty("error")]
+        public string Error { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; }
+
+        [JsonProperty("status")]
+        public int Status { get; set; }
+
+        [JsonProperty("_total")]
+        public long Total { get; set; }
+
+        #endregion Public Properties
+
+        #region Public Methods
 
         public State GetState()
         {
@@ -60,5 +70,7 @@ namespace OakBot.Models
         {
             return Status == 204;
         }
+
+        #endregion Public Methods
     }
 }

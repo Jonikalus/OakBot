@@ -5,42 +5,25 @@ using System.Threading;
 
 namespace OakBot
 {
+    public enum SongType
+    {
+        YOUTUBE,
+        YOUTUBE_LINK,
+        SOUNDCLOUD,
+        INVALID
+    }
+
     public class Song : INotifyPropertyChanged
     {
-        private string songName;
+        #region Private Fields
+
         private string link;
+        private string songName;
         private SongType type;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion Private Fields
 
-        public string SongName
-        {
-            get
-            {
-                return songName;
-            }
-        }
-
-        public string Link
-        {
-            get
-            {
-                return link;
-            }
-            set
-            {
-                link = value;
-                OnPropertyChanged(Link);
-            }
-        }
-
-        public SongType Type
-        {
-            get
-            {
-                return type;
-            }
-        }
+        #region Public Constructors
 
         public Song(string link)
         {
@@ -67,17 +50,54 @@ namespace OakBot
             Link = tmpLink;
         }
 
+        #endregion Public Constructors
+
+        #region Public Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion Public Events
+
+        #region Public Properties
+
+        public string Link
+        {
+            get
+            {
+                return link;
+            }
+            set
+            {
+                link = value;
+                OnPropertyChanged(Link);
+            }
+        }
+
+        public string SongName
+        {
+            get
+            {
+                return songName;
+            }
+        }
+
+        public SongType Type
+        {
+            get
+            {
+                return type;
+            }
+        }
+
+        #endregion Public Properties
+
+        #region Protected Methods
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
 
-    public enum SongType
-    {
-        YOUTUBE,
-        YOUTUBE_LINK,
-        SOUNDCLOUD,
-        INVALID
+        #endregion Protected Methods
     }
 }

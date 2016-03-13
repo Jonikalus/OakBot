@@ -3,6 +3,8 @@
     // @author gibletto
     internal interface IPagedList<T>
     {
+        #region Public Properties
+
         int Count { get; set; }
         int End { get; }
         bool HasNext { get; }
@@ -14,5 +16,7 @@
         int PageSize { get; set; }
         int PrevPage { get; }
         int Start { get; }
+
+        #endregion Public Properties
     }
 }

@@ -7,20 +7,18 @@ namespace OakBot
 {
     public class BotIrcClient
     {
-        #region Fields
+        #region Private Fields
 
-        private TcpClient tcpClient;
+        private DateTime _lastSend;
+        private TwitchCredentials _loggedinAs;
+        private int _throttle;
         private StreamReader inputStream;
         private StreamWriter outputStream;
+        private TcpClient tcpClient;
 
-        private int _throttle;
-        private DateTime _lastSend;
+        #endregion Private Fields
 
-        private TwitchCredentials _loggedinAs;
-
-        #endregion Fields
-
-        #region Constructors
+        #region Public Constructors
 
         public BotIrcClient(string ip, int port, TwitchCredentials user)
         {
@@ -47,46 +45,9 @@ namespace OakBot
             //WriteLine("USER " + user.username + " 8 * :" + user.username);
         }
 
-        #endregion Constructors
+        #endregion Public Constructors
 
-        #region Methods
-
-        public void WriteLineThrottle(string message)
-        {
-            double timeSpan = (DateTime.Now - _lastSend).TotalMilliseconds;
-            if (timeSpan < _throttle)
-            {
-                Thread.Sleep(Convert.ToInt32(_throttle - timeSpan));
-            }
-            _lastSend = DateTime.Now;
-
-            outputStream.WriteLine(message);
-            outputStream.Flush();
-        }
-
-        public void WriteLine(string message)
-        {
-            _lastSend = DateTime.Now;
-
-            outputStream.WriteLine(message);
-            outputStream.Flush();
-        }
-
-        public string ReadLine()
-        {
-            try
-            {
-                return inputStream.ReadLine();
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-        }
-
-        #endregion Methods
-
-        #region Properties
+        #region Public Properties
 
         /// <summary>
         /// Returns the user that is logged in on
@@ -119,6 +80,43 @@ namespace OakBot
             }
         }
 
-        #endregion Properties
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public string ReadLine()
+        {
+            try
+            {
+                return inputStream.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public void WriteLine(string message)
+        {
+            _lastSend = DateTime.Now;
+
+            outputStream.WriteLine(message);
+            outputStream.Flush();
+        }
+
+        public void WriteLineThrottle(string message)
+        {
+            double timeSpan = (DateTime.Now - _lastSend).TotalMilliseconds;
+            if (timeSpan < _throttle)
+            {
+                Thread.Sleep(Convert.ToInt32(_throttle - timeSpan));
+            }
+            _lastSend = DateTime.Now;
+
+            outputStream.WriteLine(message);
+            outputStream.Flush();
+        }
+
+        #endregion Public Methods
     }
 }
