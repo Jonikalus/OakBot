@@ -165,6 +165,7 @@
     <Compile Include="GameWisp API\GameWispAuth.xaml.cs">
       <DependentUpon>GameWispAuth.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GroupMinigame.cs" />
     <Compile Include="Helpers\DynamicJsonDeserializer.cs" />
     <Compile Include="Helpers\PagedList.cs" />
     <Compile Include="Helpers\PagingInfo.cs" />
