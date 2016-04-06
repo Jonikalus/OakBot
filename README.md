@@ -1,6 +1,12 @@
 # OakBot
 Twitch Bot focused on integration with HTML overlays written in C#
+
 Free, open, solid and feature rich Twitch Bot for everyone to use and to improve.
+
+# Social Media
+To stay tuned about latest updates, we recommend you to follow our Twitter accounts:
+- Jeanolos | https://twitter.com/tgr_jeanolos
+- Ocgineer | https://twitter.com/ocgineer
 
 # Features
 The basic stuff like any other Twitch bot out there but with additions;
