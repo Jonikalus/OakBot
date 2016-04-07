@@ -751,6 +751,7 @@ namespace OakBot
 
             // Start the chat connection threads
             botChat.Start();
+            GroupMinigame.Initialize();
         }
 
         private void ConnectStreamer()
