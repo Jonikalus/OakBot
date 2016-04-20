@@ -4,7 +4,7 @@ Twitch Bot focused on integration with HTML overlays written in C#
 Free, open, solid and feature rich Twitch Bot for everyone to use and to improve.
 
 # Social Media
-To stay tuned about latest updates, we recommend you to follow our Twitter accounts:
+To stay tuned about latest updates, I recommend you to follow my Twitter account:
 - Jeanolos | https://twitter.com/tgr_jeanolos
 
 # Features
