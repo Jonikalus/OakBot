@@ -48,6 +48,8 @@ namespace OakBot
 
         public static ObservableCollection<Viewer> colViewers = new ObservableCollection<Viewer>();
 
+        public static ObservableCollection<Giveaway> colGiveaways = new ObservableCollection<Giveaway>();
+
         public static DiscordClient discord;
 
         public static int indexSong = -1;
@@ -81,6 +83,8 @@ namespace OakBot
         private object _lockSongs = new object();
 
         private object _lockViewers = new object();
+
+        private object _lockGiveaways = new object();
 
         private Thread botChat;
 
@@ -127,6 +131,7 @@ namespace OakBot
             BindingOperations.EnableCollectionSynchronization(colViewers, _lockViewers);
             BindingOperations.EnableCollectionSynchronization(colDatabase, _lockDatabase);
             BindingOperations.EnableCollectionSynchronization(colSongs, _lockSongs);
+            BindingOperations.EnableCollectionSynchronization(colGiveaways, _lockGiveaways);
 
             // Create Event for collection changed
             colChatMessages.CollectionChanged += colChatMessages_Changed;
@@ -145,6 +150,8 @@ namespace OakBot
             lvQuotes.ItemsSource = colQuotes;
 
             lvSongs.ItemsSource = colSongs;
+
+            lvGiveaways.ItemsSource = colGiveaways;
 
             // Testing Commands
             colBotCommands.Add(new UserCommand("!test", "Test received!", 30, 0, true));
@@ -261,10 +268,6 @@ namespace OakBot
 
         #region Private Methods
 
-        private void AddEntered(string v)
-        {
-            lbEntered.Items.Add(v);
-        }
 
         private void btn120Secs_Click(object sender, RoutedEventArgs e)
         {
@@ -528,50 +531,6 @@ namespace OakBot
         private void button_Click(object sender, RoutedEventArgs e)
         {
             Utils.StartWebserver();
-        }
-
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            testGw = new Giveaway("Test", new TimeSpan(0, 0, 30), "!giveaway", 0, false, 1, new TimeSpan(0, 1, 0));
-            testGw.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
-            {
-                Dispatcher.BeginInvoke(new Action(delegate ()
-                {
-                    AddEntered(ev.Viewer);
-                }));
-            };
-            testGw.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
-            {
-                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
-            };
-            testGw.Start();
-        }
-
-        private void button2_Click(object sender, RoutedEventArgs e)
-        {
-            testGw.DrawWinner();
-        }
-
-        private void button3_Click(object sender, RoutedEventArgs e)
-        {
-            testGw2 = new Giveaway("Active", new TimeSpan(0, 0, 30), "", 0, false, 1, new TimeSpan());
-            testGw2.ViewerEntered += delegate (object o, ViewerEnteredEventArgs ev)
-            {
-                Dispatcher.BeginInvoke(new Action(delegate ()
-                {
-                    AddEntered(ev.Viewer);
-                }));
-            };
-            testGw2.WinnerChosen += delegate (object o, WinnerChosenEventArgs ev)
-            {
-                botChatConnection.SendChatMessage(string.Format("{0}, you won! Speak up in chat!", ev.Winner.UserName));
-            };
-            testGw2.Start();
-        }
-
-        private void button4_Click(object sender, RoutedEventArgs e)
-        {
-            testGw2.DrawWinner();
         }
 
         private void buttonBotConnect_Click(object sender, RoutedEventArgs e)

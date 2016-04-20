@@ -1,0 +1,14 @@
+﻿<Window x:Class="OakBot.Dialogs.DialogEditGiveaway"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OakBot.Dialogs"
+        mc:Ignorable="d"
+        Title="DialogEditGiveaway" Height="481.644" Width="357.534">
+    <Grid Background="#FF363636">
+        <Label x:Name="lblGwName" Content="Giveaway Name:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbGwName" HorizontalAlignment="Left" Height="23" Margin="10,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="330"/>
+
+    </Grid>
+</Window>

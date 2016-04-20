@@ -159,11 +159,20 @@
             </TabItem>
             <TabItem Header="Giveaways">
                 <Grid Background="#FF363636" Margin="0">
-                    <Button x:Name="button1" Content="Start 30 seconds giveaway, keyword = !giveaway" HorizontalAlignment="Left" Margin="164,46,0,0" VerticalAlignment="Top" Width="476" Click="button1_Click" />
-                    <Button x:Name="button2" Content="Draw Winner Keyword" HorizontalAlignment="Left" Margin="363,129,0,0" VerticalAlignment="Top" Width="143" Click="button2_Click" />
-                    <ListBox x:Name="lbEntered" HorizontalAlignment="Left" Height="198" Margin="10,129,0,0" VerticalAlignment="Top" Width="148" />
-                    <Button x:Name="button3" Content="Start 30 seconds giveaway, no keyword" HorizontalAlignment="Left" Margin="164,71,0,0" VerticalAlignment="Top" Width="476" Click="button3_Click" />
-                    <Button x:Name="button4" Content="Draw Winner Active" HorizontalAlignment="Left" Margin="363,154,0,0" VerticalAlignment="Top" Width="143" Click="button4_Click" />
+                    <ListView x:Name="lvGiveaways" HorizontalAlignment="Left" Height="195" Margin="10,10,0,0" VerticalAlignment="Top" Width="806">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="200" Header="Giveaway Name" DisplayMemberBinding="{Binding GiveawayName}"/>
+                                <GridViewColumn Width="100" Header="Time to enter" DisplayMemberBinding="{Binding GiveawayTime}"/>
+                                <GridViewColumn Width="100" Header="Keyword" DisplayMemberBinding="{Binding Keyword}"/>
+                                <GridViewColumn Width="90" DisplayMemberBinding="{Binding NeedsFollow}" Header="Needs Follow?"/>
+                                <GridViewColumn Width="60" DisplayMemberBinding="{Binding Price}" Header="Price"/>
+                                <GridViewColumn DisplayMemberBinding="{Binding ResponseTime}" Header="Response Time" Width="100"/>
+                                <GridViewColumn DisplayMemberBinding="{Binding SubscriberLuck}" Header="Subscriber Luck" Width="100"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button x:Name="btnAddGw" Content="Add" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top" Width="75"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Commands">
