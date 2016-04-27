@@ -159,7 +159,7 @@
             </TabItem>
             <TabItem Header="Giveaways">
                 <Grid Background="#FF363636" Margin="0">
-                    <ListView x:Name="lvGiveaways" HorizontalAlignment="Left" Height="195" Margin="10,10,0,0" VerticalAlignment="Top" Width="806">
+                    <ListView x:Name="lvGiveaways" HorizontalAlignment="Left" Height="195" Margin="10,10,0,0" VerticalAlignment="Top" Width="806" SelectionChanged="lvGiveaways_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Width="200" Header="Giveaway Name" DisplayMemberBinding="{Binding GiveawayName}"/>
@@ -172,7 +172,22 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <Button x:Name="btnAddGw" Content="Add" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Label x:Name="lblGwName" Content="Giveaway Name:" HorizontalAlignment="Left" Margin="10,213,0,0" VerticalAlignment="Top" Height="23"/>
+                    <TextBox x:Name="tbGwName" HorizontalAlignment="Left" Height="23" Margin="112,213,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280"/>
+                    <Label x:Name="lblTimeToEnter" Content="Time to enter:" HorizontalAlignment="Left" Margin="23,245,0,0" VerticalAlignment="Top" Height="27"/>
+                    <TextBox x:Name="tbTimeToEnter" HorizontalAlignment="Left" Height="23" Margin="112,245,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="36"/>
+                    <Label x:Name="lblS" Content="s" HorizontalAlignment="Left" Margin="148,245,0,0" VerticalAlignment="Top" Height="23"/>
+                    <Label x:Name="lblKeyword" Content="Keyword:" HorizontalAlignment="Left" Margin="49,302,0,0" VerticalAlignment="Top" Height="27"/>
+                    <TextBox x:Name="tbKeyword" HorizontalAlignment="Left" Height="23" Margin="112,302,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="161"/>
+                    <CheckBox x:Name="cbNeedsFollow" Content="Needs Follow?" HorizontalAlignment="Left" Margin="10,277,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblPrice" Content="Price:" HorizontalAlignment="Left" Margin="125,271,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbPrice" HorizontalAlignment="Left" Height="23" Margin="168,274,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="58"/>
+                    <Label x:Name="lblResponseTime" Content="Response Time:" HorizontalAlignment="Left" Margin="168,243,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbResponseTime" HorizontalAlignment="Left" Height="23" Margin="260,245,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="36"/>
+                    <Label x:Name="lblS2" Content="s" HorizontalAlignment="Left" Margin="296,245,0,0" VerticalAlignment="Top" Height="23"/>
+                    <Slider x:Name="slSubLuck" HorizontalAlignment="Left" Margin="112,337,0,0" VerticalAlignment="Top" Width="280" TickPlacement="BottomRight"/>
+                    <Label x:Name="lblSubLuck" Content="Subscriber Luck:" HorizontalAlignment="Left" Margin="12,334,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btnAddEditGw" Content="Add/Edit" HorizontalAlignment="Left" Margin="397,213,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Commands">

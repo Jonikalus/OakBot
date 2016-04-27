@@ -147,9 +147,6 @@
     <Compile Include="Dialogs\DialogEditCommand.xaml.cs">
       <DependentUpon>DialogEditCommand.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\DialogEditGiveaway.xaml.cs">
-      <DependentUpon>DialogEditGiveaway.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\DialogEditQuote.xaml.cs">
       <DependentUpon>DialogEditQuote.xaml</DependentUpon>
     </Compile>
@@ -222,10 +219,6 @@
     <Compile Include="TwitchWhisperConnection.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="Dialogs\DialogEditCommand.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\DialogEditGiveaway.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

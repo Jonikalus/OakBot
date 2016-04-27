@@ -970,6 +970,12 @@ namespace OakBot
             }
         }
 
+        private void lvGiveaways_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Giveaway selected = (Giveaway)lvGiveaways.SelectedItem;
+            tbGwName.Text = selected.GiveawayName;
+        }
+
         private void textBoxStreamerName_LostFocus(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(textBoxStreamerName.Text))
