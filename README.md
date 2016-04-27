@@ -4,8 +4,9 @@ Twitch Bot focused on integration with HTML overlays written in C#
 Free, open, solid and feature rich Twitch Bot for everyone to use and to improve.
 
 # Social Media
-To stay tuned about latest updates, I recommend you to follow my Twitter account:
+To stay tuned about latest updates, we recommend you to follow our Twitter accounts:
 - Jeanolos | https://twitter.com/tgr_jeanolos
+- Ocgineer | https://twitter.com/ocgineer
 
 # Features
 The basic stuff like any other Twitch bot out there but with additions;
@@ -26,3 +27,16 @@ The basic stuff like any other Twitch bot out there but with additions;
   - Remove Viewers longer than x days last seen
 - What we can change on Twitch through API will most likely to get a spot, just to make things simple.
 - Own alerts (in the end) where donations are handled through TwitchAlerts as we don't like swapping
+
+# How to compile and use
+At the moment, the bot is under heavy development!
+That means, it is full of bugs and it lacks of many features. We will release the bot, once the majority of bugs is fixed, but if you still want to use the bot in this state, here are instructions:
+
+  1. Install Visual Studio 2015 on your computer
+  2. Install the GitHub Extension for Visual Studio
+  3. Add an existing repository and enter the link of this bot
+  4. Sync it!
+  5. Press Build and look into the projects folder (C:\Users\{yourname}\Source\Repos\OakBot\OakBot\bin\Debug
+  6. Run the Oakbot.exe file
+
+If you've never used Visual Studio before or haven't even coded before, there will be a bleeding branch for development releases.
