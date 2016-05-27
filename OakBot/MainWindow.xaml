@@ -27,7 +27,7 @@
                             <CheckBox x:Name="cbAutoConnectStreamer" Content="Auto Connect" HorizontalAlignment="Left" Margin="611,18,0,0" VerticalAlignment="Top" Checked="cbAutoConnectStreamer_Checked" Unchecked="cbAutoConnectStreamer_Unchecked" />
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="715,329,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click" />
+                    <Button x:Name="btnImport" Content="Import" HorizontalAlignment="Left" Margin="741,351,0,0" VerticalAlignment="Top" Width="75" Click="btnImport_Click" />
                     <GroupBox x:Name="GroupTwitchBotLogin" Header="BOT LOGIN" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="109" Width="806" BorderBrush="Black">
                         <Grid Margin="0">
                             <Label x:Name="lblBotAccount" Content="Bot Name" HorizontalAlignment="Left" Margin="10,0,0,48" VerticalAlignment="Bottom" FontSize="18.667" />
@@ -54,6 +54,13 @@
                         </Grid>
                     </GroupBox>
                     <Button x:Name="button" Content="Start Webserver" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Width="112" Click="button_Click" />
+                    <GroupBox x:Name="GroupDiscord" Header="DISCORD" HorizontalAlignment="Left" Margin="10,203,0,0" VerticalAlignment="Top" Height="74" Width="806" BorderBrush="Black">
+                        <Grid Margin="0">
+                            <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="709,10,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click" Height="30" />
+                            <Label x:Name="lblBotToken" Content="Bot Token:" HorizontalAlignment="Left" Margin="1,7,0,0" VerticalAlignment="Top" FontSize="18.667"/>
+                            <TextBox x:Name="txtToken" HorizontalAlignment="Left" Height="30" Margin="102,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="216" FontSize="18.667" LostFocus="txtToken_LostFocus"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabMainDashboard" Header="Twitch Dashboard" IsEnabled="False">
@@ -187,7 +194,7 @@
                     <Label x:Name="lblS2" Content="s" HorizontalAlignment="Left" Margin="296,245,0,0" VerticalAlignment="Top" Height="23"/>
                     <Slider x:Name="slSubLuck" HorizontalAlignment="Left" Margin="112,337,0,0" VerticalAlignment="Top" Width="280" TickPlacement="BottomRight"/>
                     <Label x:Name="lblSubLuck" Content="Subscriber Luck:" HorizontalAlignment="Left" Margin="12,334,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnAddEditGw" Content="Add/Edit" HorizontalAlignment="Left" Margin="397,213,0,0" VerticalAlignment="Top" Width="75" Height="23"/>
+                    <Button x:Name="btnAddEditGw" Content="Add/Edit" HorizontalAlignment="Left" Margin="397,213,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="btnAddEditGw_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Commands">
@@ -245,11 +252,6 @@
             </TabItem>
             <TabItem x:Name="tabDiscord" Header="Discord">
                 <Grid Background="#FF363636" Margin="0">
-                    <TextBox x:Name="txtEmail" HorizontalAlignment="Left" Height="23" Margin="77,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="216" />
-                    <Label x:Name="lblEmail" Content="E-Mail:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
-                    <PasswordBox x:Name="pwdPassword" HorizontalAlignment="Left" Margin="77,39,0,0" VerticalAlignment="Top" Width="216" Height="23" />
-                    <Label x:Name="label" Content="Password:" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
-                    <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="298,39,0,0" VerticalAlignment="Top" Width="75" Click="btnLogin_Click" />
                     <TextBox x:Name="txtUsername" HorizontalAlignment="Left" Height="23" Margin="81,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173" />
                     <Label x:Name="lblDUsername" Content="Username:" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top" />
                     <Label x:Name="lblServerBrowser" Content="Server Browser:" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" />
