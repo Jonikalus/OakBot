@@ -227,7 +227,6 @@ namespace OakBot
 
         public void ExecuteCommandDiscord(Message message)
         {
-            MainWindow.popMsgBox(message.User.Id.ToString());
             Viewer viewer;
             try
             {
@@ -237,7 +236,6 @@ namespace OakBot
             catch (Exception)
             {
                 viewer = new Viewer(message.User.Name);
-                MainWindow.popMsgBox(viewer.UserName);
             }
             if (viewer == null)
             {

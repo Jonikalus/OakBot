@@ -320,6 +320,17 @@ The user {0} wants to link his Twitch account with your Discord name!
             {
                 SendMessageDiscord(string.Format("{0} Your ID is {1}", message.User.Mention, message.User.Id), message.Server.Id, message.Channel.Id);
             }
+            else if(command == "!twitchname")
+            {
+                Viewer vwr = MainWindow.colDatabase.FirstOrDefault(x => x.DiscordID == message.User.Id.ToString());
+                if(vwr != null)
+                {
+                    SendMessageDiscord(string.Format("{0}, your Twitch name is **{1}**!", message.User.Mention, vwr.UserName), message.Server.Id, message.Channel.Id);
+                }else
+                {
+                    SendMessageDiscord(string.Format("{0}, you haven't linked your Twitch account yet!"), message.Server.Id, message.Channel.Id);
+                }
+            }
         }
 
         #endregion Public Methods
