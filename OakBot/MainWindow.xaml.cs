@@ -847,12 +847,17 @@ namespace OakBot
             }
             if (e.Channel.IsPrivate)
             {
-                Discord.User confirm = e.User;
-                if(e.Message.Text == "confirm")
+                if(e.Message.Text.Split(' ')[0] == "confirm" && e.Message.Text.Split(' ').Length == 2)
                 {
-                    Viewer vwr = colDatabase.FirstOrDefault(x => x.UserName.ToLower() == confirm.Name.ToLower());
-                    vwr.DiscordID = confirm.Id.ToString();
-                    popMsgBox(vwr.UserName + "|" + vwr.DiscordID);
+                    Discord.User confirm = e.User;
+                    Models.Channel target = client.GetChannel(e.Message.Text.Split(' ')[1]);
+                    string id = target.Game;
+                    if(id == confirm.Id.ToString())
+                    {
+                        Viewer vwr = colDatabase.FirstOrDefault(x => x.UserName.ToLower() == target.Name.ToLower());
+                        vwr.DiscordID = confirm.Id.ToString();
+                        DatabaseUtils.UpdateViewer(vwr);
+                    }
                 }
             }
         }

@@ -89,7 +89,7 @@ namespace OakBot
             dbConnection.Open();
 
             SQLiteCommand sqlCmd = new SQLiteCommand(
-                string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
+                string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}')",
                     viewer.UserName,
                     viewer.Points,
                     viewer.Spent,
@@ -98,7 +98,8 @@ namespace OakBot
                     viewer.Raids,
                     viewer.Title,
                     viewer.regular.ToString(),
-                    viewer.IGN),
+                    viewer.IGN,
+                    viewer.DiscordID),
                 dbConnection);
             sqlCmd.ExecuteNonQuery();
 

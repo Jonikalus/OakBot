@@ -169,9 +169,9 @@ The user {0} wants to link his Twitch account with your Discord name!
 
 **If you didn't use !link {1} in the Twitch chat, please ignore this message!** Else, please do the following steps:
 
-**1.** Change your username to the Twitch account name you used (**{0}**)
-**2.** Reply with *confirm* (case sensitive)
-**3.** Test a user specific command (like !followdate) in the Discord chat", sender.UserName, priv.Id);
+**1.** Change your Twitch game to the ID (**{1}**) you used with !link
+**2.** Reply with `confirm {0}` (case sensitive)
+**3.** Test a user specific command (like !followdate) in the Discord chat", sender.UserName, splitMessage[1]);
                         priv.SendMessage(msg);
                     }
                 }
@@ -315,6 +315,10 @@ The user {0} wants to link his Twitch account with your Discord name!
                 {
                     MainWindow.instance.prevSong();
                 }
+            }
+            else if(command == "!id")
+            {
+                SendMessageDiscord(string.Format("{0} Your ID is {1}", message.User.Mention, message.User.Id), message.Server.Id, message.Channel.Id);
             }
         }
 
