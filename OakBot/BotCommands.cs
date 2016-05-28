@@ -8,7 +8,7 @@ namespace OakBot
     {
         #region Public Methods
 
-        public static void RunBotCommand(string command, IrcMessage message)
+        public async static void RunBotCommand(string command, IrcMessage message)
         {
             // !quote > display random quote
             // !quote # > display quote of given id
@@ -139,6 +139,43 @@ namespace OakBot
                     SendAndShowMessage("Current song playing: " + MainWindow.colSongs[MainWindow.indexSong].SongName);
                 }
             }
+            else if (command == "!nextsong")
+            {
+                if (MainWindow.playState)
+                {
+                    MainWindow.instance.nextSong();
+                }
+            }
+            else if (command == "!prevsong")
+            {
+                if (MainWindow.playState)
+                {
+                    MainWindow.instance.prevSong();
+                }
+            }
+            else if (command == "!link") {
+                string[] splitMessage = message.Message.Split(new char[] { ' ' }, 2);
+                if (splitMessage.Count() != 2)
+                {
+                    SendAndShowMessage("In order to link your Twitch name to this bot, you have to get your Discord User ID. You can get that by using !id in Discord. Then, proceed to use !link [id] here in chat. Further instructions are following in a Discord message!");
+                } else
+                {
+                    Channel priv = MainWindow.discord.CreatePrivateChannel(ulong.Parse(splitMessage[1])).Result;
+                    if (priv.IsPrivate && priv != null)
+                    {
+                        string msg = string.Format(@"Hello!
+
+The user {0} wants to link his Twitch account with your Discord name!
+
+**If you didn't use !link {1} in the Twitch chat, please ignore this message!** Else, please do the following steps:
+
+**1.** Change your Twitch game to the ID (**{1}**) you used with !link
+**2.** Reply with `confirm {0}` (case sensitive)
+**3.** Test a user specific command (like !followdate) in the Discord chat", sender.UserName, splitMessage[1]);
+                        priv.SendMessage(msg);
+                    }
+                }
+            }
         }
 
         public static void RunBotCommandDiscord(string command, Message message)
@@ -263,6 +300,35 @@ namespace OakBot
                 if (MainWindow.playState)
                 {
                     SendMessageDiscord("Current song playing: " + MainWindow.colSongs[MainWindow.indexSong].SongName, message.Server.Id, message.Channel.Id);
+                }
+            }
+            else if (command == "!nextsong")
+            {
+                if (MainWindow.playState)
+                {
+                    MainWindow.instance.nextSong();
+                }
+            }
+            else if (command == "!prevsong")
+            {
+                if (MainWindow.playState)
+                {
+                    MainWindow.instance.prevSong();
+                }
+            }
+            else if(command == "!id")
+            {
+                SendMessageDiscord(string.Format("{0} Your ID is {1}", message.User.Mention, message.User.Id), message.Server.Id, message.Channel.Id);
+            }
+            else if(command == "!twitchname")
+            {
+                Viewer vwr = MainWindow.colDatabase.FirstOrDefault(x => x.DiscordID == message.User.Id.ToString());
+                if(vwr != null)
+                {
+                    SendMessageDiscord(string.Format("{0}, your Twitch name is **{1}**!", message.User.Mention, vwr.UserName), message.Server.Id, message.Channel.Id);
+                }else
+                {
+                    SendMessageDiscord(string.Format("{0}, you haven't linked your Twitch account yet!"), message.Server.Id, message.Channel.Id);
                 }
             }
         }

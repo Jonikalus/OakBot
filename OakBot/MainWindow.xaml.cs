@@ -112,6 +112,7 @@ namespace OakBot
                 x.UsePermissionsCache = false;
             });
 
+
             // Initialize instance
             instance = this;
 
@@ -167,6 +168,24 @@ namespace OakBot
 
             colSongs.Add(new Song("https://www.youtube.com/watch?v=VEAy700YGuU"));
             colSongs.Add(new Song("https://soundcloud.com/aivisura/steven-universe-strong-in-the-real-way-rebecca-sugar"));
+
+            string message = "Hello and welcome to the first OakBot Alpha ever to be released! I know it took some time, but I also have a private life, you know? ;)\n\n" +
+                             "Anyways, this version has not many functions yet, but the ones that are listed here, are fully working.\n\n" +
+                             "WORKING:\n" +
+                             "- Twitch Chat\n" +
+                             "- Commands\n" +
+                             "  - Song Requests (the controls are only working for YouTube at the moment)\n" +
+                             "  - Quotes\n" +
+                             "  - Follow Date\n" +
+                             "- Discord Integration (user unspecific commands work without problems, while the user specific ones are yet to be handled)\n" +
+                             "- Import from Ankhbot\n" +
+                             "- Dashboard and Viewer related stuff\n\n" +
+                             "IMPLEMENTED, BUT NOT FULLY WORKING:\n" +
+                             "- Giveaways\n" +
+                             "- Stream Currency Gain\n" +
+                             "- The UI itself\n\n" +
+                             "I know, there's much to do, but bear with me. I'm working as hard as I can c:";
+            MessageBox.Show(message, "OakBot Alpha 1");
 
             // BackgroundTask Thread
             BackgroundTasks bg = new BackgroundTasks(60, 120);
@@ -262,6 +281,7 @@ namespace OakBot
             textBoxStreamerName.Text = Config.StreamerUsername;
             cbAutoConnectBot.IsChecked = Config.AutoConnectStreamer;
             cbAutoConnectStreamer.IsChecked = Config.AutoConnectStreamer;
+            txtToken.Text = Config.DiscordBotToken;
         }
 
         #endregion Public Methods
@@ -325,49 +345,63 @@ namespace OakBot
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            discord.Connect(txtEmail.Text, pwdPassword.Password);
-            while (discord.State != ConnectionState.Connected)
+            if((string)btnLogin.Content == "Login")
             {
-                Task.Delay(25);
-            }
-            discord.MessageReceived += Discord_MessageReceived;
-            txtUsername.Text = discord.CurrentUser.Name;
-            int serverCounter = 0, channelCounter = 0, userCounter = 0;
-            foreach (Server s in discord.Servers)
-            {
-                serverCounter++;
-                TreeViewItem server = new TreeViewItem();
-                server.Header = s.Name;
-                TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
-                voice.Header = "Voice Channels";
-                text.Header = "Text Channels";
-                foreach (Discord.Channel c in s.VoiceChannels)
+                //https://discordapp.com/oauth2/authorize?client_id=168646630260736000&scope=bot&permissions=267648063
+                discord.Connect(txtToken.Text);
+                while (discord.State != ConnectionState.Connected)
                 {
-                    channelCounter++;
-                    TreeViewItem channel = new TreeViewItem();
-                    channel.Header = c.Name;
-                    foreach (Discord.User u in c.Users)
+                    Task.Delay(25);
+                }
+                discord.MessageReceived += Discord_MessageReceived;
+                txtUsername.Text = discord.CurrentUser.Name;
+                int serverCounter = 0, channelCounter = 0, userCounter = 0;
+                foreach (Server s in discord.Servers)
+                {
+                    serverCounter++;
+                    TreeViewItem server = new TreeViewItem();
+                    server.Header = s.Name;
+                    TreeViewItem voice = new TreeViewItem(), text = new TreeViewItem();
+                    voice.Header = "Voice Channels";
+                    text.Header = "Text Channels";
+                    foreach (Discord.Channel c in s.VoiceChannels)
                     {
-                        userCounter++;
-                        channel.Items.Add(u.Name);
+                        channelCounter++;
+                        TreeViewItem channel = new TreeViewItem();
+                        channel.Header = c.Name;
+                        foreach (Discord.User u in c.Users)
+                        {
+                            userCounter++;
+                            channel.Items.Add(u.Name);
+                        }
+                        voice.Items.Add(channel);
                     }
-                    voice.Items.Add(channel);
+                    foreach (Discord.Channel c in s.TextChannels)
+                    {
+                        channelCounter++;
+                        text.Items.Add(c);
+                    }
+                    server.Items.Add(voice);
+                    server.Items.Add(text);
+                    tvServerBrowser.Items.Add(server);
                 }
-                foreach (Discord.Channel c in s.TextChannels)
-                {
-                    channelCounter++;
-                    text.Items.Add(c);
-                }
-                server.Items.Add(voice);
-                server.Items.Add(text);
-                tvServerBrowser.Items.Add(server);
+                btnLogin.Content = "Logout";
             }
-            MessageBox.Show(string.Format("{0} servers, {1} channels and {2} users added!", serverCounter, channelCounter, userCounter));
+            else
+            {
+                discord.Disconnect();
+                tvServerBrowser.Items.Clear();
+                btnLogin.Content = "Login";
+            }
         }
 
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(indexSong.ToString());
+            nextSong();
+        }
+
+        public void nextSong()
+        {
             if (indexSong == colSongs.Count - 1)
             {
                 indexSong = 0;
@@ -378,7 +412,20 @@ namespace OakBot
             }
             Song play = colSongs[indexSong];
             cefSong.Load(play.Link);
-            MessageBox.Show(indexSong.ToString());
+        }
+
+        public void prevSong()
+        {
+            if (indexSong == 0)
+            {
+                indexSong = colSongs.Count - 1;
+            }
+            else
+            {
+                indexSong--;
+            }
+            Song play = colSongs[indexSong];
+            cefSong.Load(play.Link);
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
@@ -388,6 +435,7 @@ namespace OakBot
                 Song first = (Song)lvSongs.Items[0];
                 cefSong.Load(first.Link);
                 playState = true;
+                btnPlayerCtl.Content = "Pause";
                 indexSong = 0;
             }
             catch (Exception)
@@ -416,7 +464,6 @@ namespace OakBot
 
         private void btnPrev_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(indexSong.ToString());
             if (indexSong == 0)
             {
                 indexSong = colSongs.Count - 1;
@@ -427,7 +474,6 @@ namespace OakBot
             }
             Song play = colSongs[indexSong];
             cefSong.Load(play.Link);
-            MessageBox.Show(indexSong.ToString());
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
@@ -710,7 +756,6 @@ namespace OakBot
 
             // Start the chat connection threads
             botChat.Start();
-            GroupMinigame.Initialize();
         }
 
         private void ConnectStreamer()
@@ -808,6 +853,26 @@ namespace OakBot
                 //BotCommands.RunBotCommand(firstWord, new IrcMessage(e.User.Name + "@Discord", e.Message.Text));
                 BotCommands.RunBotCommandDiscord(firstWord, e.Message);
             }
+            if (e.Channel.IsPrivate)
+            {
+                if(e.Message.Text.Split(' ')[0] == "confirm" && e.Message.Text.Split(' ').Length == 2)
+                {
+                    Discord.User confirm = e.User;
+                    Models.Channel target = client.GetChannel(e.Message.Text.Split(' ')[1]);
+                    string id = target.Game;
+                    if(id == confirm.Id.ToString())
+                    {
+                        Viewer vwr = colDatabase.FirstOrDefault(x => x.UserName.ToLower() == target.Name.ToLower());
+                        vwr.DiscordID = confirm.Id.ToString();
+                        DatabaseUtils.UpdateViewer(vwr);
+                    }
+                }
+            }
+        }
+
+        public static void popMsgBox(string text)
+        {
+            MessageBox.Show(text);
         }
 
         private void listViewChat_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -974,6 +1039,23 @@ namespace OakBot
         {
             Giveaway selected = (Giveaway)lvGiveaways.SelectedItem;
             tbGwName.Text = selected.GiveawayName;
+        }
+
+        private void btnAddEditGw_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void txtToken_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(textBoxBotName.Text))
+            {
+                
+            }
+            else
+            {
+                Config.DiscordBotToken = txtToken.Text;
+            }
         }
 
         private void textBoxStreamerName_LostFocus(object sender, RoutedEventArgs e)

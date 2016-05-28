@@ -31,6 +31,7 @@ namespace OakBot
         private static int serverPort;
         private static string streamerOAuthKey;
         private static string streamerUsername;
+        private static string discordBotToken;
 
         #endregion Private Fields
 
@@ -189,6 +190,22 @@ namespace OakBot
             }
         }
 
+        public static string DiscordBotToken
+        {
+            get
+            {
+                return discordBotToken;
+            }
+            set
+            {
+                if(value != discordBotToken)
+                {
+                    discordBotToken = value;
+                    SaveSettingPropertyToDB("DiscordBotToken", value);
+                }
+            }
+        }
+
         #endregion Public Properties
 
         #region Public Methods
@@ -226,7 +243,8 @@ namespace OakBot
                         "('AutoConnectBot', 'false'), " +
                         "('StreamerTwitchUsername', 'notSet'), " +
                         "('StreamerOAuthToken', 'notSet'), " +
-                        "('AutoConnectStreamer', 'false')",
+                        "('AutoConnectStreamer', 'false')," +
+                        "('DiscordBotToken', 'notSet')",
                         dbConnection);
                     sqlCmd.ExecuteNonQuery();
 
@@ -287,6 +305,9 @@ namespace OakBot
 
                         case "AutoConnectStreamer":
                             autoConnectStreamer = bool.Parse((string)sqlReader["value"]);
+                            break;
+                        case "DiscordBotToken":
+                            discordBotToken = (string)sqlReader["value"];
                             break;
                         //case "CommandPrefix":
                         //    commandPrefix = ((string)sqlReader["value"])[0];

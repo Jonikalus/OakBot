@@ -45,12 +45,14 @@ namespace OakBot
                 if (isInDatabase != null)
                 { // is in database
                     MainWindow.colViewers.Add(isInDatabase);
+                    DatabaseUtils.UpdateViewer(isInDatabase);
                 }
                 else
                 { // is not in database
                     Viewer newViewer = new Viewer(viewerName);
                     MainWindow.colDatabase.Add(newViewer);
                     MainWindow.colViewers.Add(newViewer);
+                    DatabaseUtils.AddViewer(newViewer);
                 }
             }
         }

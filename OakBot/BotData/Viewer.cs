@@ -36,6 +36,9 @@ namespace OakBot
         // Watched timespan of the viewer
         private TimeSpan watched;
 
+        // Discord ID, if linked
+        private string discordID;
+
         #endregion Private Fields
 
         #region Public Constructors
@@ -52,6 +55,7 @@ namespace OakBot
             this.title = "";
             this.regular = false;
             this.ign = "";
+            this.discordID = "";
         }
 
         #endregion Public Constructors
@@ -238,6 +242,18 @@ namespace OakBot
             set
             {
                 watched = value;
+            }
+        }
+
+        public string DiscordID
+        {
+            get
+            {
+                return discordID;
+            }
+            set
+            {
+                discordID = value;
             }
         }
 

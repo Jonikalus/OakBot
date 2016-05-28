@@ -89,7 +89,7 @@ namespace OakBot
             dbConnection.Open();
 
             SQLiteCommand sqlCmd = new SQLiteCommand(
-                string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')",
+                string.Format("INSERT INTO `Viewers` VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}')",
                     viewer.UserName,
                     viewer.Points,
                     viewer.Spent,
@@ -98,7 +98,8 @@ namespace OakBot
                     viewer.Raids,
                     viewer.Title,
                     viewer.regular.ToString(),
-                    viewer.IGN),
+                    viewer.IGN,
+                    viewer.DiscordID),
                 dbConnection);
             sqlCmd.ExecuteNonQuery();
 
@@ -168,7 +169,7 @@ namespace OakBot
                 dbConnection = new SQLiteConnection(string.Format("Data Source={0}; Version=3;", fileViewers));
                 dbConnection.Open();
 
-                SQLiteCommand sqlCmd = new SQLiteCommand("CREATE TABLE `Viewers` (`Username` TEXT NOT NULL, `Points` INTEGER, `Spent` INTEGER, `Watched` TEXT, `LastSeen` TEXT, `Raids` INTEGER, `Title` TEXT, `Regular` BOOLEAN, `IGN` TEXT, PRIMARY KEY(Username))", dbConnection);
+                SQLiteCommand sqlCmd = new SQLiteCommand("CREATE TABLE `Viewers` (`Username` TEXT NOT NULL, `Points` INTEGER, `Spent` INTEGER, `Watched` TEXT, `LastSeen` TEXT, `Raids` INTEGER, `Title` TEXT, `Regular` BOOLEAN, `IGN` TEXT, `DiscordID` TEXT, PRIMARY KEY(Username))", dbConnection);
                 sqlCmd.ExecuteNonQuery();
 
                 dbConnection.Close();
@@ -192,6 +193,7 @@ namespace OakBot
                     loadedViewer.Title = (string)reader["Title"];
                     loadedViewer.regular = (bool)reader["Regular"];
                     loadedViewer.IGN = (string)reader["IGN"];
+                    loadedViewer.DiscordID = (string)reader["DiscordID"];
 
                     MainWindow.colDatabase.Add(loadedViewer);
                 }
@@ -279,7 +281,7 @@ namespace OakBot
             foreach (Viewer viewer in MainWindow.colDatabase)
             {
                 sqlCmd = new SQLiteCommand(
-                    string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}' WHERE `Username` = '{0}'",
+                    string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}', `DiscordID` = '{9}' WHERE `Username` = '{0}'",
                         viewer.UserName,
                         viewer.Points,
                         viewer.Spent,
@@ -288,7 +290,8 @@ namespace OakBot
                         viewer.Raids,
                         viewer.Title,
                         viewer.regular.ToString(),
-                        viewer.IGN),
+                        viewer.IGN,
+                        viewer.DiscordID),
                 dbConnection);
 
                 sqlCmd.ExecuteNonQuery();
@@ -308,7 +311,7 @@ namespace OakBot
             dbConnection.Open();
 
             SQLiteCommand sqlCmd = new SQLiteCommand(
-                string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}' WHERE `Username` = '{0}'",
+                string.Format("UPDATE `Viewers` SET `Points` = '{1}', `Spent` = '{2}', `Watched` = '{3}', `LastSeen` = '{4}', `Raids` = '{5}', `Title` = '{6}', `Regular` = '{7}', `IGN` = '{8}', `DiscordID` = '{9}' WHERE `Username` = '{0}'",
                     viewer.UserName,
                     viewer.Points,
                     viewer.Spent,
@@ -317,7 +320,8 @@ namespace OakBot
                     viewer.Raids,
                     viewer.Title,
                     viewer.regular.ToString(),
-                    viewer.IGN),
+                    viewer.IGN,
+                    viewer.DiscordID),
             dbConnection);
             sqlCmd.ExecuteNonQuery();
 

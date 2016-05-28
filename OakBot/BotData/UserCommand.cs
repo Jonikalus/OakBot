@@ -227,7 +227,16 @@ namespace OakBot
 
         public void ExecuteCommandDiscord(Message message)
         {
-            Viewer viewer = new Viewer(message.User.Name);
+            Viewer viewer;
+            try
+            {
+                viewer = MainWindow.colDatabase.FirstOrDefault(x => x.DiscordID == message.User.Id.ToString());
+                MainWindow.popMsgBox(viewer.UserName);
+            }
+            catch (Exception)
+            {
+                viewer = new Viewer(message.User.Name);
+            }
             if (viewer == null)
             {
                 return;
